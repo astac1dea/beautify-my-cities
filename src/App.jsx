@@ -1,14 +1,31 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AppLayout from './components/layout/AppLayout'
+import WelcomePage from './pages/WelcomePage'
+import AuthPage from './pages/AuthPage'
 import MapPage from './pages/MapPage'
+import CalendarPage from './pages/CalendarPage'
+import LeaderboardPage from './pages/LeaderboardPage'
+import DashboardPage from './pages/DashboardPage'
+import ProfilePage from './pages/ProfilePage'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public */}
+        <Route path="/" element={<WelcomePage />} />
+        <Route path="/login" element={<AuthPage />} />
+
+        {/* Requires an account */}
         <Route element={<AppLayout />}>
-          <Route path="/" element={<MapPage />} />
+          <Route path="/map" element={<MapPage />} />
+          <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

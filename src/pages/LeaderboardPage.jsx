@@ -1,12 +1,137 @@
+import { useMemo, useState } from 'react'
 import Topbar from '../components/layout/Topbar'
+import Badge from '../components/ui/Badge'
+import Leaderboard from '../components/dashboard/Leaderboard'
+import PinPopup from '../components/map/PinPopup'
+import { useAppState } from '../hooks/useStore'
+import { useAuth } from '../hooks/useAuth'
+import { spotRanking, residentRanking } from '../lib/store'
+import { plural } from '../lib/format'
+
+const MEDALS = { 1: '🥇', 2: '🥈', 3: '🥉' }
+
+function ResidentTable({ residents, currentUserId }) {
+  return (
+    <div style={{
+      background: 'var(--surface)', border: '1px solid var(--border)',
+      borderRadius: 14, overflow: 'hidden',
+    }}>
+      <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ fontSize: 15, fontWeight: 800 }}>Residents</div>
+        <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 3 }}>
+          Ranked by the upvotes their pins have collected
+        </div>
+      </div>
+
+      {residents.map(row => {
+        const isMe = row.profile.id === currentUserId
+        return (
+          <div key={row.profile.id} style={{
+            display: 'flex', gap: 14, alignItems: 'center', padding: '13px 20px',
+            borderBottom: '1px solid var(--border)',
+            background: isMe ? 'var(--blue-light)' : 'transparent',
+          }}>
+            <div style={{
+              width: 30, flexShrink: 0, textAlign: 'center',
+              fontFamily: 'Fraunces, serif', fontWeight: 900,
+              fontSize: row.rank <= 3 ? 18 : 14,
+              color: row.rank <= 3 ? '#B45309' : 'var(--muted)',
+            }}>
+              {MEDALS[row.rank] || row.rank}
+            </div>
+
+            <div style={{
+              width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
+              background: row.profile.avatar_color || 'var(--blue-mid)',
+              color: 'white', fontWeight: 800, fontSize: 14,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              {row.profile.display_name.charAt(0)}
+            </div>
+
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 700, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                {row.profile.display_name}
+                {isMe && <Badge color="#1B4FD8" bg="#DBEAFE" size="sm">You</Badge>}
+              </div>
+              <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
+                {plural(row.pins, 'pin')} · {row.hours} verified hours
+              </div>
+            </div>
+
+            <div style={{ textAlign: 'right', flexShrink: 0 }}>
+              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 18, fontWeight: 900, lineHeight: 1 }}>
+                {row.upvotes}
+              </div>
+              <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 3 }}>upvotes</div>
+            </div>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 
 export default function LeaderboardPage() {
+  const state = useAppState()
+  const { user } = useAuth()
+  const [openSpotId, setOpenSpotId] = useState(null)
+
+  const { spots, residents, myBest } = useMemo(() => {
+    const spots = spotRanking(state)
+    const mine = spots.filter(s => s.user_id === user?.id)
+    return {
+      spots,
+      residents: residentRanking(state),
+      myBest: mine.length ? mine.reduce((a, b) => (a.rank < b.rank ? a : b)) : null,
+    }
+  }, [state, user])
+
   return (
     <div>
-      <Topbar title="Leaderboard" />
-      <div style={{ padding: 32 }}>
-        <p>Leaderboard coming soon!</p>
+      <Topbar
+        title="Leaderboard"
+        subtitle="The spots Milpitas most wants dealt with"
+      />
+
+      <div style={{ padding: 32, display: 'grid', gap: 20 }}>
+        {myBest && (
+          <div style={{
+            background: 'var(--sidebar)', color: 'white', borderRadius: 14,
+            padding: '20px 24px', display: 'flex', justifyContent: 'space-between',
+            alignItems: 'center', gap: 16, flexWrap: 'wrap',
+          }}>
+            <div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>
+                YOUR BEST PIN
+              </div>
+              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 21, fontWeight: 900, marginBottom: 5 }}>
+                {myBest.title}
+              </div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>
+                {myBest.rank === 1
+                  ? 'Sitting at #1. This is the most upvoted spot in the city right now.'
+                  : `Ranked #${myBest.rank} of ${spots.length} spots in Milpitas.`}
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 40, fontWeight: 900, lineHeight: 1 }}>
+                {myBest.upvotes}
+              </div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 4 }}>
+                upvotes · {myBest.volunteerCount} volunteers
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div className="split">
+          <Leaderboard spots={spots} currentUserId={user?.id} onOpen={setOpenSpotId} />
+          <ResidentTable residents={residents} currentUserId={user?.id} />
+        </div>
       </div>
+
+      {openSpotId && <PinPopup spotId={openSpotId} onClose={() => setOpenSpotId(null)} />}
     </div>
   )
 }

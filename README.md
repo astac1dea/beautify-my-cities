@@ -1,16 +1,93 @@
-# React + Vite
+# Beautify My City
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A civic platform for Milpitas, CA. Residents pin spots around the city that need
+work, neighbours upvote them, local organizations schedule volunteer days, and
+volunteers walk away with service hours they can get verified for the
+Congressional Award.
 
-Currently, two official plugins are available:
+## Running it
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+npm run dev
+```
 
-## React Compiler
+Then open http://localhost:5173.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Demo accounts
 
-## Expanding the Oxlint configuration
+The login page has one-tap buttons for all three. Password for each is `demo1234`.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+| Email | Who | Loaded with |
+| --- | --- | --- |
+| `maya@demo.city` | Maya Chen | 44 verified hours, 1 short of the Silver Certificate |
+| `jordan@demo.city` | Jordan Rivera | Newer volunteer, a couple of events booked |
+| `sam@demo.city` | Sam Okafor | Reported the most upvoted pins in the city |
+
+Signing up creates a real (local) account too.
+
+## What a resident can do
+
+**Welcome page** → **Login** → the signed-in app:
+
+- **Map** — every reported spot in Milpitas, filterable by type. `+ Pin a Spot`
+  drops a new pin anywhere on the map; the report is routed to whichever
+  organization handles that category, and you get a "request sent" confirmation
+  naming them.
+- **Pin details** — click any pin for the full picture: who reported it, its
+  upvote count and city ranking, a status timeline (request sent → under review
+  → event scheduled → resolved), the organization responsible with their contact
+  email and phone, and the volunteer event for that spot including what you would
+  actually be doing on the day. `JOIN this event` signs you up.
+- **My Calendar** — a month grid plus a list of every event you joined, with
+  time, date and location. Clicking a calendar entry opens the same event popup
+  you get from the map.
+- **My Dashboard** — verified service hours, Congressional Award progress against
+  all six service levels, the hour log as a spreadsheet (downloadable as CSV)
+  with the verifying organization's email on every row, your pins with their
+  upvotes / city rank / status, and where you sit among residents.
+- **Leaderboard** — every spot ranked by upvotes then by volunteer count, so the
+  #1 most popular spot is obvious, plus a resident ranking.
+- **Profile** — your details, and a button to reset the demo data.
+
+## Congressional Award
+
+Service hours only count once the supervising organization confirms you were
+there, so the hour log tracks `verified` and `pending` separately and only
+verified hours advance the award progress. Every row carries the organization's
+verification email, and the dashboard has per-organization buttons that open a
+pre-filled email asking them to confirm your hours.
+
+Service hour thresholds used: Bronze / Silver / Gold Certificate at 30 / 45 / 60
+hours, and Bronze / Silver / Gold Medal at 100 / 200 / 400 hours.
+
+## How data works right now
+
+Everything lives in `localStorage` behind `src/lib/store.js`, seeded from
+`src/lib/seed.js`. No backend is needed to run or demo the app.
+
+The table and column names in the store deliberately mirror the Supabase schema
+that already exists in this project (`cities`, `spots`, `events`, `profiles`,
+`votes`), so swapping the store for real queries does not mean reshaping the
+components. Those tables are currently empty, and several things this app needs
+(`organizations`, `event_signups`, `volunteer_hours`, plus event time/location
+columns) do not exist yet — see **`MIGRATION.sql`** for the SQL that adds them.
+Run it in the Supabase dashboard's SQL editor when you want to go live.
+
+## Layout
+
+```
+src/
+  lib/        constants, seed data, the local store, date helpers, map helpers
+  hooks/      useAuth, useSpots, useVote, useEvents, useStore
+  components/
+    ui/         Button, Badge, Modal
+    layout/     AppLayout (auth guard), Sidebar, Topbar
+    map/        CommunityMap, PinMarker, PinPopup, AddPinModal, FilterPills
+    events/     EventDetails (shared body), EventModal
+    dashboard/  StatCard, HoursTable, AwardProgress, SpotBreakdown,
+                Leaderboard, TopVotedPanel, UpcomingEvents
+  pages/      Welcome, Auth, Map, Calendar, Dashboard, Leaderboard, Profile
+```
+
+The map is Leaflet with OpenStreetMap tiles, so it needs no API key.

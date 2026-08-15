@@ -1,55 +1,103 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Topbar from '../components/layout/Topbar'
 import CommunityMap from '../components/map/CommunityMap'
+import FilterPills from '../components/map/FilterPills'
+import AddPinModal from '../components/map/AddPinModal'
+import PinPopup from '../components/map/PinPopup'
 import StatCard from '../components/dashboard/StatCard'
 import TopVotedPanel from '../components/dashboard/TopVotedPanel'
-
-const testSpots = [
-  { id: 1, type: 'trash',    title: 'Park & Abel Intersection', description: 'Overflowing bins',         lat: 37.4350, lng: -121.9020, upvotes: 142 },
-  { id: 2, type: 'mural',    title: 'Main St. Blank Wall',      description: 'Perfect wall for a mural', lat: 37.4280, lng: -121.8960, upvotes: 98  },
-  { id: 3, type: 'graffiti', title: 'Calaveras Underpass',      description: 'Tagged last week',          lat: 37.4400, lng: -121.8900, upvotes: 77  },
-  { id: 4, type: 'seating',  title: 'Civic Center Bus Stop',    description: 'No shade or seating',       lat: 37.4320, lng: -121.9050, upvotes: 61  },
-  { id: 5, type: 'bike',     title: 'Calaveras Blvd Route',     description: 'Need a bike lane here',     lat: 37.4260, lng: -121.8850, upvotes: 55  },
-]
+import { useSpots } from '../hooks/useSpots'
+import { useAppState } from '../hooks/useStore'
+import { cityStats } from '../lib/store'
+import { formatDate } from '../lib/format'
 
 export default function MapPage() {
-  const [selectedSpot, setSelectedSpot] = useState(null)
+  const { spots } = useSpots()
+  const state = useAppState()
+  const stats = useMemo(() => cityStats(state), [state])
+
+  const [filter, setFilter] = useState('all')
+  const [placing, setPlacing] = useState(false)
+  const [draft, setDraft] = useState(null)
+  const [openSpotId, setOpenSpotId] = useState(null)
+
+  const visible = filter === 'all' ? spots : spots.filter(s => s.type === filter)
+
+  function handleMapClick(coords) {
+    if (!placing) return
+    setDraft(coords)
+    setPlacing(false)
+  }
 
   return (
     <div>
-      <Topbar title="Milpitas Map" />
+      <Topbar
+        title="Milpitas Map"
+        onAddPin={() => { setPlacing(p => !p); setDraft(null) }}
+        addPinLabel={placing ? 'Cancel' : '+ Pin a Spot'}
+      />
+
       <div style={{ padding: 32 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 28 }}>
-          <StatCard icon="🗑️" iconBg="#FFF0E6" number={47}  label="Open Spots"       trend="↑ 12 this week" trendColor={{ bg: '#DCFCE7', text: '#16A34A' }} />
-          <StatCard icon="✅" iconBg="#DCFCE7" number={89}  label="Resolved"         trend="↑ 8 this month" trendColor={{ bg: '#DCFCE7', text: '#16A34A' }} />
-          <StatCard icon="👥" iconBg="#E8EFFE" number={312} label="Volunteers"       trend="↑ 34 new"       trendColor={{ bg: '#DCFCE7', text: '#16A34A' }} />
-          <StatCard icon="📅" iconBg="#F3EFFE" number={3}   label="Events Scheduled" trend="Next: Jun 22"   trendColor={{ bg: '#E8EFFE', text: '#1B4FD8' }} />
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+          gap: 16, marginBottom: 28,
+        }}>
+          <StatCard icon="🗑️" iconBg="#FFF0E6" number={stats.open} label="Open Spots"
+            trend="Needs work" trendColor={{ bg: '#FFF0E6', text: '#EA580C' }} />
+          <StatCard icon="✅" iconBg="#DCFCE7" number={stats.resolved} label="Resolved"
+            trend="Done" trendColor={{ bg: '#DCFCE7', text: '#16A34A' }} />
+          <StatCard icon="👥" iconBg="#E8EFFE" number={stats.volunteers} label="Volunteers"
+            trend="Signed up" trendColor={{ bg: '#E8EFFE', text: '#1B4FD8' }} />
+          <StatCard icon="📅" iconBg="#F3EFFE" number={stats.upcoming} label="Events Scheduled"
+            trend={stats.nextEvent ? `Next: ${formatDate(stats.nextEvent.event_date)}` : 'None yet'}
+            trendColor={{ bg: '#F3EFFE', text: '#7C3AED' }} />
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 16, marginBottom: 28 }}>
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, overflow: 'hidden' }}>
-            <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontWeight: 700, fontSize: 15 }}>
+
+        <div className="split" style={{ marginBottom: 28 }}>
+          <div style={{
+            background: 'var(--surface)', border: '1px solid var(--border)',
+            borderRadius: 14, overflow: 'hidden',
+          }}>
+            <div style={{
+              padding: '16px 20px', borderBottom: '1px solid var(--border)',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              gap: 12, flexWrap: 'wrap', fontWeight: 700, fontSize: 15,
+            }}>
               Community Map
-              <div style={{ display: 'flex', gap: 6 }}>
-                {['All', '🗑️', '🎨', '🪑', '🚲'].map((f, i) => (
-                  <button key={i} style={{
-                    padding: '5px 12px', borderRadius: 50, fontSize: 11, fontWeight: 600, cursor: 'pointer',
-                    background: i === 0 ? 'var(--blue)' : 'var(--bg)',
-                    color: i === 0 ? 'white' : 'var(--muted)',
-                    border: `1px solid ${i === 0 ? 'var(--blue)' : 'var(--border)'}`,
-                  }}>{f}</button>
-                ))}
-              </div>
+              <FilterPills value={filter} onChange={setFilter} />
             </div>
-            <CommunityMap spots={testSpots} onPinClick={setSelectedSpot} />
+            <CommunityMap
+              spots={visible}
+              placing={placing}
+              draft={draft}
+              onMapClick={handleMapClick}
+              onOpenSpot={setOpenSpotId}
+            />
+            <div style={{
+              padding: '12px 20px', borderTop: '1px solid var(--border)',
+              fontSize: 12, color: 'var(--muted)',
+            }}>
+              {placing
+                ? 'Click the map to place your pin.'
+                : `Showing ${visible.length} of ${spots.length} spots. Click a pin to see who handles it and how to volunteer.`}
+            </div>
           </div>
-          <TopVotedPanel spots={testSpots} />
+
+          <TopVotedPanel spots={spots} onSelect={setOpenSpotId} />
         </div>
-        {selectedSpot && (
-          <div style={{ padding: '16px 20px', background: 'var(--surface)', borderRadius: 14, border: '1px solid var(--border)', fontSize: 14 }}>
-            <strong>{selectedSpot.title}</strong> — {selectedSpot.description} · 👍 {selectedSpot.upvotes} votes
-          </div>
-        )}
       </div>
+
+      {draft && (
+        <AddPinModal
+          coords={draft}
+          onClose={() => setDraft(null)}
+          onCreated={(spot, openIt) => { if (openIt) setOpenSpotId(spot.id) }}
+        />
+      )}
+
+      {openSpotId && (
+        <PinPopup spotId={openSpotId} onClose={() => setOpenSpotId(null)} />
+      )}
     </div>
   )
 }

@@ -17,3 +17,29 @@ body {
 }
 
 .font-display { font-family: 'Fraunces', serif; }
+
+/* Leaflet gives its panes z-indexes up to 700, which would otherwise paint
+   over the sidebar and sticky topbar. Isolating the container keeps all of
+   that inside the map. */
+.leaflet-container {
+  isolation: isolate;
+  z-index: 0;
+  font: inherit;
+}
+
+.leaflet-popup-content { margin: 12px 14px; }
+.leaflet-popup-content-wrapper { border-radius: 10px; }
+
+/* Two-column page layout that collapses on narrow screens. */
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .split { grid-template-columns: minmax(0, 1fr); }
+}
+
+table tbody tr:hover { background: var(--bg); }
