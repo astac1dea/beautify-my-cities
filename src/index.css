@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+:root {
+  --blue: #1B4FD8; --blue-light: #E8EFFE; --blue-mid: #3B6BF5;
+  --green: #16A34A; --green-light: #DCFCE7;
+  --orange: #EA580C; --orange-light: #FFF0E6;
+  --purple: #7C3AED; --purple-light: #F3EFFE;
+  --bg: #F8FAFF; --surface: #FFFFFF;
+  --border: #E4E9F7; --text: #0F1729;
+  --muted: #6B7A9F; --sidebar: #0F1729;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.font-display { font-family: 'Fraunces', serif; }
