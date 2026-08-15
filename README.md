@@ -5,14 +5,20 @@ work, neighbours upvote them, local organizations schedule volunteer days, and
 volunteers walk away with service hours they can get verified for the
 Congressional Award.
 
-## Running it
+## Running it on your own computer
 
 ```bash
 npm install
-npm run dev
+npm start
 ```
 
-Then open http://localhost:5173.
+Then open http://localhost:4173. That builds the real production version and
+serves it locally — the same thing that would go on a server.
+
+For editing, `npm run dev` instead gives you http://localhost:5173 with hot
+reload, so changes show up as you save.
+
+Stop either one with `Ctrl+C` in the terminal.
 
 ## Demo accounts
 
