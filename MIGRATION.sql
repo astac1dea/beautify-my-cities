@@ -33,7 +33,7 @@ create table if not exists organizations (
 -- Which organization is responsible for each kind of pin.
 create table if not exists org_categories (
   org_id  uuid references organizations(id) on delete cascade,
-  type    text not null,                -- trash | graffiti | mural | seating | bike
+  type    text not null,                -- trash | graffiti | mural | seating
   primary key (org_id, type)
 );
 
