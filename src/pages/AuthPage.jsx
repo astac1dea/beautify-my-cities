@@ -4,6 +4,7 @@ import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
 import Wordmark from '../components/layout/Wordmark'
 import { useAuth } from '../hooks/useAuth'
+import { useCity } from '../hooks/useCity'
 
 const DEMO_ACCOUNTS = [
   { email: 'maya@demo.city',   name: 'Maya Chen',     note: '44 verified hours, one short of the Silver Certificate' },
@@ -33,6 +34,7 @@ export default function AuthPage() {
   const { isAuthed, signIn, signUp } = useAuth()
   const navigate = useNavigate()
   const [params] = useSearchParams()
+  const { city } = useCity()
   const [mode, setMode] = useState(params.get('signup') ? 'signup' : 'login')
   const [form, setForm] = useState({ name: '', email: '', password: '', school: '', grade: '' })
   const [error, setError] = useState('')
@@ -76,7 +78,7 @@ export default function AuthPage() {
           </Link>
 
           <div style={{ marginBottom: 38 }}>
-            <Wordmark size={36} subtitle="Milpitas, California" />
+            <Wordmark size={36} subtitle={`${city.name}, ${city.state}`} />
           </div>
 
           <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 10 }}>
@@ -85,7 +87,7 @@ export default function AuthPage() {
           <p style={{ fontSize: 14.5, color: 'var(--muted)', marginBottom: 30, lineHeight: 1.6 }}>
             {mode === 'login'
               ? 'You need an account to report spots, upvote and sign up for events. Browsing the map does not require one.'
-              : 'Open to anyone living in Milpitas. It is free and takes a moment.'}
+              : `Open to anyone living in ${city.name}. It is free and takes a moment.`}
           </p>
 
           <form onSubmit={submit} style={{ display: 'grid', gap: 17 }}>
@@ -112,7 +114,7 @@ export default function AuthPage() {
             {mode === 'signup' && (
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 13 }}>
                 <Field label="School (optional)">
-                  <input style={inputStyle} value={form.school} onChange={e => set('school', e.target.value)} placeholder="Milpitas High" />
+                  <input style={inputStyle} value={form.school} onChange={e => set('school', e.target.value)} placeholder="Your school" />
                 </Field>
                 <Field label="Grade (optional)">
                   <input style={inputStyle} value={form.grade} onChange={e => set('grade', e.target.value)} placeholder="11th grade" />

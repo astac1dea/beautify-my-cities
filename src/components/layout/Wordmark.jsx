@@ -19,7 +19,7 @@ export function Logo({ size = 34, background = 'var(--navy)', color = '#fff' }) 
 }
 
 // Always links home, so there is a way back to the welcome page from anywhere.
-export default function Wordmark({ dark = false, size = 34, subtitle = 'Milpitas, California' }) {
+export default function Wordmark({ dark = false, size = 34, subtitle }) {
   return (
     <Link
       to="/"

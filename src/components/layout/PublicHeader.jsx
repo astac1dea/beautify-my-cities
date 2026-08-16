@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import Button from '../ui/Button'
 import Wordmark from './Wordmark'
 import { useAuth } from '../../hooks/useAuth'
+import CityPicker from './CityPicker'
 
 const LINKS = [
   { href: '#map', label: 'The map' },
@@ -24,7 +25,11 @@ export default function PublicHeader() {
       }}>
         <Wordmark size={34} subtitle={null} />
 
-        <nav style={{ display: 'flex', gap: 22, flexWrap: 'wrap', marginRight: 'auto' }}>
+        <div style={{ width: 178 }}>
+          <CityPicker />
+        </div>
+
+        <nav style={{ display: 'flex', gap: 20, flexWrap: 'wrap', marginRight: 'auto' }}>
           {LINKS.map(l => (
             <a
               key={l.href}

@@ -7,6 +7,7 @@ import { useAppState } from '../hooks/useStore'
 import { useHours } from '../hooks/useEvents'
 import { mySpots, resetDemoData } from '../lib/store'
 import { formatDate } from '../lib/format'
+import { useCity } from '../hooks/useCity'
 
 const inputStyle = {
   width: '100%', padding: '10px 12px', borderRadius: 9,
@@ -40,6 +41,7 @@ function Card({ title, children }) {
 
 export default function ProfilePage() {
   const { user, updateProfile, signOut } = useAuth()
+  const { city } = useCity()
   const state = useAppState()
   const { totals } = useHours()
   const navigate = useNavigate()
@@ -84,7 +86,7 @@ export default function ProfilePage() {
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <Field label="School">
-                  <input style={inputStyle} value={form.school} onChange={e => set('school', e.target.value)} placeholder="Milpitas High School" />
+                  <input style={inputStyle} value={form.school} onChange={e => set('school', e.target.value)} placeholder="Your school" />
                 </Field>
                 <Field label="Grade">
                   <input style={inputStyle} value={form.grade} onChange={e => set('grade', e.target.value)} placeholder="11th grade" />
@@ -138,7 +140,7 @@ export default function ProfilePage() {
               {user.display_name}
             </div>
             <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>
-              {[user.grade, user.school].filter(Boolean).join(' · ') || 'Milpitas resident'}
+              {[user.grade, user.school].filter(Boolean).join(' · ') || `${city.name} resident`}
             </div>
             {user.bio && (
               <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 12, lineHeight: 1.6 }}>

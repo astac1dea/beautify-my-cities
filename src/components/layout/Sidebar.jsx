@@ -3,6 +3,7 @@ import Icon from '../ui/Icon'
 import Wordmark from './Wordmark'
 import { useAuth } from '../../hooks/useAuth'
 import { useHours } from '../../hooks/useEvents'
+import CityPicker from './CityPicker'
 
 const NAV = [
   { to: '/map',         icon: 'map',      label: 'Map' },
@@ -31,10 +32,14 @@ export default function Sidebar() {
       overflowY: 'auto',
     }}>
       <div style={{ padding: '0 6px 20px', borderBottom: '1px solid rgba(255,255,255,.1)' }}>
-        <Wordmark dark size={32} subtitle="Milpitas, California" />
+        <Wordmark dark size={32} subtitle={null} />
       </div>
 
-      <nav style={{ marginTop: 20 }}>
+      <div style={{ marginTop: 18 }}>
+        <CityPicker dark />
+      </div>
+
+      <nav style={{ marginTop: 18 }}>
         <ul style={{ listStyle: 'none' }}>
           {NAV.map(({ to, icon, label }) => (
             <li key={to} style={{ marginBottom: 2 }}>

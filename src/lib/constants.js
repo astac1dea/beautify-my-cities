@@ -7,11 +7,6 @@ export const PIN_TYPES = {
   seating:  { label: 'Seating',  icon: 'bench', color: '#1F6E45', bg: '#E3F0E8' },
 }
 
-export const MILPITAS = {
-  lat: 37.4323, lng: -121.8996, zoom: 13,
-  cityId: '79786f15-df18-4cc8-b5d9-bfcdaae63023',
-}
-
 export const MAP_TILES = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 export const MAP_ATTRIBUTION = '© OpenStreetMap contributors'
 
@@ -28,14 +23,6 @@ export const SPOT_STATUS = {
 }
 
 export const STATUS_ORDER = ['reported', 'reviewing', 'scheduled', 'resolved']
-
-// Which organization takes responsibility for each kind of pin.
-export const TYPE_TO_ORG = {
-  trash:    'org-kmb',
-  graffiti: 'org-mural',
-  mural:    'org-mural',
-  seating:  'org-bikewalk',
-}
 
 // Service hours needed for each Congressional Award level.
 export const AWARD_TIERS = [

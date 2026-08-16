@@ -4,14 +4,14 @@ import Icon from '../ui/Icon'
 
 // Spots ranked by how much support they have. Ties break on the number of
 // volunteers who signed up for the spot's event.
-export default function Leaderboard({ spots, currentUserId, onOpen }) {
+export default function Leaderboard({ spots, currentUserId, cityName, onOpen }) {
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
       borderRadius: 'var(--radius-lg)', overflow: 'hidden',
     }}>
       <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ fontSize: 15, fontWeight: 800 }}>Most wanted spots in Milpitas</div>
+        <div style={{ fontSize: 15, fontWeight: 800 }}>Most wanted spots in {cityName}</div>
         <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 3 }}>
           Ranked by upvotes, then by how many volunteers signed up
         </div>

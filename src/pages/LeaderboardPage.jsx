@@ -7,6 +7,7 @@ import { useAppState } from '../hooks/useStore'
 import { useAuth } from '../hooks/useAuth'
 import { spotRanking, residentRanking } from '../lib/store'
 import { plural } from '../lib/format'
+import { useCity } from '../hooks/useCity'
 
 function ResidentTable({ residents, currentUserId }) {
   return (
@@ -73,6 +74,7 @@ function ResidentTable({ residents, currentUserId }) {
 export default function LeaderboardPage() {
   const state = useAppState()
   const { user } = useAuth()
+  const { city } = useCity()
   const [openSpotId, setOpenSpotId] = useState(null)
 
   const { spots, residents, myBest } = useMemo(() => {
@@ -89,7 +91,7 @@ export default function LeaderboardPage() {
     <div>
       <Topbar
         title="Leaderboard"
-        subtitle="The spots Milpitas most wants dealt with"
+        subtitle={`The spots ${city.name} most wants dealt with`}
       />
 
       <div style={{ padding: 32, display: 'grid', gap: 20 }}>
@@ -109,7 +111,7 @@ export default function LeaderboardPage() {
               <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>
                 {myBest.rank === 1
                   ? 'Sitting at #1. This is the most upvoted spot in the city right now.'
-                  : `Ranked #${myBest.rank} of ${spots.length} spots in Milpitas.`}
+                  : `Ranked #${myBest.rank} of ${spots.length} spots in ${city.name}.`}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
@@ -124,7 +126,7 @@ export default function LeaderboardPage() {
         )}
 
         <div className="split">
-          <Leaderboard spots={spots} currentUserId={user?.id} onOpen={setOpenSpotId} />
+          <Leaderboard spots={spots} currentUserId={user?.id} cityName={city.name} onOpen={setOpenSpotId} />
           <ResidentTable residents={residents} currentUserId={user?.id} />
         </div>
       </div>

@@ -1,5 +1,7 @@
-import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet'
-import { MAP_TILES, MAP_ATTRIBUTION, MILPITAS } from '../../lib/constants'
+import { useEffect } from 'react'
+import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet'
+import { MAP_TILES, MAP_ATTRIBUTION } from '../../lib/constants'
+import { useCity } from '../../hooks/useCity'
 import PinMarker from './PinMarker'
 import { configureLeafletIcons, createDraftIcon } from '../../lib/maps'
 import Icon from '../ui/Icon'
@@ -12,18 +14,29 @@ function MapClickHandler({ onMapClick }) {
   return null
 }
 
+// MapContainer only reads `center` once, so re-centre imperatively when the
+// selected city changes.
+function RecenterOnCity({ lat, lng, zoom }) {
+  const map = useMap()
+  useEffect(() => { map.setView([lat, lng], zoom) }, [map, lat, lng, zoom])
+  return null
+}
+
 export default function CommunityMap({
-  spots = [], onMapClick, onOpenSpot, draft, placing, height = 460, zoom = MILPITAS.zoom,
+  spots = [], onMapClick, onOpenSpot, draft, placing, height = 460,
 }) {
+  const { city } = useCity()
   return (
     <div style={{ position: 'relative' }}>
       <MapContainer
-        center={[MILPITAS.lat, MILPITAS.lng]}
-        zoom={zoom}
+        key={city.id}
+        center={[city.lat, city.lng]}
+        zoom={city.zoom}
         style={{ width: '100%', height, cursor: placing ? 'crosshair' : undefined }}
         scrollWheelZoom={false}
       >
         <TileLayer url={MAP_TILES} attribution={MAP_ATTRIBUTION} />
+        <RecenterOnCity lat={city.lat} lng={city.lng} zoom={city.zoom} />
         <MapClickHandler onMapClick={onMapClick} />
         {spots.map(spot => (
           <PinMarker key={spot.id} spot={spot} onOpen={onOpenSpot} />

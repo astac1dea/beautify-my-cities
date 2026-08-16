@@ -14,9 +14,11 @@ import { useAppState } from '../hooks/useStore'
 import { useHours } from '../hooks/useEvents'
 import { mySpots, myEvents, spotRanking, residentRanking, todayISO } from '../lib/store'
 import { plural } from '../lib/format'
+import { useCity } from '../hooks/useCity'
 
 export default function DashboardPage() {
   const { user } = useAuth()
+  const { city } = useCity()
   const state = useAppState()
   const { rows, totals } = useHours()
   const [openSpotId, setOpenSpotId] = useState(null)
@@ -89,7 +91,7 @@ export default function DashboardPage() {
           }}>
             <div>
               <div style={{ fontSize: 15, fontWeight: 800, marginBottom: 4 }}>
-                You are ranked #{myRank.rank} in Milpitas
+                You are ranked #{myRank.rank} in {city.name}
               </div>
               <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5 }}>
                 Based on {myRank.upvotes} upvotes across {plural(myRank.pins, 'pin')}, plus {myRank.hours} verified hours.

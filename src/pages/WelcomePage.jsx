@@ -15,6 +15,7 @@ import { useAppState } from '../hooks/useStore'
 import { cityStats } from '../lib/store'
 import { AWARD_TIERS, PIN_TYPES } from '../lib/constants'
 import { formatDateLong, formatTimeRange, plural } from '../lib/format'
+import { useCity } from '../hooks/useCity'
 
 const SHELL = { maxWidth: 1220, margin: '0 auto', padding: '0 28px' }
 
@@ -108,6 +109,7 @@ function EventCard({ event, onOpen }) {
 export default function WelcomePage() {
   const { spots } = useSpots()
   const { upcoming } = useEvents()
+  const { city } = useCity()
   const state = useAppState()
   const stats = useMemo(() => cityStats(state), [state])
 
@@ -137,7 +139,7 @@ export default function WelcomePage() {
       <section style={{ background: 'var(--navy)', color: '#fff', paddingTop: 64 }}>
         <div style={{ ...SHELL, paddingBottom: 90 }}>
           <div className="eyebrow" style={{ color: 'rgba(255,255,255,.7)', marginBottom: 20 }}>
-            Milpitas, California
+            {city.name}, {city.state}
           </div>
 
           <h1 style={{
@@ -151,9 +153,10 @@ export default function WelcomePage() {
             fontSize: 18, lineHeight: 1.6, color: 'rgba(255,255,255,.78)',
             maxWidth: 660, marginBottom: 36,
           }}>
-            Beautify My City is a public record of spots around Milpitas that need attention,
-            and the volunteer days local organizations are running to deal with them. Browse
-            all of it below. You only need an account when you want to report a spot or sign up.
+            Beautify My City is a public record of spots around {city.name} that need
+            attention, and the volunteer days local organizations are running to deal with
+            them. Browse all of it below. You only need an account when you want to report a
+            spot or sign up. Not your city? Switch it at the top of the page.
           </p>
 
           <div style={{ display: 'flex', gap: 34, flexWrap: 'wrap' }}>
@@ -199,7 +202,7 @@ export default function WelcomePage() {
                   See the volunteer events in your area
                 </div>
                 <div style={{ fontSize: 13.5, color: 'var(--muted)', marginTop: 3 }}>
-                  {plural(upcoming.length, 'event')} coming up across Milpitas
+                  {plural(upcoming.length, 'event')} coming up across {city.name}
                 </div>
               </div>
               <Icon name="arrowRight" size="md" style={{ marginLeft: 'auto', color: 'var(--muted-light)' }} />
@@ -236,7 +239,7 @@ export default function WelcomePage() {
       <section id="map" style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
         <SectionHead
           eyebrow="Every reported spot"
-          title="The Milpitas map"
+          title={`The ${city.name} map`}
           blurb="Each pin is something a resident reported. Click one to see who is responsible for it, where the request stands, and whether there is a volunteer day scheduled."
           action={<FilterPills value={filter} onChange={setFilter} />}
         />
@@ -328,7 +331,7 @@ export default function WelcomePage() {
         <div style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
           <SectionHead
             eyebrow="Coming up"
-            title="Volunteer events in your area"
+            title={`Volunteer events in ${city.name}`}
             blurb="Run by local organizations, open to anyone. Each one lists what you would actually be doing and how many service hours it is worth."
           />
 
@@ -435,7 +438,7 @@ export default function WelcomePage() {
             <Logo size={32} background="rgba(255,255,255,.14)" />
             <div>
               <div style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>Beautify My City</div>
-              <div style={{ fontSize: 12.5, marginTop: 2 }}>A civic platform for Milpitas, California</div>
+              <div style={{ fontSize: 12.5, marginTop: 2 }}>A civic platform for {city.name}, {city.state}</div>
             </div>
           </div>
           <div style={{ fontSize: 13.5 }}>

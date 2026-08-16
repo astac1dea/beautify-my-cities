@@ -1,11 +1,11 @@
 import { ORGANIZATIONS, PROFILES, SPOTS, EVENTS, SIGNUPS, UNVERIFIED_EVENTS } from './seed'
-import { TYPE_TO_ORG, MILPITAS } from './constants'
+import { CITIES, DEFAULT_CITY_ID, cityById, orgIdFor } from './cities'
 
 // Local persistence layer. Everything the app reads and writes goes through
 // here. Shapes match the Supabase tables so this can be replaced with real
 // queries later - see MIGRATION.sql for the tables that still need creating.
 
-const KEY = 'bmc.state.v1'
+const KEY = 'bmc.state.v2'
 
 export function todayISO() {
   const d = new Date()
@@ -37,6 +37,7 @@ function seedState() {
     votes: [],
     hours,
     sessionUserId: null,
+    cityId: DEFAULT_CITY_ID,
   }
 }
 
@@ -75,6 +76,18 @@ export function resetDemoData() {
   commit({ ...seedState(), sessionUserId: keepSession })
 }
 
+/* ---------------------------------------------------------------- cities */
+
+export { CITIES, cityById }
+
+export function currentCity(s = state) {
+  return cityById(s.cityId)
+}
+
+export function setCity(cityId) {
+  commit({ ...state, cityId })
+}
+
 /* ------------------------------------------------------------------ auth */
 
 export function signIn(email, password) {
@@ -101,7 +114,7 @@ export function signUp({ name, email, password, school, grade }) {
     password,
     display_name: name.trim(),
     role: 'resident',
-    city_id: MILPITAS.cityId,
+    city_id: state.cityId,
     school: school?.trim() || '',
     grade: grade?.trim() || '',
     bio: '',
@@ -127,20 +140,20 @@ export function updateProfile(patch) {
 
 /* ----------------------------------------------------------------- spots */
 
-export function addSpot({ type, title, description, lat, lng }) {
+export function addSpot({ type, title, address, description, lat, lng }) {
   const spot = {
     id: `sp-${Date.now()}`,
-    city_id: MILPITAS.cityId,
+    city_id: state.cityId,
     user_id: state.sessionUserId,
     type,
     title: title.trim(),
+    address: (address || '').trim(),
     description: description.trim(),
     lat,
     lng,
     status: 'reported',
     base_upvotes: 0,
     created_at: todayISO(),
-    org_id: TYPE_TO_ORG[type] || 'org-pw',
   }
   commit({ ...state, spots: [spot, ...state.spots] })
   return spot
@@ -207,13 +220,15 @@ export function decorateSpot(spot, s = state) {
     upvotes: (spot.base_upvotes || 0) + extra,
     hasVoted: s.votes.some(v => v.spot_id === spot.id && v.user_id === s.sessionUserId),
     reporter: profileById(spot.user_id, s),
-    org: orgById(spot.org_id),
+    org: orgById(spot.org_id || orgIdFor(spot.city_id, spot.type)),
     event: event ? decorateEvent(event, s) : null,
   }
 }
 
+// Everything the map, leaderboard and events lists show is scoped to the
+// city currently being browsed. Personal data (hours, calendar) is not.
 export function allSpots(s = state) {
-  return s.spots.map(sp => decorateSpot(sp, s))
+  return s.spots.filter(sp => sp.city_id === s.cityId).map(sp => decorateSpot(sp, s))
 }
 
 export function decorateEvent(event, s = state) {
@@ -230,7 +245,7 @@ export function decorateEvent(event, s = state) {
 }
 
 export function allEvents(s = state) {
-  return s.events.map(e => decorateEvent(e, s))
+  return s.events.filter(e => e.city_id === s.cityId).map(e => decorateEvent(e, s))
 }
 
 export function eventById(id, s = state) {
@@ -247,6 +262,7 @@ export function myEvents(s = state) {
     .sort((a, b) => a.event_date.localeCompare(b.event_date))
 }
 
+// Personal views span every city the resident has been active in.
 export function mySpots(s = state) {
   return s.spots
     .filter(sp => sp.user_id === s.sessionUserId)
@@ -284,6 +300,7 @@ export function spotRanking(s = state) {
 // Residents ranked by the total upvotes across every pin they reported.
 export function residentRanking(s = state) {
   const spots = allSpots(s)
+  const cityEventIds = new Set(s.events.filter(e => e.city_id === s.cityId).map(e => e.id))
   return s.profiles
     .map(p => {
       const theirs = spots.filter(sp => sp.user_id === p.id)
@@ -292,7 +309,7 @@ export function residentRanking(s = state) {
         pins: theirs.length,
         upvotes: theirs.reduce((n, sp) => n + sp.upvotes, 0),
         hours: s.hours
-          .filter(h => h.user_id === p.id && h.status === 'verified')
+          .filter(h => h.user_id === p.id && h.status === 'verified' && cityEventIds.has(h.event_id))
           .reduce((n, h) => n + h.hours, 0),
       }
     })
@@ -302,13 +319,15 @@ export function residentRanking(s = state) {
 }
 
 export function cityStats(s = state) {
-  const spots = s.spots
+  const spots = s.spots.filter(sp => sp.city_id === s.cityId)
+  const events = s.events.filter(e => e.city_id === s.cityId)
+  const eventIds = new Set(events.map(e => e.id))
   return {
     open: spots.filter(sp => sp.status !== 'resolved').length,
     resolved: spots.filter(sp => sp.status === 'resolved').length,
-    volunteers: new Set(s.signups.map(su => su.user_id)).size,
-    upcoming: s.events.filter(e => e.event_date >= todayISO()).length,
-    nextEvent: s.events
+    volunteers: new Set(s.signups.filter(su => eventIds.has(su.event_id)).map(su => su.user_id)).size,
+    upcoming: events.filter(e => e.event_date >= todayISO()).length,
+    nextEvent: events
       .filter(e => e.event_date >= todayISO())
       .sort((a, b) => a.event_date.localeCompare(b.event_date))[0] || null,
   }

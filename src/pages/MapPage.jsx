@@ -10,9 +10,11 @@ import { useSpots } from '../hooks/useSpots'
 import { useAppState } from '../hooks/useStore'
 import { cityStats } from '../lib/store'
 import { formatDate } from '../lib/format'
+import { useCity } from '../hooks/useCity'
 
 export default function MapPage() {
   const { spots } = useSpots()
+  const { city } = useCity()
   const state = useAppState()
   const stats = useMemo(() => cityStats(state), [state])
 
@@ -32,7 +34,7 @@ export default function MapPage() {
   return (
     <div>
       <Topbar
-        title="Milpitas map"
+        title={`${city.name} map`}
         onAddPin={() => { setPlacing(p => !p); setDraft(null) }}
         addPinLabel={placing ? 'Cancel' : 'Report a spot'}
       />

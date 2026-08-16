@@ -3,9 +3,11 @@ import { Link } from 'react-router-dom'
 import Modal from '../ui/Modal'
 import Button from '../ui/Button'
 import Icon from '../ui/Icon'
-import { PIN_TYPES, TYPE_TO_ORG } from '../../lib/constants'
+import { PIN_TYPES } from '../../lib/constants'
 import { addSpot, orgById } from '../../lib/store'
+import { orgIdFor } from '../../lib/cities'
 import { useAuth } from '../../hooks/useAuth'
+import { useCity } from '../../hooks/useCity'
 
 const inputStyle = {
   width: '100%', padding: '10px 12px', borderRadius: 'var(--radius)',
@@ -27,20 +29,23 @@ function Field({ label, hint, children }) {
 
 export default function AddPinModal({ coords, onClose, onCreated }) {
   const { isAuthed } = useAuth()
+  const { city } = useCity()
   const [type, setType] = useState('trash')
   const [title, setTitle] = useState('')
+  const [address, setAddress] = useState('')
   const [description, setDescription] = useState('')
   const [error, setError] = useState('')
   const [created, setCreated] = useState(null)
 
-  const org = orgById(TYPE_TO_ORG[type])
+  const org = orgById(orgIdFor(city.id, type))
 
   function submit(e) {
     e.preventDefault()
     if (!title.trim()) return setError('Give the spot a short name so people can find it.')
+    if (!address.trim()) return setError('Add the street or landmark so the crew can find it.')
     if (!description.trim()) return setError('Describe what needs doing here.')
     setError('')
-    setCreated(addSpot({ type, title, description, lat: coords.lat, lng: coords.lng }))
+    setCreated(addSpot({ type, title, address, description, lat: coords.lat, lng: coords.lng }))
   }
 
   // Anyone can browse, but reporting a spot needs an account.
@@ -94,7 +99,7 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
           }}>
             <Icon name="checkCircle" size="lg" style={{ marginTop: 1 }} />
             <div style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--text)' }}>
-              <strong>{created.title}</strong> is on the Milpitas map, and the request went
+              <strong>{created.title}</strong> is on the {city.name} map, and the request went
               to <strong>{org.name}</strong>.
             </div>
           </div>
@@ -118,7 +123,7 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
       onClose={onClose}
       width={540}
       title="Report a spot that needs work"
-      subtitle={`Pin placed at ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`}
+      subtitle={`Pin placed in ${city.name} at ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`}
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>Cancel</Button>
@@ -153,13 +158,26 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
           </div>
         </Field>
 
-        <Field label="Name this spot" hint="Something a neighbour would recognise, like a cross street or a park.">
+        <Field label="Name this spot" hint="Short and recognisable, like a cross street or a park.">
           <input
             style={inputStyle}
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="Abel St and Curtis Ave corner"
             maxLength={70}
+          />
+        </Field>
+
+        <Field
+          label="Where exactly is it?"
+          hint="Describe it the way you would to someone standing nearby, so the crew can find it on the day."
+        >
+          <input
+            style={inputStyle}
+            value={address}
+            onChange={e => setAddress(e.target.value)}
+            placeholder="Sidewalk in front of 1200 Main St"
+            maxLength={110}
           />
         </Field>
 

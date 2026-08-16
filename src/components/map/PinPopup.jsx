@@ -11,6 +11,7 @@ import { useSpot } from '../../hooks/useSpots'
 import { useVote } from '../../hooks/useVote'
 import { useAppState } from '../../hooks/useStore'
 import { spotRanking } from '../../lib/store'
+import { useCity } from '../../hooks/useCity'
 
 function StatusTimeline({ status }) {
   const current = SPOT_STATUS[status]?.step ?? 0
@@ -106,6 +107,7 @@ function OrgCard({ org }) {
 export default function PinPopup({ spotId, onClose }) {
   const spot = useSpot(spotId)
   const state = useAppState()
+  const { city } = useCity()
   const { vote, canVote } = useVote()
 
   const rank = useMemo(() => {
@@ -132,10 +134,29 @@ export default function PinPopup({ spotId, onClose }) {
           <Badge color={status.color} bg={status.bg}>{status.label}</Badge>
           {rank && rank <= 3 && (
             <Badge color="var(--amber)" bg="var(--amber-soft)" icon="award">
-              {rank === 1 ? 'Most upvoted in Milpitas' : `#${rank} most upvoted`}
+              {rank === 1 ? `Most upvoted in ${city.name}` : `#${rank} most upvoted`}
             </Badge>
           )}
         </div>
+
+        {spot.address && (
+          <div style={{
+            display: 'flex', gap: 11, alignItems: 'flex-start',
+            padding: '13px 16px', background: 'var(--surface-alt)',
+            border: '1px solid var(--border)', borderRadius: 'var(--radius)',
+          }}>
+            <Icon name="pin" size="sm" style={{ marginTop: 2, color: 'var(--muted-light)' }} />
+            <div>
+              <div style={{
+                fontSize: 11.5, fontWeight: 700, letterSpacing: 0.05,
+                textTransform: 'uppercase', color: 'var(--muted)',
+              }}>
+                Where to find it
+              </div>
+              <div style={{ fontSize: 14, marginTop: 2, lineHeight: 1.5 }}>{spot.address}</div>
+            </div>
+          </div>
+        )}
 
         <div style={{ fontSize: 15, lineHeight: 1.65 }}>{spot.description}</div>
 

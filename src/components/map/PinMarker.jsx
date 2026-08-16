@@ -23,6 +23,11 @@ export default function PinMarker({ spot, onOpen }) {
           <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 5, lineHeight: 1.35 }}>
             {spot.title}
           </div>
+          {spot.address && (
+            <div style={{ fontSize: 12.5, color: 'var(--muted)', marginBottom: 6, lineHeight: 1.45 }}>
+              {spot.address}
+            </div>
+          )}
           {spot.description && (
             <div style={{ fontSize: 12.5, color: 'var(--muted)', marginBottom: 9, lineHeight: 1.5 }}>
               {spot.description}

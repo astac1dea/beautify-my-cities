@@ -5,7 +5,7 @@
 --
 --   cities    (id, name, state, lat, lng, created_at)
 --   spots     (id, city_id, user_id, type, title, description, lat, lng,
---              status, upvotes, created_at, photo_url)
+--              status, upvotes, created_at, photo_url)   -- no `address` yet
 --   events    (id, spot_id, city_id, title, description, event_date,
 --              max_volunteers, created_at)
 --   profiles  (id, city_id, role, display_name, created_at)
@@ -25,19 +25,27 @@ create table if not exists organizations (
   focus         text,                   -- short "what they handle" line
   blurb         text,
   contact_name  text,                   -- named supervising adult
-  color         text default '#1B4FD8',
+  color         text default '#205C99',
   city_id       uuid references cities(id) on delete cascade,
   created_at    timestamptz default now()
 );
 
--- Which organization is responsible for each kind of pin.
+-- Which organization is responsible for each kind of pin, per city. The same
+-- organization can cover several cities (a regional mural collective, say),
+-- and each city routes its own categories.
 create table if not exists org_categories (
-  org_id  uuid references organizations(id) on delete cascade,
-  type    text not null,                -- trash | graffiti | mural | seating
-  primary key (org_id, type)
+  org_id   uuid references organizations(id) on delete cascade,
+  city_id  uuid references cities(id) on delete cascade,
+  type     text not null,               -- trash | graffiti | mural | seating
+  primary key (org_id, city_id, type)
 );
 
 -- ------------------------------------------------- extend spots/events ----
+
+-- The plain-language location a resident types when reporting a spot,
+-- e.g. "sidewalk in front of 1200 Main St". Latitude and longitude put the
+-- pin on the map; this is what the crew actually navigates by on the day.
+alter table spots  add column if not exists address text;
 
 alter table spots  add column if not exists org_id uuid references organizations(id);
 
@@ -84,7 +92,12 @@ alter table profiles add column if not exists email  text;
 alter table profiles add column if not exists school text;
 alter table profiles add column if not exists grade  text;
 alter table profiles add column if not exists bio    text;
-alter table profiles add column if not exists avatar_color text default '#3B6BF5';
+alter table profiles add column if not exists avatar_color text default '#205C99';
+
+-- --------------------------------------------------------------- cities ----
+
+-- The map view each city opens at.
+alter table cities add column if not exists zoom smallint default 13;
 
 -- ----------------------------------------------------------------- RLS ----
 
