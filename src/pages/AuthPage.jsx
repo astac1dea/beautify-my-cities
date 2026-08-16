@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom'
 import Button from '../components/ui/Button'
 import Icon from '../components/ui/Icon'
 import Wordmark from '../components/layout/Wordmark'
@@ -63,6 +63,18 @@ export default function AuthPage() {
       {/* Form */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '52px 30px' }}>
         <div style={{ width: '100%', maxWidth: 400 }}>
+          <Link
+            to="/"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 7,
+              fontSize: 13.5, fontWeight: 600, color: 'var(--muted)',
+              textDecoration: 'none', marginBottom: 26,
+            }}
+          >
+            <Icon name="chevronLeft" size="sm" />
+            Back to home
+          </Link>
+
           <div style={{ marginBottom: 38 }}>
             <Wordmark size={36} subtitle="Milpitas, California" />
           </div>

@@ -5,7 +5,6 @@ export const PIN_TYPES = {
   graffiti: { label: 'Graffiti', icon: 'spray', color: '#8F3134', bg: '#F6E7E7' },
   mural:    { label: 'Mural',    icon: 'brush', color: '#5B4A86', bg: '#EDEAF5' },
   seating:  { label: 'Seating',  icon: 'bench', color: '#1F6E45', bg: '#E3F0E8' },
-  bike:     { label: 'Cycling',  icon: 'bike',  color: '#205C99', bg: '#E6EEF6' },
 }
 
 export const MILPITAS = {
@@ -36,7 +35,6 @@ export const TYPE_TO_ORG = {
   graffiti: 'org-mural',
   mural:    'org-mural',
   seating:  'org-bikewalk',
-  bike:     'org-bikewalk',
 }
 
 // Service hours needed for each Congressional Award level.

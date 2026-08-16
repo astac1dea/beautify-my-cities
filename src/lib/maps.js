@@ -19,7 +19,6 @@ const GLYPHS = {
   spray: '<rect x="7.6" y="8.4" width="7.4" height="13" rx="1.8"/><path d="M9.8 8.4V5.2a1.4 1.4 0 0 1 1.4-1.4h.6a1.4 1.4 0 0 1 1.4 1.4v3.2"/><path d="M7.6 12.6H15"/>',
   brush: '<path d="M14.4 3.9 20 9.5l-8 8a3 3 0 0 1-1.6.9l-4.2.8.8-4.2a3 3 0 0 1 .9-1.6Z"/><path d="m12.6 5.7 5.6 5.6"/>',
   bench: '<path d="M3.5 10.2h17"/><path d="M3.5 13.6h17"/><path d="M5.5 10.2V20M18.5 10.2V20"/><path d="M4.6 6.8h14.8l1 3.4H3.6Z"/>',
-  bike:  '<circle cx="5.9" cy="17" r="3.4"/><circle cx="18.1" cy="17" r="3.4"/><path d="m5.9 17 4-8.4h5.3l2.9 8.4"/><path d="M8.4 8.6h4.2"/>',
 }
 
 function svg(glyph, color, px = 15) {

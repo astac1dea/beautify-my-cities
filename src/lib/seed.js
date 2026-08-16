@@ -30,8 +30,8 @@ export const ORGANIZATIONS = [
     name: 'Milpitas Bike & Walk Coalition',
     email: 'coordinator@milpitasbikewalk.org',
     phone: '(408) 555-0177',
-    focus: 'Bike lanes, racks, benches, shade and seating',
-    blurb: 'Advocacy group working with the city on safer streets. Builds and installs benches, racks and shade structures with volunteer crews.',
+    focus: 'Benches, shade, seating and street furniture',
+    blurb: 'Advocacy group working with the city on safer, more comfortable streets. Builds and installs benches and shade structures with volunteer crews.',
     color: '#205C99',
     contact_name: 'Theo Nguyen, Field Organizer',
   },
@@ -92,11 +92,9 @@ export const SPOTS = [
   { id: 'sp-2',  city_id: MILPITAS.cityId, user_id: 'u-maya',  type: 'mural',    title: 'Main St. Blank Wall',          description: 'Big blank wall by the parking lot. Would be perfect for a mural.',     lat: 37.4280, lng: -121.8960, status: 'resolved',  base_upvotes: 98,  created_at: '2026-04-18', org_id: 'org-mural' },
   { id: 'sp-3',  city_id: MILPITAS.cityId, user_id: 'u-sam',   type: 'graffiti', title: 'Calaveras Underpass',          description: 'Tagged again last week. Gets worse every month.',                      lat: 37.4400, lng: -121.8900, status: 'scheduled', base_upvotes: 77,  created_at: '2026-05-09', org_id: 'org-mural' },
   { id: 'sp-4',  city_id: MILPITAS.cityId, user_id: 'u-priya', type: 'seating',  title: 'Civic Center Bus Stop',        description: 'No shade or bench. People stand in full sun waiting for the 66.',      lat: 37.4320, lng: -121.9050, status: 'reviewing', base_upvotes: 61,  created_at: '2026-06-24', org_id: 'org-bikewalk' },
-  { id: 'sp-5',  city_id: MILPITAS.cityId, user_id: 'u-jordan',type: 'bike',     title: 'Calaveras Blvd Route',         description: 'Lane just ends before the overpass. Feels unsafe on a bike.',           lat: 37.4260, lng: -121.8850, status: 'reported',  base_upvotes: 55,  created_at: '2026-07-30', org_id: 'org-bikewalk' },
   { id: 'sp-6',  city_id: MILPITAS.cityId, user_id: 'u-maya',  type: 'trash',    title: 'Coyote Creek Trail Access',    description: 'Bags of dumped trash right where the trail meets the road.',            lat: 37.4189, lng: -121.9124, status: 'resolved',  base_upvotes: 88,  created_at: '2026-05-28', org_id: 'org-kmb' },
   { id: 'sp-7',  city_id: MILPITAS.cityId, user_id: 'u-diego', type: 'graffiti', title: 'Great Mall Transit Underpass', description: 'Tags all along the walkway to the BART shuttle stop.',                  lat: 37.4155, lng: -121.8981, status: 'reviewing', base_upvotes: 73,  created_at: '2026-07-06', org_id: 'org-mural' },
   { id: 'sp-8',  city_id: MILPITAS.cityId, user_id: 'u-maya',  type: 'seating',  title: 'Cardoza Park Playground',      description: 'Two benches are cracked and the shade sail is torn.',                   lat: 37.4425, lng: -121.9075, status: 'reported',  base_upvotes: 44,  created_at: '2026-08-04', org_id: 'org-bikewalk' },
-  { id: 'sp-9',  city_id: MILPITAS.cityId, user_id: 'u-anna',  type: 'bike',     title: 'Milpitas Library Bike Racks',  description: 'Only one rack and it is always full. People lock to railings.',         lat: 37.4288, lng: -121.9142, status: 'scheduled', base_upvotes: 67,  created_at: '2026-07-14', org_id: 'org-bikewalk' },
   { id: 'sp-10', city_id: MILPITAS.cityId, user_id: 'u-sam',   type: 'trash',    title: 'Higuera Adobe Park Slope',     description: 'Litter collects on the hillside behind the picnic tables.',             lat: 37.4356, lng: -121.8792, status: 'scheduled', base_upvotes: 39,  created_at: '2026-08-01', org_id: 'org-kmb' },
   { id: 'sp-11', city_id: MILPITAS.cityId, user_id: 'u-priya', type: 'mural',    title: 'Town Center Utility Boxes',    description: 'Four grey boxes on the corner. Other cities paint these.',              lat: 37.4310, lng: -121.8998, status: 'scheduled',  base_upvotes: 52,  created_at: '2026-08-09', org_id: 'org-mural' },
   { id: 'sp-12', city_id: MILPITAS.cityId, user_id: 'u-jordan',type: 'trash',    title: 'Sports Center Parking Lot',    description: 'Broken glass along the fence line by the far entrance.',                lat: 37.4396, lng: -121.9013, status: 'scheduled',  base_upvotes: 28,  created_at: '2026-08-12', org_id: 'org-kmb' },
@@ -136,9 +134,6 @@ export const EVENTS = [
     tasks: ['Assemble bench frames from the kit', 'Sand and seal the wood slats', 'Bolt benches to the existing concrete pads', 'Help re-tension and mount the shade sail'] },
 
   // --- Upcoming events (open for signup) ---
-  { id: 'ev-11', spot_id: 'sp-9',  org_id: 'org-bikewalk', title: 'Milpitas Library Bike Rack Install', event_date: '2026-08-22', start_time: '09:00', end_time: '12:00', hours: 3, max_volunteers: 18, location: 'Milpitas Library, 160 N Main St',
-    description: 'Installing three new bike racks at the library entrance so people stop locking to the railings.',
-    tasks: ['Unload and lay out rack hardware', 'Mark and drill anchor points in the concrete', 'Bolt down and level each rack', 'Paint the new bike parking markings'] },
   { id: 'ev-12', spot_id: 'sp-10', org_id: 'org-kmb',      title: 'Higuera Adobe Park Cleanup',         event_date: '2026-08-29', start_time: '08:30', end_time: '12:30', hours: 4, max_volunteers: 40, location: 'Higuera Adobe Park, 1650 Wessex Pl',
     description: 'Clearing the litter that collects on the hillside behind the picnic area, plus a general park sweep.',
     tasks: ['Litter pickup on the hillside slope', 'Sweep the picnic and playground areas', 'Clear debris from the historic adobe walkway', 'Sort and weigh collected material'] },
@@ -162,16 +157,16 @@ export const EVENTS = [
 // Who signed up for what. Past-event rows also produce a volunteer hour log entry.
 export const SIGNUPS = [
   // Maya - the heavy volunteer, chasing the Congressional Award
-  ...['ev-01','ev-02','ev-03','ev-04','ev-05','ev-06','ev-07','ev-08','ev-09','ev-10','ev-11','ev-13','ev-16']
+  ...['ev-01','ev-02','ev-03','ev-04','ev-05','ev-06','ev-07','ev-08','ev-09','ev-10','ev-13','ev-16']
       .map(e => ({ event_id: e, user_id: 'u-maya' })),
   // Jordan - newer, started in the summer
-  ...['ev-07','ev-09','ev-10','ev-11','ev-12','ev-17'].map(e => ({ event_id: e, user_id: 'u-jordan' })),
+  ...['ev-07','ev-09','ev-10','ev-12','ev-17'].map(e => ({ event_id: e, user_id: 'u-jordan' })),
   // Sam
   ...['ev-02','ev-05','ev-06','ev-08','ev-09','ev-10','ev-12','ev-13','ev-14','ev-17'].map(e => ({ event_id: e, user_id: 'u-sam' })),
   // Background volunteers, so events show realistic headcounts
-  ...['ev-02','ev-05','ev-09','ev-11','ev-12','ev-16'].map(e => ({ event_id: e, user_id: 'u-priya' })),
+  ...['ev-02','ev-05','ev-09','ev-12','ev-16'].map(e => ({ event_id: e, user_id: 'u-priya' })),
   ...['ev-04','ev-07','ev-12','ev-14'].map(e => ({ event_id: e, user_id: 'u-diego' })),
-  ...['ev-03','ev-08','ev-11','ev-13','ev-15','ev-16','ev-17'].map(e => ({ event_id: e, user_id: 'u-anna' })),
+  ...['ev-03','ev-08','ev-13','ev-15','ev-16','ev-17'].map(e => ({ event_id: e, user_id: 'u-anna' })),
 ]
 
 // Hours the organization has (or has not yet) signed off on.
