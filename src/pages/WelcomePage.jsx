@@ -1,215 +1,458 @@
-import { Link, Navigate } from 'react-router-dom'
+import { useMemo, useState } from 'react'
+import PublicHeader from '../components/layout/PublicHeader'
+import { Logo } from '../components/layout/Wordmark'
 import Button from '../components/ui/Button'
-import { useAuth } from '../hooks/useAuth'
-import { AWARD_TIERS } from '../lib/constants'
+import Badge from '../components/ui/Badge'
+import Icon from '../components/ui/Icon'
+import CommunityMap from '../components/map/CommunityMap'
+import FilterPills from '../components/map/FilterPills'
+import AddPinModal from '../components/map/AddPinModal'
+import PinPopup from '../components/map/PinPopup'
+import EventModal from '../components/events/EventModal'
+import { useSpots } from '../hooks/useSpots'
+import { useEvents } from '../hooks/useEvents'
+import { useAppState } from '../hooks/useStore'
+import { cityStats } from '../lib/store'
+import { AWARD_TIERS, PIN_TYPES } from '../lib/constants'
+import { formatDateLong, formatTimeRange, plural } from '../lib/format'
+
+const SHELL = { maxWidth: 1220, margin: '0 auto', padding: '0 28px' }
 
 const STEPS = [
-  {
-    emoji: '📍',
-    title: 'Pin what needs work',
-    body: 'Drop a pin on the spot: overflowing bins, a tagged wall, a bus stop with no shade. Your report goes straight to the organization that handles that kind of work.',
-  },
-  {
-    emoji: '👍',
-    title: 'Neighbours upvote it',
-    body: 'Spots with the most support move up the list. Watch your pin climb the city ranking and see when an organization schedules a work day for it.',
-  },
-  {
-    emoji: '🙋',
-    title: 'Join a volunteer day',
-    body: 'Every scheduled event tells you the date, the place and exactly what you would be doing. One tap to sign up, and it lands on your calendar.',
-  },
-  {
-    emoji: '⏱️',
-    title: 'Track your service hours',
-    body: 'Hours are logged as a spreadsheet you can hand to anyone, with the email of the organization that can confirm you were there.',
-  },
+  { icon: 'pinPlus', title: 'Put it on the map',
+    body: 'Drop a pin on the spot: an overflowing bin, a tagged wall, a bus stop with no shade. The report goes to the organization that handles that kind of work.' },
+  { icon: 'thumbsUp', title: 'Neighbours back it',
+    body: 'Spots with the most support move up the list. Watch a pin climb the city ranking and see when an organization puts a work day on the calendar for it.' },
+  { icon: 'users', title: 'Join a work day',
+    body: 'Every scheduled event lists the date, the place and exactly what you would be doing. One tap to sign up, and it lands on your calendar.' },
+  { icon: 'award', title: 'Get the hours signed off',
+    body: 'Hours are logged as a spreadsheet you can hand to anyone, with the email of the organization that can confirm you were there.' },
 ]
 
-export default function WelcomePage() {
-  const { isAuthed } = useAuth()
-  if (isAuthed) return <Navigate to="/map" replace />
-
+function SectionHead({ eyebrow, title, blurb, action }) {
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg)' }}>
-      {/* Header */}
-      <header style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '20px 32px', maxWidth: 1180, margin: '0 auto', gap: 16, flexWrap: 'wrap',
+    <>
+      <div className="section-head">
+        <div style={{ maxWidth: 640 }}>
+          {eyebrow && (
+            <div className="eyebrow" style={{ color: 'var(--link)', marginBottom: 12 }}>
+              {eyebrow}
+            </div>
+          )}
+          <h2 style={{ fontSize: 30, fontWeight: 800 }}>{title}</h2>
+          {blurb && (
+            <p style={{ fontSize: 15.5, color: 'var(--muted)', marginTop: 10, lineHeight: 1.6 }}>
+              {blurb}
+            </p>
+          )}
+        </div>
+        {action}
+      </div>
+    </>
+  )
+}
+
+function EventCard({ event, onOpen }) {
+  const spotsLeft = Math.max(0, (event.max_volunteers || 0) - event.volunteerCount)
+  return (
+    <button
+      onClick={() => onOpen(event.id)}
+      className="card"
+      style={{
+        textAlign: 'left', cursor: 'pointer', padding: 0, overflow: 'hidden',
+        display: 'flex', flexDirection: 'column',
+      }}
+    >
+      <div style={{
+        padding: '13px 18px', background: 'var(--navy)', color: '#fff',
+        display: 'flex', alignItems: 'center', gap: 10,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{
-            width: 34, height: 34, background: 'var(--blue-mid)', borderRadius: 10,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
-          }}>🌿</div>
-          <div style={{ fontFamily: 'Fraunces, serif', fontSize: 17, fontWeight: 900 }}>
-            Beautify My City
+        <Icon name="calendar" size="sm" />
+        <span style={{ fontSize: 13.5, fontWeight: 600 }}>
+          {formatDateLong(event.event_date)}
+        </span>
+      </div>
+
+      <div style={{ padding: '18px', display: 'grid', gap: 12, flex: 1 }}>
+        <div style={{ fontSize: 16.5, fontWeight: 700, lineHeight: 1.35 }}>{event.title}</div>
+
+        <div style={{ display: 'grid', gap: 7, fontSize: 13.5, color: 'var(--muted)' }}>
+          <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start' }}>
+            <Icon name="clock" size="sm" style={{ marginTop: 2, color: 'var(--muted-light)' }} />
+            {formatTimeRange(event.start_time, event.end_time)}
+          </div>
+          <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start' }}>
+            <Icon name="pin" size="sm" style={{ marginTop: 2, color: 'var(--muted-light)' }} />
+            {event.location}
+          </div>
+          <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start' }}>
+            <Icon name="building" size="sm" style={{ marginTop: 2, color: 'var(--muted-light)' }} />
+            {event.org.name}
           </div>
         </div>
-        <Link to="/login" style={{ textDecoration: 'none' }}>
-          <Button variant="secondary">Log in</Button>
-        </Link>
-      </header>
 
-      {/* Hero */}
-      <section style={{
-        maxWidth: 1180, margin: '0 auto', padding: '56px 32px 64px',
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-        gap: 48, alignItems: 'center',
-      }}>
-        <div>
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 7, marginBottom: 20,
-            padding: '6px 13px', borderRadius: 50, background: 'var(--blue-light)',
-            color: 'var(--blue)', fontSize: 12, fontWeight: 700,
-          }}>
-            📍 Now live in Milpitas, CA
+        <div style={{
+          marginTop: 'auto', paddingTop: 12, borderTop: '1px solid var(--border)',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10,
+        }}>
+          <Badge color="var(--navy)" bg="var(--navy-soft)">{event.hours} service hours</Badge>
+          <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>
+            {spotsLeft} of {event.max_volunteers} spots left
+          </span>
+        </div>
+      </div>
+    </button>
+  )
+}
+
+export default function WelcomePage() {
+  const { spots } = useSpots()
+  const { upcoming } = useEvents()
+  const state = useAppState()
+  const stats = useMemo(() => cityStats(state), [state])
+
+  const [filter, setFilter] = useState('all')
+  const [placing, setPlacing] = useState(false)
+  const [draft, setDraft] = useState(null)
+  const [openSpotId, setOpenSpotId] = useState(null)
+  const [openEventId, setOpenEventId] = useState(null)
+
+  const visible = filter === 'all' ? spots : spots.filter(s => s.type === filter)
+  const topSpots = useMemo(
+    () => [...spots].sort((a, b) => b.upvotes - a.upvotes).slice(0, 6),
+    [spots]
+  )
+
+  function handleMapClick(coords) {
+    if (!placing) return
+    setDraft(coords)
+    setPlacing(false)
+  }
+
+  return (
+    <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
+      <PublicHeader />
+
+      {/* ------------------------------------------------------------ hero */}
+      <section style={{ background: 'var(--navy)', color: '#fff', paddingTop: 64 }}>
+        <div style={{ ...SHELL, paddingBottom: 90 }}>
+          <div className="eyebrow" style={{ color: 'rgba(255,255,255,.7)', marginBottom: 20 }}>
+            Milpitas, California
           </div>
 
           <h1 style={{
-            fontFamily: 'Fraunces, serif', fontSize: 'clamp(38px, 5.5vw, 60px)',
-            fontWeight: 900, lineHeight: 1.05, letterSpacing: -1, marginBottom: 20,
+            fontSize: 'clamp(34px, 4.6vw, 52px)', fontWeight: 800,
+            lineHeight: 1.1, maxWidth: 880, marginBottom: 20,
           }}>
-            See something<br />that needs fixing?<br />
-            <span style={{ color: 'var(--blue)' }}>Put it on the map.</span>
+            The parts of the city that need work, and the people fixing them.
           </h1>
 
-          <p style={{ fontSize: 17, color: 'var(--muted)', lineHeight: 1.6, maxWidth: 480, marginBottom: 32 }}>
-            Beautify My City connects residents who notice the problems with the organizations
-            that can fix them. Pin a spot, rally your neighbours, show up on the day, and walk
-            away with verified service hours.
+          <p style={{
+            fontSize: 18, lineHeight: 1.6, color: 'rgba(255,255,255,.78)',
+            maxWidth: 660, marginBottom: 36,
+          }}>
+            Beautify My City is a public record of spots around Milpitas that need attention,
+            and the volunteer days local organizations are running to deal with them. Browse
+            all of it below. You only need an account when you want to report a spot or sign up.
           </p>
 
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <Link to="/login" style={{ textDecoration: 'none' }}>
-              <Button size="lg">Get started</Button>
-            </Link>
-            <Link to="/login" style={{ textDecoration: 'none' }}>
-              <Button size="lg" variant="secondary">Try a demo account</Button>
-            </Link>
+          <div style={{ display: 'flex', gap: 34, flexWrap: 'wrap' }}>
+            {[
+              [stats.open, 'spots open'],
+              [stats.resolved, 'resolved'],
+              [stats.volunteers, 'volunteers'],
+              [stats.upcoming, 'events scheduled'],
+            ].map(([n, label]) => (
+              <div key={label}>
+                <div style={{ fontSize: 34, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.02em' }}>
+                  {n}
+                </div>
+                <div style={{ fontSize: 13.5, color: 'rgba(255,255,255,.6)', marginTop: 6 }}>
+                  {label}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+      </section>
 
-        {/* Illustrative map card */}
-        <div style={{
-          background: 'var(--surface)', border: '1px solid var(--border)',
-          borderRadius: 18, padding: 24, boxShadow: '0 20px 50px rgba(15,23,41,0.09)',
+      {/* Action bar, overlapping the hero the way volunteer.gov does */}
+      <div style={{ ...SHELL, marginTop: -52, position: 'relative', zIndex: 10 }}>
+        <div className="card" style={{
+          padding: 22, boxShadow: 'var(--shadow-lg)',
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16,
         }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 16 }}>
-            This week in Milpitas
-          </div>
-          {[
-            { emoji: '🗑️', title: 'Park & Abel Intersection', meta: '142 upvotes · cleanup scheduled', color: '#EA580C', bg: '#FFF0E6' },
-            { emoji: '🎨', title: 'Main St. Blank Wall', meta: '98 upvotes · mural finished', color: '#7C3AED', bg: '#F3EFFE' },
-            { emoji: '🚫', title: 'Calaveras Underpass', meta: '77 upvotes · prep day booked', color: '#DC2626', bg: '#FEE2E2' },
-            { emoji: '🪑', title: 'Civic Center Bus Stop', meta: '61 upvotes · under review', color: '#16A34A', bg: '#DCFCE7' },
-          ].map(row => (
-            <div key={row.title} style={{
-              display: 'flex', gap: 12, alignItems: 'center', padding: '11px 0',
-              borderBottom: '1px solid var(--border)',
+          <a href="#events" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div style={{
+              display: 'flex', gap: 15, alignItems: 'center', padding: '16px 18px',
+              border: '1px solid var(--border)', borderRadius: 'var(--radius)', height: '100%',
             }}>
               <div style={{
-                width: 36, height: 36, borderRadius: 9, background: row.bg,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17, flexShrink: 0,
-              }}>{row.emoji}</div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 13, fontWeight: 700 }}>{row.title}</div>
-                <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>{row.meta}</div>
+                width: 44, height: 44, borderRadius: 'var(--radius)', flexShrink: 0,
+                background: 'var(--navy-soft)', color: 'var(--navy)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Icon name="calendar" size="lg" />
               </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 15.5, fontWeight: 700 }}>
+                  See the volunteer events in your area
+                </div>
+                <div style={{ fontSize: 13.5, color: 'var(--muted)', marginTop: 3 }}>
+                  {plural(upcoming.length, 'event')} coming up across Milpitas
+                </div>
+              </div>
+              <Icon name="arrowRight" size="md" style={{ marginLeft: 'auto', color: 'var(--muted-light)' }} />
+            </div>
+          </a>
+
+          <a href="#map" onClick={() => setPlacing(true)} style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div style={{
+              display: 'flex', gap: 15, alignItems: 'center', padding: '16px 18px',
+              border: '1px solid var(--border)', borderRadius: 'var(--radius)', height: '100%',
+            }}>
+              <div style={{
+                width: 44, height: 44, borderRadius: 'var(--radius)', flexShrink: 0,
+                background: 'var(--navy-soft)', color: 'var(--navy)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Icon name="pinPlus" size="lg" />
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 15.5, fontWeight: 700 }}>
+                  Put a spot on the map
+                </div>
+                <div style={{ fontSize: 13.5, color: 'var(--muted)', marginTop: 3 }}>
+                  Report something that needs cleaning up or fixing
+                </div>
+              </div>
+              <Icon name="arrowRight" size="md" style={{ marginLeft: 'auto', color: 'var(--muted-light)' }} />
+            </div>
+          </a>
+        </div>
+      </div>
+
+      {/* ------------------------------------------------------------- map */}
+      <section id="map" style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
+        <SectionHead
+          eyebrow="Every reported spot"
+          title="The Milpitas map"
+          blurb="Each pin is something a resident reported. Click one to see who is responsible for it, where the request stands, and whether there is a volunteer day scheduled."
+          action={<FilterPills value={filter} onChange={setFilter} />}
+        />
+
+        <div className="split">
+          <div className="card" style={{ overflow: 'hidden' }}>
+            <CommunityMap
+              spots={visible}
+              placing={placing}
+              draft={draft}
+              onMapClick={handleMapClick}
+              onOpenSpot={setOpenSpotId}
+              height={520}
+            />
+            <div style={{
+              padding: '14px 20px', borderTop: '1px solid var(--border)',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              gap: 14, flexWrap: 'wrap',
+            }}>
+              <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>
+                {placing
+                  ? 'Click the map to place your pin.'
+                  : `Showing ${visible.length} of ${spots.length} reported spots.`}
+              </span>
+              <Button
+                variant={placing ? 'secondary' : 'primary'}
+                icon={placing ? undefined : 'pinPlus'}
+                size="sm"
+                onClick={() => { setPlacing(p => !p); setDraft(null) }}
+              >
+                {placing ? 'Cancel' : 'Report a spot'}
+              </Button>
+            </div>
+          </div>
+
+          <div className="card" style={{ overflow: 'hidden' }}>
+            <div style={{
+              padding: '15px 18px', borderBottom: '1px solid var(--border)',
+              fontSize: 14.5, fontWeight: 700,
+            }}>
+              Most upvoted right now
+            </div>
+            {topSpots.map((spot, i) => {
+              const type = PIN_TYPES[spot.type] || PIN_TYPES.trash
+              return (
+                <button
+                  key={spot.id}
+                  onClick={() => setOpenSpotId(spot.id)}
+                  style={{
+                    display: 'flex', gap: 12, alignItems: 'center', width: '100%',
+                    textAlign: 'left', padding: '13px 18px', cursor: 'pointer',
+                    background: 'none', border: 'none',
+                    borderBottom: i === topSpots.length - 1 ? 'none' : '1px solid var(--border)',
+                  }}
+                >
+                  <span style={{
+                    width: 22, fontSize: 13, fontWeight: 700, color: 'var(--muted-light)', flexShrink: 0,
+                  }}>
+                    {i + 1}
+                  </span>
+                  <span style={{
+                    width: 34, height: 34, borderRadius: 'var(--radius)', flexShrink: 0,
+                    background: type.bg, color: type.color,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <Icon name={type.icon} size="sm" />
+                  </span>
+                  <span style={{ flex: 1, minWidth: 0 }}>
+                    <span style={{
+                      display: 'block', fontSize: 13.5, fontWeight: 600,
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
+                      {spot.title}
+                    </span>
+                    <span style={{ display: 'block', fontSize: 12.5, color: 'var(--muted)', marginTop: 2 }}>
+                      {type.label}
+                    </span>
+                  </span>
+                  <span style={{ fontSize: 15, fontWeight: 700, flexShrink: 0 }}>{spot.upvotes}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------------- events */}
+      <section id="events" style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
+          <SectionHead
+            eyebrow="Coming up"
+            title="Volunteer events in your area"
+            blurb="Run by local organizations, open to anyone. Each one lists what you would actually be doing and how many service hours it is worth."
+          />
+
+          <div style={{
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: 18,
+          }}>
+            {upcoming.slice(0, 6).map(event => (
+              <EventCard key={event.id} event={event} onOpen={setOpenEventId} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ------------------------------------------------------------- how */}
+      <section id="how" style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
+        <SectionHead
+          eyebrow="Start to finish"
+          title="How it works"
+          blurb="Four steps, from noticing a problem to holding the hours that prove you helped fix it."
+        />
+
+        <div style={{
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(238px, 1fr))', gap: 18,
+        }}>
+          {STEPS.map((step, i) => (
+            <div key={step.title} className="card" style={{ padding: '24px 22px' }}>
+              <div style={{
+                width: 44, height: 44, borderRadius: 'var(--radius)', marginBottom: 18,
+                background: 'var(--navy-soft)', color: 'var(--navy)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Icon name={step.icon} size="lg" />
+              </div>
+              <div style={{
+                fontSize: 12, fontWeight: 700, color: 'var(--muted-light)',
+                letterSpacing: 0.07, textTransform: 'uppercase', marginBottom: 7,
+              }}>
+                Step {i + 1}
+              </div>
+              <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 9 }}>{step.title}</h3>
+              <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.6 }}>{step.body}</p>
             </div>
           ))}
-          <div style={{ fontSize: 12, color: 'var(--muted)', paddingTop: 14 }}>
-            312 residents volunteering · 89 spots resolved
-          </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ maxWidth: 1180, margin: '0 auto', padding: '64px 32px' }}>
-          <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 34, fontWeight: 900, marginBottom: 12 }}>
-            How it works
-          </h2>
-          <p style={{ fontSize: 15, color: 'var(--muted)', marginBottom: 40, maxWidth: 560, lineHeight: 1.6 }}>
-            Four steps, from noticing a problem to holding the hours that prove you helped fix it.
-          </p>
-          <div style={{
-            display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 20,
-          }}>
-            {STEPS.map((step, i) => (
-              <div key={step.title} style={{
-                background: 'var(--bg)', border: '1px solid var(--border)',
-                borderRadius: 14, padding: '24px 22px',
-              }}>
-                <div style={{ fontSize: 26, marginBottom: 14 }}>{step.emoji}</div>
-                <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--blue)', marginBottom: 6 }}>
-                  STEP {i + 1}
-                </div>
-                <div style={{ fontSize: 16, fontWeight: 800, marginBottom: 8 }}>{step.title}</div>
-                <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6 }}>{step.body}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Congressional Award */}
-      <section style={{ maxWidth: 1180, margin: '0 auto', padding: '64px 32px' }}>
+      {/* ----------------------------------------------------------- award */}
+      <section id="award" style={{ background: 'var(--navy)', color: '#fff' }}>
         <div style={{
-          background: 'var(--sidebar)', borderRadius: 18, padding: '44px 40px', color: 'white',
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 40, alignItems: 'center',
+          ...SHELL, paddingTop: 64, paddingBottom: 64,
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: 52, alignItems: 'start',
         }}>
           <div>
-            <div style={{
-              display: 'inline-block', padding: '5px 12px', borderRadius: 50,
-              background: 'rgba(255,255,255,0.1)', fontSize: 11, fontWeight: 700, marginBottom: 18,
-            }}>
-              🏅 Congressional Award
+            <div className="eyebrow" style={{ color: 'rgba(255,255,255,.7)', marginBottom: 18 }}>
+              Congressional Award
             </div>
-            <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 30, fontWeight: 900, lineHeight: 1.15, marginBottom: 16 }}>
-              Your hours, ready to be verified
+            <h2 style={{ fontSize: 30, fontWeight: 800, marginBottom: 18, maxWidth: 460 }}>
+              Hours that an organization will actually vouch for
             </h2>
-            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65 }}>
-              The Congressional Award is the United States Congress&rsquo; award for young people, earned
-              partly through voluntary public service. Every hour you log here is tied to the
-              organization that supervised it, with their email attached, so when you submit your
-              record they can confirm you were there.
+            <p style={{ fontSize: 15.5, color: 'rgba(255,255,255,.72)', lineHeight: 1.7, marginBottom: 18 }}>
+              The Congressional Award is the United States Congress&rsquo; award for young people,
+              earned partly through voluntary public service. It only counts if a supervising
+              adult confirms you were there.
+            </p>
+            <p style={{ fontSize: 15.5, color: 'rgba(255,255,255,.72)', lineHeight: 1.7 }}>
+              Every hour logged here is tied to the organization that supervised it, with their
+              email attached, so when you submit your record you know exactly who to ask.
             </p>
           </div>
-          <div style={{ display: 'grid', gap: 8 }}>
-            {AWARD_TIERS.map(tier => (
-              <div key={tier.id} style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                padding: '11px 16px', borderRadius: 9, background: 'rgba(255,255,255,0.06)',
-                fontSize: 13,
-              }}>
-                <span style={{ fontWeight: 600 }}>{tier.label}</span>
-                <span style={{ color: 'rgba(255,255,255,0.55)', fontWeight: 700 }}>{tier.hours} hrs</span>
-              </div>
-            ))}
+
+          <div>
+            <div style={{
+              fontSize: 12, fontWeight: 700, letterSpacing: 0.07, textTransform: 'uppercase',
+              color: 'rgba(255,255,255,.5)', marginBottom: 14,
+            }}>
+              Service hours required
+            </div>
+            <div style={{ display: 'grid', gap: 1, background: 'rgba(255,255,255,.12)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
+              {AWARD_TIERS.map(tier => (
+                <div key={tier.id} style={{
+                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                  padding: '13px 17px', background: 'var(--navy)', fontSize: 14.5,
+                }}>
+                  <span style={{ fontWeight: 500 }}>{tier.label}</span>
+                  <span style={{ color: 'rgba(255,255,255,.62)', fontWeight: 700 }}>
+                    {tier.hours} hrs
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Footer CTA */}
-      <section style={{ maxWidth: 1180, margin: '0 auto', padding: '0 32px 80px', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 32, fontWeight: 900, marginBottom: 14 }}>
-          Start with one pin
-        </h2>
-        <p style={{ fontSize: 15, color: 'var(--muted)', marginBottom: 26, lineHeight: 1.6 }}>
-          It takes about a minute, and somebody who can actually fix it will see it.
-        </p>
-        <Link to="/login" style={{ textDecoration: 'none' }}>
-          <Button size="lg">Create your account</Button>
-        </Link>
-      </section>
-
-      <footer style={{
-        borderTop: '1px solid var(--border)', padding: '24px 32px',
-        fontSize: 12, color: 'var(--muted)', textAlign: 'center',
-      }}>
-        Beautify My City · A civic platform for Milpitas, CA
+      {/* ---------------------------------------------------------- footer */}
+      <footer style={{ background: 'var(--navy-dark)', color: 'rgba(255,255,255,.6)' }}>
+        <div style={{
+          ...SHELL, paddingTop: 40, paddingBottom: 40,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          gap: 24, flexWrap: 'wrap',
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <Logo size={32} background="rgba(255,255,255,.14)" />
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: '#fff' }}>Beautify My City</div>
+              <div style={{ fontSize: 12.5, marginTop: 2 }}>A civic platform for Milpitas, California</div>
+            </div>
+          </div>
+          <div style={{ fontSize: 13.5 }}>
+            Map data © OpenStreetMap contributors
+          </div>
+        </div>
       </footer>
+
+      {draft && (
+        <AddPinModal
+          coords={draft}
+          onClose={() => setDraft(null)}
+          onCreated={(spot, openIt) => { if (openIt) setOpenSpotId(spot.id) }}
+        />
+      )}
+      {openSpotId && <PinPopup spotId={openSpotId} onClose={() => setOpenSpotId(null)} />}
+      {openEventId && <EventModal eventId={openEventId} onClose={() => setOpenEventId(null)} />}
     </div>
   )
 }

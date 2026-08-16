@@ -32,11 +32,28 @@ The login page has one-tap buttons for all three. Password for each is `demo1234
 
 Signing up creates a real (local) account too.
 
+## Design
+
+One typeface (Public Sans), a deep navy against warm greys, and outline SVG
+icons throughout - there are no emoji anywhere in the interface. Section
+headings sit above a rule, and the hero carries an action bar that overlaps it,
+following the pattern on volunteer.gov.
+
+## The welcome page is public
+
+The landing page is not an advert for signing up. It is the thing itself: a live
+map of every reported spot, the volunteer events coming up, the current
+rankings and the city's numbers. Anyone can browse all of it, open a pin, read
+who is responsible for it and see what a work day involves, with no account.
+
+Accounts come later, and only where they have to: upvoting, reporting a spot and
+joining an event each prompt a login at the moment you try them.
+
 ## What a resident can do
 
 **Welcome page** → **Login** → the signed-in app:
 
-- **Map** — every reported spot in Milpitas, filterable by type. `+ Pin a Spot`
+- **Map** — every reported spot in Milpitas, filterable by category. `Report a spot`
   drops a new pin anywhere on the map; the report is routed to whichever
   organization handles that category, and you get a "request sent" confirmation
   naming them.
@@ -44,7 +61,7 @@ Signing up creates a real (local) account too.
   upvote count and city ranking, a status timeline (request sent → under review
   → event scheduled → resolved), the organization responsible with their contact
   email and phone, and the volunteer event for that spot including what you would
-  actually be doing on the day. `JOIN this event` signs you up.
+  actually be doing on the day. `Join this event` signs you up.
 - **My Calendar** — a month grid plus a list of every event you joined, with
   time, date and location. Clicking a calendar entry opens the same event popup
   you get from the map.
@@ -87,8 +104,8 @@ src/
   lib/        constants, seed data, the local store, date helpers, map helpers
   hooks/      useAuth, useSpots, useVote, useEvents, useStore
   components/
-    ui/         Button, Badge, Modal
-    layout/     AppLayout (auth guard), Sidebar, Topbar
+    ui/         Button, Badge, Modal, Icon (the whole icon set)
+    layout/     AppLayout (auth guard), Sidebar, Topbar, PublicHeader, Wordmark
     map/        CommunityMap, PinMarker, PinPopup, AddPinModal, FilterPills
     events/     EventDetails (shared body), EventModal
     dashboard/  StatCard, HoursTable, AwardProgress, SpotBreakdown,

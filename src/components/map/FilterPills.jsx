@@ -1,7 +1,9 @@
 import { PIN_TYPES } from '../../lib/constants'
+import Icon from '../ui/Icon'
 
 export default function FilterPills({ value, onChange }) {
-  const options = [['all', { label: 'All', emoji: '' }], ...Object.entries(PIN_TYPES)]
+  const options = [['all', { label: 'All spots' }], ...Object.entries(PIN_TYPES)]
+
   return (
     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
       {options.map(([key, meta]) => {
@@ -10,16 +12,17 @@ export default function FilterPills({ value, onChange }) {
           <button
             key={key}
             onClick={() => onChange(key)}
-            title={meta.label}
             style={{
-              padding: '5px 12px', borderRadius: 50, cursor: 'pointer',
-              fontSize: 11, fontWeight: 600, fontFamily: 'inherit',
-              background: active ? 'var(--blue)' : 'var(--bg)',
-              color: active ? 'white' : 'var(--muted)',
-              border: `1px solid ${active ? 'var(--blue)' : 'var(--border)'}`,
+              padding: '6px 12px', borderRadius: 'var(--radius)', cursor: 'pointer',
+              fontSize: 13, fontWeight: 600,
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              background: active ? 'var(--navy)' : 'var(--surface)',
+              color: active ? '#fff' : 'var(--muted)',
+              border: `1px solid ${active ? 'var(--navy)' : 'var(--border-firm)'}`,
             }}
           >
-            {key === 'all' ? 'All' : `${meta.emoji} ${meta.label}`}
+            {meta.icon && <Icon name={meta.icon} size={14} />}
+            {meta.label}
           </button>
         )
       })}

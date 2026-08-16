@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { PIN_TYPES } from '../../lib/constants'
+import Icon from '../ui/Icon'
 
 export default function TopVotedPanel({ spots = [], onSelect, limit = 5 }) {
   const ranked = [...spots].sort((a, b) => b.upvotes - a.upvotes).slice(0, limit)
@@ -7,7 +8,7 @@ export default function TopVotedPanel({ spots = [], onSelect, limit = 5 }) {
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 14, overflow: 'hidden',
+      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
     }}>
       <div style={{
         padding: '14px 16px', borderBottom: '1px solid var(--border)',
@@ -15,8 +16,8 @@ export default function TopVotedPanel({ spots = [], onSelect, limit = 5 }) {
         fontWeight: 700, fontSize: 13,
       }}>
         Top Voted Spots
-        <Link to="/leaderboard" style={{ fontSize: 11, color: 'var(--blue)', textDecoration: 'none', fontWeight: 600 }}>
-          See all →
+        <Link to="/leaderboard" style={{ fontSize: 11, color: 'var(--navy)', textDecoration: 'none', fontWeight: 600 }}>
+          See all
         </Link>
       </div>
 
@@ -34,16 +35,16 @@ export default function TopVotedPanel({ spots = [], onSelect, limit = 5 }) {
         >
           <div style={{
             width: 20, flexShrink: 0, fontSize: 11, fontWeight: 800,
-            color: i === 0 ? '#B45309' : 'var(--muted)', paddingTop: 9,
+            color: i === 0 ? 'var(--amber)' : 'var(--muted)', paddingTop: 9,
           }}>
             #{i + 1}
           </div>
           <div style={{
-            width: 34, height: 34, borderRadius: 8, flexShrink: 0,
-            background: PIN_TYPES[spot.type]?.bg,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
+            width: 34, height: 34, borderRadius: 'var(--radius)', flexShrink: 0,
+            background: PIN_TYPES[spot.type]?.bg, color: PIN_TYPES[spot.type]?.color,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            {PIN_TYPES[spot.type]?.emoji}
+            <Icon name={PIN_TYPES[spot.type]?.icon} size="sm" />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{
@@ -54,12 +55,12 @@ export default function TopVotedPanel({ spots = [], onSelect, limit = 5 }) {
             </div>
             <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{
-                fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 50,
+                fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 4,
                 background: PIN_TYPES[spot.type]?.bg, color: PIN_TYPES[spot.type]?.color,
               }}>
                 {PIN_TYPES[spot.type]?.label}
               </span>
-              <span style={{ fontSize: 10, color: 'var(--muted)' }}>👍 {spot.upvotes}</span>
+              <span style={{ fontSize: 10, color: 'var(--muted)' }}>{spot.upvotes} upvotes</span>
             </div>
           </div>
         </button>

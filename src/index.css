@@ -1,34 +1,103 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------ tokens */
+
 :root {
-  --blue: #1B4FD8; --blue-light: #E8EFFE; --blue-mid: #3B6BF5;
-  --green: #16A34A; --green-light: #DCFCE7;
-  --orange: #EA580C; --orange-light: #FFF0E6;
-  --purple: #7C3AED; --purple-light: #F3EFFE;
-  --bg: #F8FAFF; --surface: #FFFFFF;
-  --border: #E4E9F7; --text: #0F1729;
-  --muted: #6B7A9F; --sidebar: #0F1729;
+  /* Deep civic navy carries the brand; everything else stays quiet. */
+  --navy:        #14395E;
+  --navy-dark:   #0E2A46;
+  --navy-soft:   #E8EEF4;
+  --link:        #205C99;
+
+  /* Neutrals are warm grey rather than blue-tinted, so the navy reads as
+     the only real colour on the page. */
+  --bg:          #F5F6F8;
+  --surface:     #FFFFFF;
+  --surface-alt: #FAFBFC;
+  --border:      #DEE3E9;
+  --border-firm: #C6CFD8;
+  --text:        #17222E;
+  --muted:       #5C6B7A;
+  --muted-light: #8494A3;
+
+  /* Status. Deeper and less saturated than a default palette so nothing
+     shouts louder than the content. */
+  --green:       #1F6E45;
+  --green-soft:  #E3F0E8;
+  --amber:       #8A5417;
+  --amber-soft:  #F7EEE1;
+  --red:         #8F3134;
+  --red-soft:    #F6E7E7;
+
+  --radius:      6px;
+  --radius-lg:   10px;
+  --shadow:      0 1px 2px rgba(23, 34, 46, .06), 0 1px 3px rgba(23, 34, 46, .04);
+  --shadow-lg:   0 12px 32px rgba(23, 34, 46, .12);
 }
+
+/* ------------------------------------------------------------------- base */
 
 body {
   background-color: var(--bg);
   color: var(--text);
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Public Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
 }
 
-.font-display { font-family: 'Fraunces', serif; }
-
-/* Leaflet gives its panes z-indexes up to 700, which would otherwise paint
-   over the sidebar and sticky topbar. Isolating the container keeps all of
-   that inside the map. */
-.leaflet-container {
-  isolation: isolate;
-  z-index: 0;
-  font: inherit;
+h1, h2, h3, h4 {
+  letter-spacing: -0.018em;
+  line-height: 1.18;
+  font-weight: 700;
 }
 
-.leaflet-popup-content { margin: 12px 14px; }
-.leaflet-popup-content-wrapper { border-radius: 10px; }
+a { color: var(--link); }
+
+button, input, textarea, select { font-family: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------- structure */
+
+/* Section heading with the rule beneath it. */
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-firm);
+  margin-bottom: 26px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 3px;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
 
 /* Two-column page layout that collapses on narrow screens. */
 .split {
@@ -42,4 +111,22 @@ body {
   .split { grid-template-columns: minmax(0, 1fr); }
 }
 
-table tbody tr:hover { background: var(--bg); }
+/* ------------------------------------------------------------------ table */
+
+table tbody tr:hover { background: var(--surface-alt); }
+
+/* ---------------------------------------------------------------- leaflet */
+
+/* Leaflet gives its panes z-indexes up to 700, which would otherwise paint
+   over the sidebar and sticky topbar. Isolating the container keeps all of
+   that inside the map. */
+.leaflet-container {
+  isolation: isolate;
+  z-index: 0;
+  font: inherit;
+  background: #E8EAED;
+}
+
+.leaflet-popup-content { margin: 14px 16px; }
+.leaflet-popup-content-wrapper { border-radius: var(--radius); box-shadow: var(--shadow-lg); }
+.leaflet-bar a { color: var(--text) !important; }

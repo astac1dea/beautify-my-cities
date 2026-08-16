@@ -1,13 +1,15 @@
 import { NavLink, useNavigate } from 'react-router-dom'
+import Icon from '../ui/Icon'
+import Wordmark from './Wordmark'
 import { useAuth } from '../../hooks/useAuth'
 import { useHours } from '../../hooks/useEvents'
 
 const NAV = [
-  { to: '/map',         icon: '🗺️', label: 'Map' },
-  { to: '/calendar',    icon: '📅', label: 'My Calendar' },
-  { to: '/leaderboard', icon: '🏆', label: 'Leaderboard' },
-  { to: '/dashboard',   icon: '📊', label: 'My Dashboard' },
-  { to: '/profile',     icon: '👤', label: 'Profile' },
+  { to: '/map',         icon: 'map',      label: 'Map' },
+  { to: '/calendar',    icon: 'calendar', label: 'My calendar' },
+  { to: '/leaderboard', icon: 'award',    label: 'Leaderboard' },
+  { to: '/dashboard',   icon: 'chart',    label: 'My dashboard' },
+  { to: '/profile',     icon: 'user',     label: 'Profile' },
 ]
 
 export default function Sidebar() {
@@ -22,120 +24,89 @@ export default function Sidebar() {
 
   return (
     <div style={{
-      width: 240, background: 'var(--sidebar)',
-      minHeight: '100vh', padding: '28px 20px',
+      width: 244, background: 'var(--navy-dark)',
+      minHeight: '100vh', padding: '22px 16px',
       display: 'flex', flexDirection: 'column',
       position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: 100,
       overflowY: 'auto',
     }}>
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: 10,
-        marginBottom: 28, paddingBottom: 24,
-        borderBottom: '1px solid rgba(255,255,255,0.08)',
-      }}>
-        <div style={{
-          width: 34, height: 34, background: 'var(--blue-mid)', borderRadius: 10,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16,
-        }}>🌿</div>
-        <div>
-          <div style={{ fontFamily: 'Fraunces, serif', fontSize: 14, fontWeight: 700, color: 'white', lineHeight: 1.2 }}>
-            Beautify My City
-          </div>
-          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>Civic Platform</div>
-        </div>
+      <div style={{ padding: '0 6px 20px', borderBottom: '1px solid rgba(255,255,255,.1)' }}>
+        <Wordmark dark size={32} subtitle="Milpitas, California" />
       </div>
 
-      <div style={{
-        background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: 10, padding: '12px 14px', marginBottom: 26,
-      }}>
-        <div style={{
-          fontSize: 10, color: 'rgba(255,255,255,0.35)', fontWeight: 600,
-          letterSpacing: 1, textTransform: 'uppercase', marginBottom: 4,
-        }}>
-          Current City
-        </div>
-        <div style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>
-          📍 Milpitas, CA
-        </div>
-      </div>
-
-      <div style={{
-        fontSize: 10, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase',
-        color: 'rgba(255,255,255,0.25)', marginBottom: 8, paddingLeft: 4,
-      }}>
-        Main
-      </div>
-      <ul style={{ listStyle: 'none', marginBottom: 26 }}>
-        {NAV.map(({ to, icon, label }) => (
-          <li key={to} style={{ marginBottom: 2 }}>
-            <NavLink to={to} style={({ isActive }) => ({
-              display: 'flex', alignItems: 'center', gap: 10,
-              padding: '9px 12px', borderRadius: 8, textDecoration: 'none',
-              fontSize: 13, fontWeight: 500,
-              color: isActive ? 'white' : 'rgba(255,255,255,0.5)',
-              background: isActive ? 'var(--blue-mid)' : 'transparent',
-            })}>
-              {icon} {label}
-            </NavLink>
-          </li>
-        ))}
-      </ul>
+      <nav style={{ marginTop: 20 }}>
+        <ul style={{ listStyle: 'none' }}>
+          {NAV.map(({ to, icon, label }) => (
+            <li key={to} style={{ marginBottom: 2 }}>
+              <NavLink to={to} style={({ isActive }) => ({
+                display: 'flex', alignItems: 'center', gap: 11,
+                padding: '10px 12px', borderRadius: 'var(--radius)', textDecoration: 'none',
+                fontSize: 14, fontWeight: isActive ? 600 : 500,
+                color: isActive ? '#fff' : 'rgba(255,255,255,.62)',
+                background: isActive ? 'rgba(255,255,255,.12)' : 'transparent',
+              })}>
+                <Icon name={icon} size="sm" />
+                {label}
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       {/* Service hour summary, since it is the thing people come back for */}
       <div style={{
-        background: 'rgba(255,255,255,0.05)', borderRadius: 10,
-        padding: '14px 16px', marginBottom: 20,
+        background: 'rgba(255,255,255,.07)', borderRadius: 'var(--radius)',
+        padding: '15px 16px', marginTop: 24,
       }}>
         <div style={{
-          fontSize: 10, color: 'rgba(255,255,255,0.35)', fontWeight: 700,
-          letterSpacing: 1, textTransform: 'uppercase', marginBottom: 6,
+          fontSize: 11, color: 'rgba(255,255,255,.5)', fontWeight: 700,
+          letterSpacing: 0.07, textTransform: 'uppercase', marginBottom: 7,
         }}>
           Service hours
         </div>
-        <div style={{ fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 900, color: 'white', lineHeight: 1 }}>
+        <div style={{ fontSize: 28, fontWeight: 800, color: '#fff', lineHeight: 1, letterSpacing: '-0.02em' }}>
           {totals.verified}
         </div>
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 5 }}>
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,.5)', marginTop: 6 }}>
           verified{totals.pending > 0 ? ` · ${totals.pending} pending` : ''}
         </div>
       </div>
 
-      <div style={{ marginTop: 'auto' }}>
+      <div style={{ marginTop: 'auto', paddingTop: 20 }}>
         <div style={{
-          display: 'flex', alignItems: 'center', gap: 10,
-          padding: '10px 12px', borderRadius: 10,
-          background: 'rgba(255,255,255,0.05)', marginBottom: 8,
+          display: 'flex', alignItems: 'center', gap: 11,
+          padding: '10px 12px', borderRadius: 'var(--radius)',
+          background: 'rgba(255,255,255,.06)', marginBottom: 8,
         }}>
           <div style={{
             width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-            background: user?.avatar_color || 'var(--blue-mid)',
+            background: 'rgba(255,255,255,.16)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 14, color: 'white', fontWeight: 700,
+            fontSize: 13, color: '#fff', fontWeight: 700,
           }}>
             {user?.display_name?.charAt(0) || '?'}
           </div>
           <div style={{ minWidth: 0 }}>
             <div style={{
-              fontSize: 12, fontWeight: 700, color: 'white',
+              fontSize: 13, fontWeight: 600, color: '#fff',
               overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>
               {user?.display_name}
             </div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
-              Resident · Milpitas
-            </div>
+            <div style={{ fontSize: 11.5, color: 'rgba(255,255,255,.45)' }}>Resident</div>
           </div>
         </div>
 
         <button
           onClick={logOut}
           style={{
-            width: '100%', padding: '8px 12px', borderRadius: 8, cursor: 'pointer',
-            background: 'transparent', border: '1px solid rgba(255,255,255,0.12)',
-            color: 'rgba(255,255,255,0.5)', fontSize: 12, fontWeight: 600, fontFamily: 'inherit',
+            width: '100%', padding: '9px 12px', borderRadius: 'var(--radius)', cursor: 'pointer',
+            background: 'transparent', border: '1px solid rgba(255,255,255,.16)',
+            color: 'rgba(255,255,255,.62)', fontSize: 13, fontWeight: 600,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
           }}
         >
+          <Icon name="logout" size="sm" />
           Log out
         </button>
       </div>

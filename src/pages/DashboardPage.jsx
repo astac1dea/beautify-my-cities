@@ -54,18 +54,13 @@ export default function DashboardPage() {
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16,
         }}>
-          <StatCard icon="⏱️" iconBg="#DCFCE7" number={totals.verified} label="Verified service hours"
-            trend={totals.pending > 0 ? `+${totals.pending} pending` : 'All verified'}
-            trendColor={totals.pending > 0
-              ? { bg: '#FFF0E6', text: '#EA580C' }
-              : { bg: '#DCFCE7', text: '#16A34A' }} />
-          <StatCard icon="📍" iconBg="#FFF0E6" number={pins.length} label="Spots I pinned"
-            trend={`${totalUpvotes} upvotes`} trendColor={{ bg: '#E8EFFE', text: '#1B4FD8' }} />
-          <StatCard icon="🏆" iconBg="#FEF3C7" number={bestRank ? `#${bestRank}` : '—'} label="Best pin ranking"
-            trend={bestRank === 1 ? 'Most popular in the city' : 'By upvotes'}
-            trendColor={{ bg: '#FEF3C7', text: '#B45309' }} />
-          <StatCard icon="📅" iconBg="#F3EFFE" number={upcoming.length} label="Events coming up"
-            trend={`${rows.length} attended`} trendColor={{ bg: '#F3EFFE', text: '#7C3AED' }} />
+          <StatCard icon="clock" number={totals.verified} label="Verified service hours"
+            trend={totals.pending > 0 ? `${totals.pending} pending` : 'All verified'}
+            tone={totals.pending > 0 ? 'warn' : 'good'} />
+          <StatCard icon="pin" number={pins.length} label="Spots I pinned" trend={`${totalUpvotes} upvotes`} tone="brand" />
+          <StatCard icon="award" number={bestRank ? `#${bestRank}` : '—'} label="Best pin ranking"
+            trend={bestRank === 1 ? 'Most popular' : 'By upvotes'} tone="warn" />
+          <StatCard icon="calendar" number={upcoming.length} label="Events coming up" trend={`${rows.length} attended`} />
         </div>
 
         {/* Award tracking + what's next */}
@@ -88,7 +83,7 @@ export default function DashboardPage() {
         {myRank && (
           <div style={{
             background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: 14, padding: '20px 24px',
+            borderRadius: 'var(--radius-lg)', padding: '20px 24px',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             gap: 16, flexWrap: 'wrap',
           }}>

@@ -1,17 +1,25 @@
+import { Link } from 'react-router-dom'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
+import Icon from '../ui/Icon'
 import { formatDateLong, formatTimeRange, plural } from '../../lib/format'
 import { joinEvent, leaveEvent } from '../../lib/store'
+import { useAuth } from '../../hooks/useAuth'
 
-function Row({ icon, label, children }) {
+function Fact({ icon, label, children }) {
   return (
-    <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-      <div style={{ fontSize: 15, width: 20, flexShrink: 0, lineHeight: 1.4 }}>{icon}</div>
+    <div style={{ display: 'flex', gap: 11, alignItems: 'flex-start' }}>
+      <Icon name={icon} size="sm" style={{ marginTop: 3, color: 'var(--muted-light)' }} />
       <div style={{ minWidth: 0 }}>
-        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 0.8, textTransform: 'uppercase', color: 'var(--muted)' }}>
+        <div style={{
+          fontSize: 11.5, fontWeight: 700, letterSpacing: 0.05, textTransform: 'uppercase',
+          color: 'var(--muted)',
+        }}>
           {label}
         </div>
-        <div style={{ fontSize: 13, fontWeight: 600, marginTop: 2, lineHeight: 1.45 }}>{children}</div>
+        <div style={{ fontSize: 14, fontWeight: 600, marginTop: 2, lineHeight: 1.45 }}>
+          {children}
+        </div>
       </div>
     </div>
   )
@@ -20,49 +28,50 @@ function Row({ icon, label, children }) {
 // The body of the event popup. Shared by the map pin detail and the calendar
 // so clicking either one shows exactly the same information.
 export default function EventDetails({ event, showJoin = true }) {
+  const { isAuthed } = useAuth()
   if (!event) return null
 
   const spotsLeft = Math.max(0, (event.max_volunteers || 0) - event.volunteerCount)
   const full = spotsLeft === 0 && !event.isJoined
 
   return (
-    <div style={{ display: 'grid', gap: 20 }}>
+    <div style={{ display: 'grid', gap: 22 }}>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <Badge color={event.org.color} bg="#F4F6FC">{event.org.name}</Badge>
+        <Badge color="var(--navy)" bg="var(--navy-soft)">{event.org.name}</Badge>
         {event.isPast
-          ? <Badge color="#6B7A9F" bg="#EEF1F8">Completed</Badge>
-          : <Badge color="#16A34A" bg="#DCFCE7">Open for signup</Badge>}
-        {event.isJoined && <Badge color="#1B4FD8" bg="#E8EFFE">✓ You are signed up</Badge>}
+          ? <Badge>Completed</Badge>
+          : <Badge color="var(--green)" bg="var(--green-soft)">Open for signup</Badge>}
+        {event.isJoined && (
+          <Badge color="var(--green)" bg="var(--green-soft)" icon="check">You are signed up</Badge>
+        )}
       </div>
 
       <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-        gap: 16, padding: '16px 18px', background: 'var(--bg)',
-        border: '1px solid var(--border)', borderRadius: 12,
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(158px, 1fr))',
+        gap: 18, padding: '18px 20px', background: 'var(--surface-alt)',
+        border: '1px solid var(--border)', borderRadius: 'var(--radius)',
       }}>
-        <Row icon="📅" label="Date">{formatDateLong(event.event_date)}</Row>
-        <Row icon="🕘" label="Time">{formatTimeRange(event.start_time, event.end_time)}</Row>
-        <Row icon="📍" label="Where">{event.location}</Row>
-        <Row icon="⏱️" label="Service hours">{event.hours} hours credited</Row>
+        <Fact icon="calendar" label="Date">{formatDateLong(event.event_date)}</Fact>
+        <Fact icon="clock" label="Time">{formatTimeRange(event.start_time, event.end_time)}</Fact>
+        <Fact icon="pin" label="Where">{event.location}</Fact>
+        <Fact icon="award" label="Service hours">{event.hours} hours credited</Fact>
       </div>
 
-      <div>
-        <div style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--text)' }}>{event.description}</div>
-      </div>
+      <div style={{ fontSize: 14.5, lineHeight: 1.65 }}>{event.description}</div>
 
       <div>
-        <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 10 }}>
+        <h4 style={{ fontSize: 14.5, fontWeight: 700, marginBottom: 12 }}>
           What you would do if you volunteered
-        </div>
-        <ul style={{ listStyle: 'none', display: 'grid', gap: 8 }}>
+        </h4>
+        <ul style={{ listStyle: 'none', display: 'grid', gap: 9 }}>
           {event.tasks?.map((task, i) => (
-            <li key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+            <li key={i} style={{ display: 'flex', gap: 11, alignItems: 'flex-start' }}>
               <span style={{
-                width: 18, height: 18, borderRadius: 5, background: 'var(--blue-light)',
-                color: 'var(--blue)', fontSize: 10, fontWeight: 800, flexShrink: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1,
+                width: 20, height: 20, borderRadius: 4, background: 'var(--navy-soft)',
+                color: 'var(--navy)', fontSize: 11, fontWeight: 700, flexShrink: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 2,
               }}>{i + 1}</span>
-              <span style={{ fontSize: 13, lineHeight: 1.5 }}>{task}</span>
+              <span style={{ fontSize: 14, lineHeight: 1.55 }}>{task}</span>
             </li>
           ))}
         </ul>
@@ -70,35 +79,37 @@ export default function EventDetails({ event, showJoin = true }) {
 
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        gap: 12, flexWrap: 'wrap', paddingTop: 4,
+        gap: 14, flexWrap: 'wrap', paddingTop: 2,
       }}>
-        <div style={{ fontSize: 12, color: 'var(--muted)' }}>
+        <div style={{ fontSize: 13.5, color: 'var(--muted)' }}>
           <strong style={{ color: 'var(--text)' }}>{plural(event.volunteerCount, 'volunteer')}</strong> signed up
           {!event.isPast && ` · ${spotsLeft} of ${event.max_volunteers} spots left`}
         </div>
 
         {showJoin && !event.isPast && (
-          event.isJoined ? (
+          !isAuthed ? (
+            <Link to="/login" style={{ textDecoration: 'none' }}>
+              <Button variant="primary" iconAfter="arrowRight">Log in to join</Button>
+            </Link>
+          ) : event.isJoined ? (
             <Button variant="danger" size="sm" onClick={() => leaveEvent(event.id)}>
               Cancel my signup
             </Button>
           ) : (
-            <Button variant="success" onClick={() => joinEvent(event.id)} disabled={full}>
-              {full ? 'Event is full' : 'JOIN this event'}
+            <Button variant="success" icon="check" onClick={() => joinEvent(event.id)} disabled={full}>
+              {full ? 'Event is full' : 'Join this event'}
             </Button>
           )
         )}
       </div>
 
       <div style={{
-        fontSize: 12, color: 'var(--muted)', lineHeight: 1.55,
-        borderTop: '1px solid var(--border)', paddingTop: 14,
+        fontSize: 13, color: 'var(--muted)', lineHeight: 1.6,
+        borderTop: '1px solid var(--border)', paddingTop: 16,
       }}>
         Hours are credited once <strong style={{ color: 'var(--text)' }}>{event.org.name}</strong> confirms
         you attended. Questions before the day? Email{' '}
-        <a href={`mailto:${event.org.email}`} style={{ color: 'var(--blue)', fontWeight: 600 }}>
-          {event.org.email}
-        </a>.
+        <a href={`mailto:${event.org.email}`} style={{ fontWeight: 600 }}>{event.org.email}</a>.
       </div>
     </div>
   )

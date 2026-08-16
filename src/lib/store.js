@@ -106,7 +106,7 @@ export function signUp({ name, email, password, school, grade }) {
     grade: grade?.trim() || '',
     bio: '',
     created_at: todayISO(),
-    avatar_color: '#3B6BF5',
+    avatar_color: '#205C99',
   }
   commit({ ...state, profiles: [...state.profiles, user], sessionUserId: user.id })
   return { user }

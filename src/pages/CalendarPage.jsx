@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import Topbar from '../components/layout/Topbar'
 import Badge from '../components/ui/Badge'
 import Button from '../components/ui/Button'
+import Icon from '../components/ui/Icon'
 import EventModal from '../components/events/EventModal'
 import { useEvents } from '../hooks/useEvents'
 import { monthGrid, monthLabel, formatTimeRange, formatTimeCompact, formatDateLong, DAYS, plural } from '../lib/format'
@@ -15,23 +16,23 @@ function EventRow({ event, onOpen }) {
       style={{
         display: 'flex', gap: 16, alignItems: 'center', width: '100%', textAlign: 'left',
         padding: '16px 18px', background: 'var(--surface)', cursor: 'pointer',
-        border: '1px solid var(--border)', borderRadius: 12, fontFamily: 'inherit',
+        border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontFamily: 'inherit',
       }}
     >
       <div style={{
         width: 54, flexShrink: 0, textAlign: 'center', padding: '8px 0',
-        background: event.isPast ? 'var(--bg)' : 'var(--blue-light)',
+        background: event.isPast ? 'var(--bg)' : 'var(--navy-soft)',
         borderRadius: 9,
       }}>
         <div style={{
           fontSize: 9, fontWeight: 800, letterSpacing: 0.6, textTransform: 'uppercase',
-          color: event.isPast ? 'var(--muted)' : 'var(--blue)',
+          color: event.isPast ? 'var(--muted)' : 'var(--navy)',
         }}>
           {formatDateLong(event.event_date).split(',')[1].trim().split(' ')[0]}
         </div>
         <div style={{
-          fontFamily: 'Fraunces, serif', fontSize: 21, fontWeight: 900, lineHeight: 1.1,
-          color: event.isPast ? 'var(--muted)' : 'var(--blue)',
+          fontSize: 21, fontWeight: 800, lineHeight: 1.1,
+          color: event.isPast ? 'var(--muted)' : 'var(--navy)',
         }}>
           {event.event_date.split('-')[2]}
         </div>
@@ -39,15 +40,25 @@ function EventRow({ event, onOpen }) {
 
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 5 }}>{event.title}</div>
-        <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.5 }}>
-          🕘 {formatTimeRange(event.start_time, event.end_time)} · 📍 {event.location}
+        <div style={{
+          fontSize: 12.5, color: 'var(--muted)', lineHeight: 1.5,
+          display: 'flex', gap: 14, flexWrap: 'wrap',
+        }}>
+          <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
+            <Icon name="clock" size={13} style={{ color: 'var(--muted-light)' }} />
+            {formatTimeRange(event.start_time, event.end_time)}
+          </span>
+          <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
+            <Icon name="pin" size={13} style={{ color: 'var(--muted-light)' }} />
+            {event.location}
+          </span>
         </div>
         <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
-          <Badge color={event.org.color} bg="#F4F6FC" size="sm">{event.org.name}</Badge>
-          <Badge color="#6B7A9F" bg="#EEF1F8" size="sm">{event.hours} hrs</Badge>
+          <Badge color={event.org.color} bg="var(--navy-soft)" size="sm">{event.org.name}</Badge>
+          <Badge color="var(--muted)" bg="#EEF1F8" size="sm">{event.hours} hrs</Badge>
           {event.isPast
-            ? <Badge color="#6B7A9F" bg="#EEF1F8" size="sm">Completed</Badge>
-            : <Badge color="#16A34A" bg="#DCFCE7" size="sm">Upcoming</Badge>}
+            ? <Badge color="var(--muted)" bg="#EEF1F8" size="sm">Completed</Badge>
+            : <Badge color="var(--green)" bg="var(--green-soft)" size="sm">Upcoming</Badge>}
         </div>
       </div>
 
@@ -94,12 +105,12 @@ export default function CalendarPage() {
 
       <div className="split" style={{ padding: 32 }}>
         {/* Month grid */}
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 14, overflow: 'hidden' }}>
+        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
           <div style={{
             padding: '16px 20px', borderBottom: '1px solid var(--border)',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
           }}>
-            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 18, fontWeight: 900 }}>
+            <div style={{ fontSize: 18, fontWeight: 800 }}>
               {monthLabel(cursor.year, cursor.month)}
             </div>
             <div style={{ display: 'flex', gap: 6 }}>
@@ -132,7 +143,7 @@ export default function CalendarPage() {
                     fontSize: 11, fontWeight: isToday ? 800 : 600, marginBottom: 5,
                     width: 21, height: 21, borderRadius: '50%',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: isToday ? 'var(--blue)' : 'transparent',
+                    background: isToday ? 'var(--navy)' : 'transparent',
                     color: isToday ? 'white' : 'var(--muted)',
                   }}>
                     {cell.date.getDate()}
@@ -172,7 +183,7 @@ export default function CalendarPage() {
             <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 12 }}>Coming up</div>
             {upcoming.length === 0 ? (
               <div style={{
-                padding: '20px 18px', border: '1px dashed var(--border)', borderRadius: 12,
+                padding: '20px 18px', border: '1px dashed var(--border)', borderRadius: 'var(--radius)',
                 fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, background: 'var(--surface)',
               }}>
                 Nothing on your calendar yet. Open a pin on the map and hit JOIN on its event.

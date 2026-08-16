@@ -32,9 +32,9 @@ export default function MapPage() {
   return (
     <div>
       <Topbar
-        title="Milpitas Map"
+        title="Milpitas map"
         onAddPin={() => { setPlacing(p => !p); setDraft(null) }}
-        addPinLabel={placing ? 'Cancel' : '+ Pin a Spot'}
+        addPinLabel={placing ? 'Cancel' : 'Report a spot'}
       />
 
       <div style={{ padding: 32 }}>
@@ -42,21 +42,17 @@ export default function MapPage() {
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: 16, marginBottom: 28,
         }}>
-          <StatCard icon="🗑️" iconBg="#FFF0E6" number={stats.open} label="Open Spots"
-            trend="Needs work" trendColor={{ bg: '#FFF0E6', text: '#EA580C' }} />
-          <StatCard icon="✅" iconBg="#DCFCE7" number={stats.resolved} label="Resolved"
-            trend="Done" trendColor={{ bg: '#DCFCE7', text: '#16A34A' }} />
-          <StatCard icon="👥" iconBg="#E8EFFE" number={stats.volunteers} label="Volunteers"
-            trend="Signed up" trendColor={{ bg: '#E8EFFE', text: '#1B4FD8' }} />
-          <StatCard icon="📅" iconBg="#F3EFFE" number={stats.upcoming} label="Events Scheduled"
-            trend={stats.nextEvent ? `Next: ${formatDate(stats.nextEvent.event_date)}` : 'None yet'}
-            trendColor={{ bg: '#F3EFFE', text: '#7C3AED' }} />
+          <StatCard icon="flag" number={stats.open} label="Spots open" trend="Needs work" tone="warn" />
+          <StatCard icon="checkCircle" number={stats.resolved} label="Resolved" trend="Done" tone="good" />
+          <StatCard icon="users" number={stats.volunteers} label="Volunteers" trend="Signed up" tone="brand" />
+          <StatCard icon="calendar" number={stats.upcoming} label="Events scheduled"
+            trend={stats.nextEvent ? `Next ${formatDate(stats.nextEvent.event_date)}` : 'None yet'} tone="brand" />
         </div>
 
         <div className="split" style={{ marginBottom: 28 }}>
           <div style={{
             background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: 14, overflow: 'hidden',
+            borderRadius: 'var(--radius-lg)', overflow: 'hidden',
           }}>
             <div style={{
               padding: '16px 20px', borderBottom: '1px solid var(--border)',

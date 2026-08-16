@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import Modal from '../ui/Modal'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
+import Icon from '../ui/Icon'
 import EventDetails from '../events/EventDetails'
 import { PIN_TYPES, SPOT_STATUS, STATUS_ORDER } from '../../lib/constants'
 import { formatDate } from '../../lib/format'
@@ -12,25 +14,28 @@ import { spotRanking } from '../../lib/store'
 
 function StatusTimeline({ status }) {
   const current = SPOT_STATUS[status]?.step ?? 0
+
   return (
     <div>
-      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', marginBottom: 11 }}>
         {STATUS_ORDER.map((key, i) => {
           const done = i <= current
-          const meta = SPOT_STATUS[key]
+          const last = i === STATUS_ORDER.length - 1
           return (
-            <div key={key} style={{ display: 'flex', alignItems: 'center', flex: i === STATUS_ORDER.length - 1 ? '0 0 auto' : 1 }}>
+            <div key={key} style={{ display: 'flex', alignItems: 'center', flex: last ? '0 0 auto' : 1 }}>
               <div style={{
                 width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
-                background: done ? meta.color : 'var(--bg)',
-                border: `2px solid ${done ? meta.color : 'var(--border)'}`,
-                color: 'white', fontSize: 11, fontWeight: 800,
+                background: done ? 'var(--navy)' : 'var(--surface)',
+                border: `1.5px solid ${done ? 'var(--navy)' : 'var(--border-firm)'}`,
+                color: '#fff',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}>{done ? '✓' : ''}</div>
-              {i < STATUS_ORDER.length - 1 && (
+              }}>
+                {done && <Icon name="check" size={12} stroke={2.6} />}
+              </div>
+              {!last && (
                 <div style={{
                   height: 2, flex: 1,
-                  background: i < current ? SPOT_STATUS[STATUS_ORDER[i + 1]].color : 'var(--border)',
+                  background: i < current ? 'var(--navy)' : 'var(--border)',
                 }} />
               )}
             </div>
@@ -40,9 +45,9 @@ function StatusTimeline({ status }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 4 }}>
         {STATUS_ORDER.map((key, i) => (
           <div key={key} style={{
-            fontSize: 10, fontWeight: 700, flex: 1,
+            fontSize: 11.5, fontWeight: 600, flex: 1,
             textAlign: i === 0 ? 'left' : i === STATUS_ORDER.length - 1 ? 'right' : 'center',
-            color: i <= current ? 'var(--text)' : 'var(--muted)',
+            color: i <= current ? 'var(--text)' : 'var(--muted-light)',
           }}>
             {SPOT_STATUS[key].label}
           </div>
@@ -54,38 +59,44 @@ function StatusTimeline({ status }) {
 
 function OrgCard({ org }) {
   return (
-    <div style={{
-      border: '1px solid var(--border)', borderRadius: 12, overflow: 'hidden',
-    }}>
+    <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
       <div style={{
-        padding: '12px 16px', background: 'var(--bg)', borderBottom: '1px solid var(--border)',
-        fontSize: 10, fontWeight: 700, letterSpacing: 0.8, textTransform: 'uppercase', color: 'var(--muted)',
+        padding: '11px 17px', background: 'var(--surface-alt)', borderBottom: '1px solid var(--border)',
+        fontSize: 11.5, fontWeight: 700, letterSpacing: 0.05, textTransform: 'uppercase',
+        color: 'var(--muted)',
       }}>
         Who handles this
       </div>
-      <div style={{ padding: 16, display: 'grid', gap: 10 }}>
-        <div style={{ display: 'flex', gap: 11, alignItems: 'center' }}>
+      <div style={{ padding: 17, display: 'grid', gap: 13 }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <div style={{
-            width: 34, height: 34, borderRadius: 9, flexShrink: 0,
-            background: org.color, color: 'white',
+            width: 38, height: 38, borderRadius: 'var(--radius)', flexShrink: 0,
+            background: 'var(--navy-soft)', color: 'var(--navy)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 800, fontSize: 14,
-          }}>{org.name.charAt(0)}</div>
+          }}>
+            <Icon name="building" size="md" />
+          </div>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 14, fontWeight: 700 }}>{org.name}</div>
-            <div style={{ fontSize: 11, color: 'var(--muted)' }}>{org.focus}</div>
+            <div style={{ fontSize: 15, fontWeight: 700 }}>{org.name}</div>
+            <div style={{ fontSize: 12.5, color: 'var(--muted)' }}>{org.focus}</div>
           </div>
         </div>
 
-        <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.55 }}>{org.blurb}</div>
+        <div style={{ fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.6 }}>{org.blurb}</div>
 
-        <div style={{ display: 'grid', gap: 4, fontSize: 12, paddingTop: 2 }}>
-          <div><span style={{ color: 'var(--muted)' }}>Contact </span><strong>{org.contact_name}</strong></div>
-          <div>
-            <span style={{ color: 'var(--muted)' }}>Email </span>
-            <a href={`mailto:${org.email}`} style={{ color: 'var(--blue)', fontWeight: 600 }}>{org.email}</a>
+        <div style={{ display: 'grid', gap: 7, fontSize: 13.5, paddingTop: 2 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+            <Icon name="user" size="sm" style={{ color: 'var(--muted-light)' }} />
+            <span>{org.contact_name}</span>
           </div>
-          <div><span style={{ color: 'var(--muted)' }}>Phone </span><strong>{org.phone}</strong></div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+            <Icon name="mail" size="sm" style={{ color: 'var(--muted-light)' }} />
+            <a href={`mailto:${org.email}`} style={{ fontWeight: 600 }}>{org.email}</a>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+            <Icon name="phone" size="sm" style={{ color: 'var(--muted-light)' }} />
+            <span>{org.phone}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -111,72 +122,78 @@ export default function PinPopup({ spotId, onClose }) {
     <Modal
       open
       onClose={onClose}
-      width={620}
-      title={`${type.emoji} ${spot.title}`}
+      width={640}
+      title={spot.title}
       subtitle={`Reported by ${spot.reporter?.display_name || 'a resident'} on ${formatDate(spot.created_at)}`}
     >
-      <div style={{ display: 'grid', gap: 22 }}>
+      <div style={{ display: 'grid', gap: 24 }}>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-          <Badge color={type.color} bg={type.bg}>{type.emoji} {type.label}</Badge>
+          <Badge color={type.color} bg={type.bg} icon={type.icon}>{type.label}</Badge>
           <Badge color={status.color} bg={status.bg}>{status.label}</Badge>
           {rank && rank <= 3 && (
-            <Badge color="#B45309" bg="#FEF3C7">
-              {rank === 1 ? '🏆 #1 most upvoted in Milpitas' : `⭐ #${rank} most upvoted`}
+            <Badge color="var(--amber)" bg="var(--amber-soft)" icon="award">
+              {rank === 1 ? 'Most upvoted in Milpitas' : `#${rank} most upvoted`}
             </Badge>
           )}
         </div>
 
-        <div style={{ fontSize: 14, lineHeight: 1.6 }}>{spot.description}</div>
+        <div style={{ fontSize: 15, lineHeight: 1.65 }}>{spot.description}</div>
 
         {/* Upvote */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 14, padding: '14px 18px', background: 'var(--bg)',
-          border: '1px solid var(--border)', borderRadius: 12, flexWrap: 'wrap',
+          gap: 16, padding: '16px 20px', background: 'var(--surface-alt)',
+          border: '1px solid var(--border)', borderRadius: 'var(--radius)', flexWrap: 'wrap',
         }}>
           <div>
-            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 26, fontWeight: 900, lineHeight: 1 }}>
+            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.02em' }}>
               {spot.upvotes}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 3 }}>
+            <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 4 }}>
               upvotes{rank ? ` · ranked #${rank} in the city` : ''}
             </div>
           </div>
-          <Button
-            variant={spot.hasVoted ? 'secondary' : 'primary'}
-            onClick={() => vote(spot.id)}
-            disabled={!canVote}
-          >
-            {spot.hasVoted ? '✓ Upvoted' : '👍 Upvote this spot'}
-          </Button>
+          {canVote ? (
+            <Button
+              variant={spot.hasVoted ? 'secondary' : 'primary'}
+              icon={spot.hasVoted ? 'check' : 'thumbsUp'}
+              onClick={() => vote(spot.id)}
+            >
+              {spot.hasVoted ? 'Upvoted' : 'Upvote this spot'}
+            </Button>
+          ) : (
+            <Link to="/login" style={{ textDecoration: 'none' }}>
+              <Button variant="secondary" iconAfter="arrowRight">Log in to upvote</Button>
+            </Link>
+          )}
         </div>
 
         {/* Where the request stands */}
-        <div style={{ display: 'grid', gap: 12 }}>
-          <div style={{ fontSize: 13, fontWeight: 700 }}>Request status</div>
+        <div style={{ display: 'grid', gap: 13 }}>
+          <h4 style={{ fontSize: 14.5, fontWeight: 700 }}>Request status</h4>
           <StatusTimeline status={spot.status} />
-          <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.55 }}>{status.blurb}</div>
+          <div style={{ fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.6 }}>{status.blurb}</div>
         </div>
 
         <OrgCard org={spot.org} />
 
         {/* The volunteer event for this spot, if one exists yet */}
-        <div style={{ display: 'grid', gap: 14 }}>
-          <div style={{ fontSize: 13, fontWeight: 700 }}>Volunteer event for this spot</div>
+        <div style={{ display: 'grid', gap: 15 }}>
+          <h4 style={{ fontSize: 14.5, fontWeight: 700 }}>Volunteer event for this spot</h4>
           {spot.event ? (
             <>
-              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 17, fontWeight: 900 }}>
-                {spot.event.title}
-              </div>
+              <div style={{ fontSize: 18, fontWeight: 700 }}>{spot.event.title}</div>
               <EventDetails event={spot.event} />
             </>
           ) : (
             <div style={{
-              padding: '18px 20px', border: '1px dashed var(--border)', borderRadius: 12,
-              fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, background: 'var(--bg)',
+              padding: '20px 22px', border: '1px dashed var(--border-firm)',
+              borderRadius: 'var(--radius)', fontSize: 13.5, color: 'var(--muted)',
+              lineHeight: 1.65, background: 'var(--surface-alt)',
             }}>
-              No event scheduled here yet. {spot.org.name} reviews new reports as they come in, and
-              schedules a work day once enough residents upvote a spot. Upvoting helps push it up the list.
+              No event scheduled here yet. {spot.org.name} reviews new reports as they come in,
+              and schedules a work day once enough residents upvote a spot. Upvoting helps push
+              it up the list.
             </div>
           )}
         </div>

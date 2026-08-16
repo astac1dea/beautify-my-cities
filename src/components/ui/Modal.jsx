@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
+import Icon from './Icon'
 
-export default function Modal({ open, onClose, title, subtitle, width = 560, children, footer }) {
+export default function Modal({ open, onClose, title, subtitle, width = 580, children, footer }) {
   useEffect(() => {
     if (!open) return
     const onKey = e => { if (e.key === 'Escape') onClose?.() }
@@ -20,7 +21,7 @@ export default function Modal({ open, onClose, title, subtitle, width = 560, chi
       onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 1000,
-        background: 'rgba(15,23,41,0.45)',
+        background: 'rgba(14, 27, 42, .55)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         padding: 20,
       }}
@@ -29,45 +30,48 @@ export default function Modal({ open, onClose, title, subtitle, width = 560, chi
         onClick={e => e.stopPropagation()}
         style={{
           background: 'var(--surface)',
-          borderRadius: 16,
-          border: '1px solid var(--border)',
+          borderRadius: 'var(--radius-lg)',
           width: '100%', maxWidth: width,
           maxHeight: 'calc(100vh - 40px)',
           display: 'flex', flexDirection: 'column',
-          boxShadow: '0 24px 60px rgba(15,23,41,0.22)',
+          boxShadow: 'var(--shadow-lg)',
         }}
       >
         <div style={{
-          padding: '20px 24px', borderBottom: '1px solid var(--border)',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 16,
+          padding: '20px 26px', borderBottom: '1px solid var(--border)',
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 18,
         }}>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 20, fontWeight: 900, lineHeight: 1.25 }}>
-              {title}
-            </div>
+            <h2 style={{ fontSize: 20, fontWeight: 700 }}>{title}</h2>
             {subtitle && (
-              <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 4 }}>{subtitle}</div>
+              <div style={{ fontSize: 13.5, color: 'var(--muted)', marginTop: 5 }}>{subtitle}</div>
             )}
           </div>
           <button
             onClick={onClose}
             aria-label="Close"
             style={{
-              background: 'var(--bg)', border: '1px solid var(--border)',
-              width: 30, height: 30, borderRadius: 8, cursor: 'pointer',
-              fontSize: 15, color: 'var(--muted)', flexShrink: 0, lineHeight: 1,
+              background: 'transparent', border: '1px solid var(--border)',
+              width: 32, height: 32, borderRadius: 'var(--radius)', cursor: 'pointer',
+              color: 'var(--muted)', flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
-          >×</button>
+          >
+            <Icon name="close" size="sm" />
+          </button>
         </div>
 
-        <div style={{ padding: '20px 24px', overflowY: 'auto', flex: 1 }}>
+        <div style={{ padding: '24px 26px', overflowY: 'auto', flex: 1 }}>
           {children}
         </div>
 
         {footer && (
           <div style={{
-            padding: '16px 24px', borderTop: '1px solid var(--border)',
+            padding: '16px 26px', borderTop: '1px solid var(--border)',
             display: 'flex', gap: 10, justifyContent: 'flex-end', flexWrap: 'wrap',
+            background: 'var(--surface-alt)',
+            borderBottomLeftRadius: 'var(--radius-lg)',
+            borderBottomRightRadius: 'var(--radius-lg)',
           }}>
             {footer}
           </div>

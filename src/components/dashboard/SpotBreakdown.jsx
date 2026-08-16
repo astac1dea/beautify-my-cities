@@ -15,7 +15,7 @@ export default function SpotBreakdown({ spots, rankOf, onOpen }) {
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 14, overflow: 'hidden',
+      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
     }}>
       <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontSize: 15, fontWeight: 800 }}>My pins</div>
@@ -54,15 +54,15 @@ export default function SpotBreakdown({ spots, rankOf, onOpen }) {
                   >
                     <td style={{ ...td, fontWeight: 700 }}>{spot.title}</td>
                     <td style={td}>
-                      <Badge color={type.color} bg={type.bg} size="sm">{type.emoji} {type.label}</Badge>
+                      <Badge color={type.color} bg={type.bg} icon={type.icon} size="sm">{type.label}</Badge>
                     </td>
                     <td style={{ ...td, color: 'var(--muted)', whiteSpace: 'nowrap' }}>
                       {formatDate(spot.created_at)}
                     </td>
-                    <td style={{ ...td, textAlign: 'right', fontWeight: 800 }}>👍 {spot.upvotes}</td>
+                    <td style={{ ...td, textAlign: 'right', fontWeight: 800 }}>{spot.upvotes}</td>
                     <td style={{ ...td, textAlign: 'right', whiteSpace: 'nowrap' }}>
                       {rank === 1
-                        ? <Badge color="#B45309" bg="#FEF3C7" size="sm">🏆 #1</Badge>
+                        ? <Badge color="var(--amber)" bg="var(--amber-soft)" icon="award" size="sm">#1</Badge>
                         : <span style={{ color: 'var(--muted)', fontWeight: 700 }}>#{rank}</span>}
                     </td>
                     <td style={td}>

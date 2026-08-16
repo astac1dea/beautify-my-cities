@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom'
 import { formatDateLong, formatTimeRange } from '../../lib/format'
+import Icon from '../ui/Icon'
 
 export default function UpcomingEvents({ events = [], onOpen, limit = 4 }) {
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 14, overflow: 'hidden',
+      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
     }}>
       <div style={{
         padding: '14px 18px', borderBottom: '1px solid var(--border)',
@@ -13,8 +14,8 @@ export default function UpcomingEvents({ events = [], onOpen, limit = 4 }) {
         fontWeight: 700, fontSize: 13,
       }}>
         My next events
-        <Link to="/calendar" style={{ fontSize: 11, color: 'var(--blue)', textDecoration: 'none', fontWeight: 600 }}>
-          Calendar →
+        <Link to="/calendar" style={{ fontSize: 11, color: 'var(--navy)', textDecoration: 'none', fontWeight: 600 }}>
+          Calendar
         </Link>
       </div>
 
@@ -42,13 +43,17 @@ export default function UpcomingEvents({ events = [], onOpen, limit = 4 }) {
               <div style={{ fontSize: 11, color: 'var(--muted)', lineHeight: 1.5 }}>
                 {formatDateLong(event.event_date)} · {formatTimeRange(event.start_time, event.end_time)}
               </div>
-              <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
-                📍 {event.location}
+              <div style={{
+                fontSize: 11, color: 'var(--muted)', marginTop: 3,
+                display: 'flex', gap: 6, alignItems: 'flex-start',
+              }}>
+                <Icon name="pin" size={12} style={{ marginTop: 2, color: 'var(--muted-light)' }} />
+                {event.location}
               </div>
             </div>
             <div style={{
-              fontSize: 11, fontWeight: 800, color: 'var(--blue)',
-              background: 'var(--blue-light)', padding: '3px 8px', borderRadius: 50,
+              fontSize: 11, fontWeight: 800, color: 'var(--navy)',
+              background: 'var(--navy-soft)', padding: '3px 8px', borderRadius: 4,
               flexShrink: 0, whiteSpace: 'nowrap',
             }}>
               {event.hours} hrs

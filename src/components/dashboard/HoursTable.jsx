@@ -72,7 +72,7 @@ export default function HoursTable({ rows, totals, volunteerName }) {
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 14, overflow: 'hidden',
+      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
     }}>
       <div style={{
         padding: '16px 20px', borderBottom: '1px solid var(--border)',
@@ -85,8 +85,8 @@ export default function HoursTable({ rows, totals, volunteerName }) {
             {totals.verified} verified · {totals.pending} awaiting verification · {totals.total} total
           </div>
         </div>
-        <Button variant="secondary" size="sm" onClick={() => downloadCsv(rows, volunteerName)}>
-          ⬇ Download as CSV
+        <Button variant="secondary" size="sm" icon="download" onClick={() => downloadCsv(rows, volunteerName)}>
+          Download as CSV
         </Button>
       </div>
 
@@ -127,7 +127,7 @@ export default function HoursTable({ rows, totals, volunteerName }) {
                       </td>
                       <td style={td}>
                         <div style={{ fontSize: 12 }}>{row.org.contact_name}</div>
-                        <a href={`mailto:${row.org.email}`} style={{ fontSize: 12, color: 'var(--blue)', fontWeight: 600 }}>
+                        <a href={`mailto:${row.org.email}`} style={{ fontSize: 12, color: 'var(--navy)', fontWeight: 600 }}>
                           {row.org.email}
                         </a>
                       </td>
@@ -140,7 +140,7 @@ export default function HoursTable({ rows, totals, volunteerName }) {
                   </td>
                   <td style={{
                     ...td, textAlign: 'right', borderBottom: 'none',
-                    fontFamily: 'Fraunces, serif', fontSize: 18, fontWeight: 900,
+                    fontSize: 18, fontWeight: 800,
                   }}>
                     {totals.verified}
                   </td>
@@ -167,7 +167,7 @@ export default function HoursTable({ rows, totals, volunteerName }) {
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {orgs.map(org => (
                 <a key={org.id} href={verifyMailto(org, rows, volunteerName)} style={{ textDecoration: 'none' }}>
-                  <Button variant="secondary" size="sm">✉️ {org.name}</Button>
+                  <Button variant="secondary" size="sm" icon="mail">{org.name}</Button>
                 </a>
               ))}
             </div>

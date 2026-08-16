@@ -12,7 +12,7 @@ export const ORGANIZATIONS = [
     phone: '(408) 555-0142',
     focus: 'Litter pickup, park cleanups, illegal dumping',
     blurb: 'Volunteer-run nonprofit that runs weekend cleanups across Milpitas parks and trails. Signs off on service hours for students.',
-    color: '#EA580C',
+    color: '#8A5417',
     contact_name: 'Renata Alvarez, Volunteer Coordinator',
   },
   {
@@ -22,7 +22,7 @@ export const ORGANIZATIONS = [
     phone: '(408) 555-0198',
     focus: 'Graffiti removal, community murals, public art',
     blurb: 'Artist collective covering Milpitas, Fremont and Newark. Pairs tagged walls with local artists and student volunteers to turn them into murals.',
-    color: '#7C3AED',
+    color: '#5B4A86',
     contact_name: 'Devon Park, Program Lead',
   },
   {
@@ -32,7 +32,7 @@ export const ORGANIZATIONS = [
     phone: '(408) 555-0177',
     focus: 'Bike lanes, racks, benches, shade and seating',
     blurb: 'Advocacy group working with the city on safer streets. Builds and installs benches, racks and shade structures with volunteer crews.',
-    color: '#1B4FD8',
+    color: '#205C99',
     contact_name: 'Theo Nguyen, Field Organizer',
   },
   {
@@ -42,7 +42,7 @@ export const ORGANIZATIONS = [
     phone: '(408) 555-0163',
     focus: 'Tree planting, native habitat, creek restoration',
     blurb: 'Regional conservation corps. Runs planting and habitat restoration days and verifies hours for the Congressional Award and school service requirements.',
-    color: '#16A34A',
+    color: '#1F6E45',
     contact_name: 'Grace Whitfield, Crew Supervisor',
   },
   {
@@ -52,7 +52,7 @@ export const ORGANIZATIONS = [
     phone: '(408) 555-0110',
     focus: 'Streets, sidewalks, lighting, storm debris',
     blurb: 'City department. Handles anything that needs equipment or a permit, and takes referrals from resident reports.',
-    color: '#0F1729',
+    color: '#17222E',
     contact_name: 'Public Works Service Desk',
   },
 ]
@@ -63,26 +63,26 @@ export const PROFILES = [
     display_name: 'Maya Chen', role: 'resident', city_id: MILPITAS.cityId,
     school: 'Milpitas High School', grade: '11th grade',
     bio: 'Working toward the Congressional Award Silver Certificate. Mostly park and creek cleanups.',
-    created_at: '2026-02-02', avatar_color: '#7C3AED',
+    created_at: '2026-02-02', avatar_color: '#5B4A86',
   },
   {
     id: 'u-jordan', email: 'jordan@demo.city', password: 'demo1234',
     display_name: 'Jordan Rivera', role: 'resident', city_id: MILPITAS.cityId,
     school: 'Milpitas High School', grade: '10th grade',
     bio: 'Just started volunteering this summer. Into bike infrastructure.',
-    created_at: '2026-06-11', avatar_color: '#1B4FD8',
+    created_at: '2026-06-11', avatar_color: '#205C99',
   },
   {
     id: 'u-sam', email: 'sam@demo.city', password: 'demo1234',
     display_name: 'Sam Okafor', role: 'resident', city_id: MILPITAS.cityId,
     school: 'Calaveras Hills High School', grade: '12th grade',
     bio: 'Reports a lot of graffiti. Helped paint the Main St mural.',
-    created_at: '2026-01-19', avatar_color: '#EA580C',
+    created_at: '2026-01-19', avatar_color: '#8A5417',
   },
   // Extra residents so the leaderboard has real competition.
-  { id: 'u-priya', display_name: 'Priya Raman', role: 'resident', city_id: MILPITAS.cityId, avatar_color: '#16A34A', created_at: '2026-03-08' },
-  { id: 'u-diego', display_name: 'Diego Santos', role: 'resident', city_id: MILPITAS.cityId, avatar_color: '#DC2626', created_at: '2026-04-15' },
-  { id: 'u-anna',  display_name: 'Anna Kowalski', role: 'resident', city_id: MILPITAS.cityId, avatar_color: '#3B6BF5', created_at: '2026-05-20' },
+  { id: 'u-priya', display_name: 'Priya Raman', role: 'resident', city_id: MILPITAS.cityId, avatar_color: '#1F6E45', created_at: '2026-03-08' },
+  { id: 'u-diego', display_name: 'Diego Santos', role: 'resident', city_id: MILPITAS.cityId, avatar_color: '#8F3134', created_at: '2026-04-15' },
+  { id: 'u-anna',  display_name: 'Anna Kowalski', role: 'resident', city_id: MILPITAS.cityId, avatar_color: '#205C99', created_at: '2026-05-20' },
 ]
 
 // base_upvotes are the votes already on the pin before the signed-in user acts.

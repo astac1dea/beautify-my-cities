@@ -1,7 +1,6 @@
 import Badge from '../ui/Badge'
 import { PIN_TYPES, SPOT_STATUS } from '../../lib/constants'
-
-const MEDALS = { 1: '🥇', 2: '🥈', 3: '🥉' }
+import Icon from '../ui/Icon'
 
 // Spots ranked by how much support they have. Ties break on the number of
 // volunteers who signed up for the spot's event.
@@ -9,7 +8,7 @@ export default function Leaderboard({ spots, currentUserId, onOpen }) {
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 14, overflow: 'hidden',
+      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
     }}>
       <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontSize: 15, fontWeight: 800 }}>Most wanted spots in Milpitas</div>
@@ -31,31 +30,32 @@ export default function Leaderboard({ spots, currentUserId, onOpen }) {
             style={{
               display: 'flex', gap: 14, alignItems: 'center', width: '100%', textAlign: 'left',
               padding: '14px 20px', cursor: 'pointer', fontFamily: 'inherit',
-              background: isMine ? 'var(--blue-light)' : 'none',
+              background: isMine ? 'var(--navy-soft)' : 'none',
               border: 'none', borderBottom: '1px solid var(--border)',
             }}
           >
             <div style={{
               width: 34, flexShrink: 0, textAlign: 'center',
-              fontFamily: 'Fraunces, serif', fontWeight: 900,
+              fontWeight: 800,
               fontSize: top ? 20 : 15,
-              color: top ? '#B45309' : 'var(--muted)',
+              color: top ? 'var(--amber)' : 'var(--muted)',
             }}>
-              {MEDALS[spot.rank] || spot.rank}
+              {spot.rank}
             </div>
 
             <div style={{
-              width: 38, height: 38, borderRadius: 9, flexShrink: 0, background: type.bg,
-              display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 17,
+              width: 38, height: 38, borderRadius: 'var(--radius)', flexShrink: 0,
+              background: type.bg, color: type.color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
-              {type.emoji}
+              <Icon name={type.icon} size="md" />
             </div>
 
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 5, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                 {spot.title}
-                {isMine && <Badge color="#1B4FD8" bg="#DBEAFE" size="sm">Your pin</Badge>}
-                {spot.rank === 1 && <Badge color="#B45309" bg="#FEF3C7" size="sm">Most popular</Badge>}
+                {isMine && <Badge color="var(--navy)" bg="var(--navy-soft)" size="sm">Your pin</Badge>}
+                {spot.rank === 1 && <Badge color="var(--amber)" bg="var(--amber-soft)" size="sm">Most popular</Badge>}
               </div>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
                 <Badge color={type.color} bg={type.bg} size="sm">{type.label}</Badge>
@@ -67,7 +67,7 @@ export default function Leaderboard({ spots, currentUserId, onOpen }) {
             </div>
 
             <div style={{ textAlign: 'right', flexShrink: 0 }}>
-              <div style={{ fontFamily: 'Fraunces, serif', fontSize: 21, fontWeight: 900, lineHeight: 1 }}>
+              <div style={{ fontSize: 21, fontWeight: 800, lineHeight: 1 }}>
                 {spot.upvotes}
               </div>
               <div style={{ fontSize: 10, color: 'var(--muted)', marginTop: 4 }}>

@@ -27,7 +27,7 @@ function Card({ title, children }) {
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 14, overflow: 'hidden',
+      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
     }}>
       <div style={{
         padding: '15px 20px', borderBottom: '1px solid var(--border)',
@@ -124,17 +124,17 @@ export default function ProfilePage() {
         <div style={{ display: 'grid', gap: 20 }}>
           <div style={{
             background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: 14, padding: '26px 22px', textAlign: 'center',
+            borderRadius: 'var(--radius-lg)', padding: '26px 22px', textAlign: 'center',
           }}>
             <div style={{
               width: 64, height: 64, borderRadius: '50%', margin: '0 auto 14px',
-              background: user.avatar_color || 'var(--blue-mid)', color: 'white',
+              background: user.avatar_color || 'var(--navy)', color: 'white',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 26, fontWeight: 800,
             }}>
               {user.display_name.charAt(0)}
             </div>
-            <div style={{ fontFamily: 'Fraunces, serif', fontSize: 19, fontWeight: 900 }}>
+            <div style={{ fontSize: 19, fontWeight: 800 }}>
               {user.display_name}
             </div>
             <div style={{ fontSize: 12, color: 'var(--muted)', marginTop: 4 }}>

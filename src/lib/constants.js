@@ -1,9 +1,11 @@
+// Categories carry an icon name (see components/ui/Icon) rather than an emoji.
+// Colours are deliberately desaturated so a map full of pins stays readable.
 export const PIN_TYPES = {
-  trash:    { label: 'Trash',    emoji: '🗑️', color: '#EA580C', bg: '#FFF0E6' },
-  graffiti: { label: 'Graffiti', emoji: '🚫', color: '#DC2626', bg: '#FEE2E2' },
-  mural:    { label: 'Mural',    emoji: '🎨', color: '#7C3AED', bg: '#F3EFFE' },
-  seating:  { label: 'Seating',  emoji: '🪑', color: '#16A34A', bg: '#DCFCE7' },
-  bike:     { label: 'Bike',     emoji: '🚲', color: '#1B4FD8', bg: '#E8EFFE' },
+  trash:    { label: 'Litter',   icon: 'trash', color: '#8A5417', bg: '#F7EEE1' },
+  graffiti: { label: 'Graffiti', icon: 'spray', color: '#8F3134', bg: '#F6E7E7' },
+  mural:    { label: 'Mural',    icon: 'brush', color: '#5B4A86', bg: '#EDEAF5' },
+  seating:  { label: 'Seating',  icon: 'bench', color: '#1F6E45', bg: '#E3F0E8' },
+  bike:     { label: 'Cycling',  icon: 'bike',  color: '#205C99', bg: '#E6EEF6' },
 }
 
 export const MILPITAS = {
@@ -16,13 +18,13 @@ export const MAP_ATTRIBUTION = '© OpenStreetMap contributors'
 
 // A pin moves through these as the responsible org picks it up.
 export const SPOT_STATUS = {
-  reported:  { label: 'Request sent', color: '#6B7A9F', bg: '#EEF1F8', step: 0,
+  reported:  { label: 'Request sent', color: '#5C6B7A', bg: '#EDF0F3', step: 0,
                blurb: 'Your report was sent to the organization that handles this.' },
-  reviewing: { label: 'Under review', color: '#EA580C', bg: '#FFF0E6', step: 1,
+  reviewing: { label: 'Under review', color: '#8A5417', bg: '#F7EEE1', step: 1,
                blurb: 'The organization has seen it and is checking the site.' },
-  scheduled: { label: 'Event scheduled', color: '#1B4FD8', bg: '#E8EFFE', step: 2,
+  scheduled: { label: 'Event scheduled', color: '#14395E', bg: '#E8EEF4', step: 2,
                blurb: 'A volunteer event is on the calendar for this spot.' },
-  resolved:  { label: 'Resolved', color: '#16A34A', bg: '#DCFCE7', step: 3,
+  resolved:  { label: 'Resolved', color: '#1F6E45', bg: '#E3F0E8', step: 3,
                blurb: 'Work is done. Thanks for reporting it.' },
 }
 
@@ -48,6 +50,6 @@ export const AWARD_TIERS = [
 ]
 
 export const HOUR_STATUS = {
-  pending:  { label: 'Awaiting verification', color: '#EA580C', bg: '#FFF0E6' },
-  verified: { label: 'Verified', color: '#16A34A', bg: '#DCFCE7' },
+  pending:  { label: 'Awaiting verification', color: '#8A5417', bg: '#F7EEE1' },
+  verified: { label: 'Verified', color: '#1F6E45', bg: '#E3F0E8' },
 }
