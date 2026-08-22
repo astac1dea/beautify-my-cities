@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AppLayout from './components/layout/AppLayout'
+import LandingPage from './pages/LandingPage'
 import WelcomePage from './pages/WelcomePage'
 import AuthPage from './pages/AuthPage'
 import MapPage from './pages/MapPage'
@@ -12,8 +13,13 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public */}
-        <Route path="/" element={<WelcomePage />} />
+        {/* Landing — city selector + what to do */}
+        <Route path="/" element={<LandingPage />} />
+
+        {/* City home — full map/events page */}
+        <Route path="/city/:cityId" element={<WelcomePage />} />
+
+        {/* Auth */}
         <Route path="/login" element={<AuthPage />} />
 
         {/* Requires an account */}

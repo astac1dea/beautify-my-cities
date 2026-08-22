@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import PublicHeader from '../components/layout/PublicHeader'
 import { Logo } from '../components/layout/Wordmark'
 import Button from '../components/ui/Button'
@@ -12,7 +13,7 @@ import EventModal from '../components/events/EventModal'
 import { useSpots } from '../hooks/useSpots'
 import { useEvents } from '../hooks/useEvents'
 import { useAppState } from '../hooks/useStore'
-import { cityStats } from '../lib/store'
+import { cityStats, setCity } from '../lib/store'
 import { AWARD_TIERS, PIN_TYPES } from '../lib/constants'
 import { formatDateLong, formatTimeRange, plural } from '../lib/format'
 import { useCity } from '../hooks/useCity'
@@ -107,6 +108,10 @@ function EventCard({ event, onOpen }) {
 }
 
 export default function WelcomePage() {
+  // Read cityId from URL param e.g. /city/city-milpitas
+  const { cityId } = useParams()
+  useEffect(() => { if (cityId) setCity(cityId) }, [cityId])
+
   const { spots } = useSpots()
   const { upcoming } = useEvents()
   const { city } = useCity()
@@ -179,7 +184,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* Action bar, overlapping the hero the way volunteer.gov does */}
+      {/* Action bar */}
       <div style={{ ...SHELL, marginTop: -52, position: 'relative', zIndex: 10 }}>
         <div className="card" style={{
           padding: 22, boxShadow: 'var(--shadow-lg)',
@@ -235,7 +240,7 @@ export default function WelcomePage() {
         </div>
       </div>
 
-      {/* ------------------------------------------------------------- map */}
+      {/* map */}
       <section id="map" style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
         <SectionHead
           eyebrow="Every reported spot"
@@ -326,7 +331,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* ---------------------------------------------------------- events */}
+      {/* events */}
       <section id="events" style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         <div style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
           <SectionHead
@@ -345,7 +350,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* ------------------------------------------------------------- how */}
+      {/* how it works */}
       <section id="how" style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
         <SectionHead
           eyebrow="Start to finish"
@@ -378,7 +383,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* ----------------------------------------------------------- award */}
+      {/* congressional award */}
       <section id="award" style={{ background: 'var(--navy)', color: '#fff' }}>
         <div style={{
           ...SHELL, paddingTop: 64, paddingBottom: 64,
@@ -427,7 +432,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* ---------------------------------------------------------- footer */}
+      {/* footer */}
       <footer style={{ background: 'var(--navy-dark)', color: 'rgba(255,255,255,.6)' }}>
         <div style={{
           ...SHELL, paddingTop: 40, paddingBottom: 40,
