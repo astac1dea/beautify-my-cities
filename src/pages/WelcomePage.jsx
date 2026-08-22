@@ -1,5 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useMemo, useState } from 'react'
 import PublicHeader from '../components/layout/PublicHeader'
 import { Logo } from '../components/layout/Wordmark'
 import Button from '../components/ui/Button'
@@ -13,7 +12,7 @@ import EventModal from '../components/events/EventModal'
 import { useSpots } from '../hooks/useSpots'
 import { useEvents } from '../hooks/useEvents'
 import { useAppState } from '../hooks/useStore'
-import { cityStats, setCity } from '../lib/store'
+import { cityStats } from '../lib/store'
 import { AWARD_TIERS, PIN_TYPES } from '../lib/constants'
 import { formatDateLong, formatTimeRange, plural } from '../lib/format'
 import { useCity } from '../hooks/useCity'
@@ -108,10 +107,6 @@ function EventCard({ event, onOpen }) {
 }
 
 export default function WelcomePage() {
-  // Read cityId from URL param e.g. /city/city-milpitas
-  const { cityId } = useParams()
-  useEffect(() => { if (cityId) setCity(cityId) }, [cityId])
-
   const { spots } = useSpots()
   const { upcoming } = useEvents()
   const { city } = useCity()
@@ -123,6 +118,7 @@ export default function WelcomePage() {
   const [draft, setDraft] = useState(null)
   const [openSpotId, setOpenSpotId] = useState(null)
   const [openEventId, setOpenEventId] = useState(null)
+  const [focusSpotId, setFocusSpotId] = useState(null)
 
   const visible = filter === 'all' ? spots : spots.filter(s => s.type === filter)
   const topSpots = useMemo(
@@ -184,7 +180,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* Action bar */}
+      {/* Action bar, overlapping the hero the way volunteer.gov does */}
       <div style={{ ...SHELL, marginTop: -52, position: 'relative', zIndex: 10 }}>
         <div className="card" style={{
           padding: 22, boxShadow: 'var(--shadow-lg)',
@@ -240,31 +236,40 @@ export default function WelcomePage() {
         </div>
       </div>
 
-      {/* map */}
+      {/* ------------------------------------------------------------- map */}
       <section id="map" style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
-        <SectionHead
-          eyebrow="Every reported spot"
-          title={`The ${city.name} map`}
-          blurb="Each pin is something a resident reported. Click one to see who is responsible for it, where the request stands, and whether there is a volunteer day scheduled."
-          action={<FilterPills value={filter} onChange={setFilter} />}
-        />
+        {/* Section header — title left, pills right */}
+        <div style={{
+          display: 'flex', alignItems: 'flex-start',
+          justifyContent: 'space-between', gap: 24, flexWrap: 'wrap',
+          marginBottom: 24,
+        }}>
+          <div style={{ maxWidth: 560 }}>
+            <div className="eyebrow" style={{ color: 'var(--link)', marginBottom: 12 }}>
+              Every reported spot
+            </div>
+            <h2 style={{ fontSize: 30, fontWeight: 800, marginBottom: 10 }}>
+              The {city.name} map
+            </h2>
+            <p style={{ fontSize: 15.5, color: 'var(--muted)', lineHeight: 1.6 }}>
+              Each pin is something a resident reported. Click one to see who is responsible for it,
+              where the request stands, and whether there is a volunteer day scheduled.
+            </p>
+          </div>
+          <div style={{ paddingTop: 4 }}>
+            <FilterPills value={filter} onChange={v => { setFilter(v); setFocusSpotId(null) }} spots={spots} />
+          </div>
+        </div>
 
         <div className="split">
+          {/* Map */}
           <div className="card" style={{ overflow: 'hidden' }}>
-            <CommunityMap
-              spots={visible}
-              placing={placing}
-              draft={draft}
-              onMapClick={handleMapClick}
-              onOpenSpot={setOpenSpotId}
-              height={520}
-            />
+            {/* Toolbar just above the map */}
             <div style={{
-              padding: '14px 20px', borderTop: '1px solid var(--border)',
+              padding: '12px 16px', borderBottom: '1px solid var(--border)',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              gap: 14, flexWrap: 'wrap',
             }}>
-              <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>
+              <span style={{ fontSize: 13, color: 'var(--muted)' }}>
                 {placing
                   ? 'Click the map to place your pin.'
                   : `Showing ${visible.length} of ${spots.length} reported spots.`}
@@ -278,60 +283,85 @@ export default function WelcomePage() {
                 {placing ? 'Cancel' : 'Report a spot'}
               </Button>
             </div>
+            <CommunityMap
+              spots={visible}
+              placing={placing}
+              draft={draft}
+              onMapClick={handleMapClick}
+              onOpenSpot={id => { setOpenSpotId(id); setFocusSpotId(id) }}
+              height={520}
+              focusSpotId={focusSpotId}
+              filter={filter}
+            />
           </div>
 
-          <div className="card" style={{ overflow: 'hidden' }}>
+          {/* Leaderboard — fixed height matching map, scrollable */}
+          <div className="card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: 568 }}>
             <div style={{
               padding: '15px 18px', borderBottom: '1px solid var(--border)',
-              fontSize: 14.5, fontWeight: 700,
+              fontSize: 14.5, fontWeight: 700, flexShrink: 0,
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
-              Most upvoted right now
+              <span>Most upvoted right now</span>
+              <span style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 400 }}>
+                Click to locate on map
+              </span>
             </div>
-            {topSpots.map((spot, i) => {
-              const type = PIN_TYPES[spot.type] || PIN_TYPES.trash
-              return (
-                <button
-                  key={spot.id}
-                  onClick={() => setOpenSpotId(spot.id)}
-                  style={{
-                    display: 'flex', gap: 12, alignItems: 'center', width: '100%',
-                    textAlign: 'left', padding: '13px 18px', cursor: 'pointer',
-                    background: 'none', border: 'none',
-                    borderBottom: i === topSpots.length - 1 ? 'none' : '1px solid var(--border)',
-                  }}
-                >
-                  <span style={{
-                    width: 22, fontSize: 13, fontWeight: 700, color: 'var(--muted-light)', flexShrink: 0,
-                  }}>
-                    {i + 1}
-                  </span>
-                  <span style={{
-                    width: 34, height: 34, borderRadius: 'var(--radius)', flexShrink: 0,
-                    background: type.bg, color: type.color,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <Icon name={type.icon} size="sm" />
-                  </span>
-                  <span style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ overflowY: 'auto', flex: 1 }}>
+              {topSpots.map((spot, i) => {
+                const type = PIN_TYPES[spot.type] || PIN_TYPES.trash
+                const focused = spot.id === focusSpotId
+                return (
+                  <button
+                    key={spot.id}
+                    onClick={() => {
+                      setFocusSpotId(spot.id)
+                      setOpenSpotId(spot.id)
+                    }}
+                    style={{
+                      display: 'flex', gap: 12, alignItems: 'center', width: '100%',
+                      textAlign: 'left', padding: '13px 18px', cursor: 'pointer',
+                      background: focused ? 'var(--navy-soft)' : 'none',
+                      border: 'none',
+                      borderBottom: i === topSpots.length - 1 ? 'none' : '1px solid var(--border)',
+                      transition: 'background 0.15s',
+                    }}
+                  >
                     <span style={{
-                      display: 'block', fontSize: 13.5, fontWeight: 600,
-                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                      width: 22, fontSize: 13, fontWeight: 700,
+                      color: focused ? 'var(--navy)' : 'var(--muted-light)', flexShrink: 0,
                     }}>
-                      {spot.title}
+                      {i + 1}
                     </span>
-                    <span style={{ display: 'block', fontSize: 12.5, color: 'var(--muted)', marginTop: 2 }}>
-                      {type.label}
+                    <span style={{
+                      width: 34, height: 34, borderRadius: 'var(--radius)', flexShrink: 0,
+                      background: type.bg, color: type.color,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <Icon name={type.icon} size="sm" />
                     </span>
-                  </span>
-                  <span style={{ fontSize: 15, fontWeight: 700, flexShrink: 0 }}>{spot.upvotes}</span>
-                </button>
-              )
-            })}
+                    <span style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{
+                        display: 'block', fontSize: 13.5, fontWeight: 600,
+                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                        color: focused ? 'var(--navy)' : 'inherit',
+                      }}>
+                        {spot.title}
+                      </span>
+                      <span style={{ display: 'block', fontSize: 12.5, color: 'var(--muted)', marginTop: 2 }}>
+                        {type.label}
+                      </span>
+                    </span>
+                    <span style={{ fontSize: 15, fontWeight: 700, flexShrink: 0 }}>{spot.upvotes}</span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* events */}
+      {/* ---------------------------------------------------------- events */}
       <section id="events" style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
         <div style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
           <SectionHead
@@ -350,7 +380,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* how it works */}
+      {/* ------------------------------------------------------------- how */}
       <section id="how" style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
         <SectionHead
           eyebrow="Start to finish"
@@ -383,7 +413,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* congressional award */}
+      {/* ----------------------------------------------------------- award */}
       <section id="award" style={{ background: 'var(--navy)', color: '#fff' }}>
         <div style={{
           ...SHELL, paddingTop: 64, paddingBottom: 64,
@@ -432,7 +462,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* footer */}
+      {/* ---------------------------------------------------------- footer */}
       <footer style={{ background: 'var(--navy-dark)', color: 'rgba(255,255,255,.6)' }}>
         <div style={{
           ...SHELL, paddingTop: 40, paddingBottom: 40,

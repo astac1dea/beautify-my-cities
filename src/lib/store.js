@@ -140,7 +140,7 @@ export function updateProfile(patch) {
 
 /* ----------------------------------------------------------------- spots */
 
-export function addSpot({ type, title, address, description, lat, lng }) {
+export function addSpot({ type, title, address, description, lat, lng, photo }) {
   const spot = {
     id: `sp-${Date.now()}`,
     city_id: state.cityId,
@@ -149,6 +149,7 @@ export function addSpot({ type, title, address, description, lat, lng }) {
     title: title.trim(),
     address: (address || '').trim(),
     description: description.trim(),
+    photo: photo || null,
     lat,
     lng,
     status: 'reported',
