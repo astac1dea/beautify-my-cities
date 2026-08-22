@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { useMemo, useState } from 'react'
 import Modal from '../ui/Modal'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
@@ -104,11 +103,108 @@ function OrgCard({ org }) {
   )
 }
 
+function VoteSection({ spot, rank, vote, voterName, setVoterName }) {
+  const [nameInput, setNameInput] = useState(voterName || '')
+  const [showNameField, setShowNameField] = useState(false)
+  const [nameError, setNameError] = useState('')
+  const [justVoted, setJustVoted] = useState(false)
+
+  function handleVoteClick() {
+    if (spot.hasVoted) {
+      vote(spot.id, voterName)
+      return
+    }
+    if (voterName) {
+      vote(spot.id, voterName)
+      setJustVoted(true)
+      return
+    }
+    setShowNameField(true)
+  }
+
+  function handleSubmitName() {
+    const n = nameInput.trim()
+    if (!n) return setNameError('Please enter your name to upvote.')
+    setNameError('')
+    setVoterName(n)
+    vote(spot.id, n)
+    setShowNameField(false)
+    setJustVoted(true)
+  }
+
+  return (
+    <div style={{
+      padding: '16px 20px', background: 'var(--surface-alt)',
+      border: '1px solid var(--border)', borderRadius: 'var(--radius)',
+      display: 'grid', gap: 14,
+    }}>
+      <div style={{
+        display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between', gap: 16, flexWrap: 'wrap',
+      }}>
+        <div>
+          <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.02em' }}>
+            {spot.upvotes}
+          </div>
+          <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 4 }}>
+            upvotes{rank ? ` · ranked #${rank} in the city` : ''}
+          </div>
+        </div>
+        <Button
+          variant={spot.hasVoted || justVoted ? 'secondary' : 'primary'}
+          icon={spot.hasVoted || justVoted ? 'check' : 'thumbsUp'}
+          onClick={handleVoteClick}
+        >
+          {spot.hasVoted || justVoted ? 'Upvoted' : 'Upvote this spot'}
+        </Button>
+      </div>
+
+      {showNameField && (
+        <div style={{ display: 'grid', gap: 8 }}>
+          <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5 }}>
+            Just your name — no account needed. Helps keep votes meaningful.
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              autoFocus
+              value={nameInput}
+              onChange={e => { setNameInput(e.target.value); setNameError('') }}
+              onKeyDown={e => e.key === 'Enter' && handleSubmitName()}
+              placeholder="Your name"
+              style={{
+                flex: 1, padding: '8px 12px', borderRadius: 'var(--radius)',
+                border: `1px solid ${nameError ? 'var(--red)' : 'var(--border-firm)'}`,
+                background: 'var(--surface)', fontSize: 14, color: 'var(--text)',
+              }}
+            />
+            <Button onClick={handleSubmitName}>Submit</Button>
+          </div>
+          {nameError && (
+            <div style={{ fontSize: 12.5, color: 'var(--red)' }}>{nameError}</div>
+          )}
+        </div>
+      )}
+
+      {voterName && !showNameField && spot.hasVoted && (
+        <div style={{ fontSize: 12, color: 'var(--muted)' }}>
+          Voting as <strong>{voterName}</strong> ·{' '}
+          <button
+            onClick={() => { setShowNameField(true); setNameInput('') }}
+            style={{ background: 'none', border: 'none', color: 'var(--link)', cursor: 'pointer', fontSize: 12, padding: 0 }}
+          >
+            change
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function PinPopup({ spotId, onClose }) {
   const spot = useSpot(spotId)
   const state = useAppState()
   const { city } = useCity()
-  const { vote, canVote } = useVote()
+  const { vote, voterName, setVoterName } = useVote()
 
   const rank = useMemo(() => {
     if (!spot) return null
@@ -161,33 +257,7 @@ export default function PinPopup({ spotId, onClose }) {
         <div style={{ fontSize: 15, lineHeight: 1.65 }}>{spot.description}</div>
 
         {/* Upvote */}
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 16, padding: '16px 20px', background: 'var(--surface-alt)',
-          border: '1px solid var(--border)', borderRadius: 'var(--radius)', flexWrap: 'wrap',
-        }}>
-          <div>
-            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.02em' }}>
-              {spot.upvotes}
-            </div>
-            <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 4 }}>
-              upvotes{rank ? ` · ranked #${rank} in the city` : ''}
-            </div>
-          </div>
-          {canVote ? (
-            <Button
-              variant={spot.hasVoted ? 'secondary' : 'primary'}
-              icon={spot.hasVoted ? 'check' : 'thumbsUp'}
-              onClick={() => vote(spot.id)}
-            >
-              {spot.hasVoted ? 'Upvoted' : 'Upvote this spot'}
-            </Button>
-          ) : (
-            <Link to="/login" style={{ textDecoration: 'none' }}>
-              <Button variant="secondary" iconAfter="arrowRight">Log in to upvote</Button>
-            </Link>
-          )}
-        </div>
+        <VoteSection spot={spot} rank={rank} vote={vote} voterName={voterName} setVoterName={setVoterName} />
 
         {/* Where the request stands */}
         <div style={{ display: 'grid', gap: 13 }}>

@@ -140,7 +140,7 @@ export function updateProfile(patch) {
 
 /* ----------------------------------------------------------------- spots */
 
-export function addSpot({ type, title, address, description, lat, lng, photo }) {
+export function addSpot({ type, title, address, description, lat, lng }) {
   const spot = {
     id: `sp-${Date.now()}`,
     city_id: state.cityId,
@@ -149,10 +149,9 @@ export function addSpot({ type, title, address, description, lat, lng, photo }) 
     title: title.trim(),
     address: (address || '').trim(),
     description: description.trim(),
-    photo: photo || null,
     lat,
     lng,
-    status: 'reported',
+    status: state.sessionUserId ? 'reported' : 'pending',
     base_upvotes: 0,
     created_at: todayISO(),
   }
@@ -160,15 +159,22 @@ export function addSpot({ type, title, address, description, lat, lng, photo }) 
   return spot
 }
 
-export function toggleVote(spotId) {
-  const me = state.sessionUserId
+export function toggleVote(spotId, voterName) {
+  // Works for both logged-in users (sessionUserId) and guests (voterName).
+  const me = state.sessionUserId || voterName
   if (!me) return
-  const existing = state.votes.find(v => v.spot_id === spotId && v.user_id === me)
+  const existing = state.votes.find(v => v.spot_id === spotId && (v.user_id === me || v.voter_name === me))
   commit({
     ...state,
     votes: existing
       ? state.votes.filter(v => v !== existing)
-      : [...state.votes, { id: `vt-${spotId}-${me}`, spot_id: spotId, user_id: me, created_at: todayISO() }],
+      : [...state.votes, {
+          id: `vt-${spotId}-${Date.now()}`,
+          spot_id: spotId,
+          user_id: state.sessionUserId || null,
+          voter_name: voterName || null,
+          created_at: todayISO(),
+        }],
   })
 }
 

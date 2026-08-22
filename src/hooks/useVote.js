@@ -1,16 +1,23 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { toggleVote } from '../lib/store'
-import { useAuth } from './useAuth'
 
-// Upvoting is one vote per resident per spot, and toggles off if you click again.
+// Voting requires a name but no account.
+// Name is stored in localStorage so the user only has to enter it once.
+const NAME_KEY = 'bmc.voterName'
+
 export function useVote() {
-  const { isAuthed } = useAuth()
-  const vote = useCallback(spotId => {
-    if (!isAuthed) return false
-    toggleVote(spotId)
+  const [voterName, setVoterName] = useState(() => localStorage.getItem(NAME_KEY) || '')
+
+  const vote = useCallback((spotId, name) => {
+    const n = (name || voterName).trim()
+    if (!n) return false
+    localStorage.setItem(NAME_KEY, n)
+    setVoterName(n)
+    toggleVote(spotId, n)
     return true
-  }, [isAuthed])
-  return { vote, canVote: isAuthed }
+  }, [voterName])
+
+  return { vote, voterName, setVoterName, canVote: true }
 }
 
 export default useVote
