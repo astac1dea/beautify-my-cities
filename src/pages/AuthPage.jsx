@@ -39,22 +39,25 @@ export default function AuthPage() {
   const [form, setForm] = useState({ name: '', email: '', password: '', school: '', grade: '' })
   const [error, setError] = useState('')
 
-  if (isAuthed) return <Navigate to="/map" replace />
+  if (isAuthed) return <Navigate to="/city/milpitas" replace />
 
   const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
 
-  function submit(e) {
+  async function submit(e) {
     e.preventDefault()
-    const result = mode === 'login' ? signIn(form.email, form.password) : signUp(form)
-    if (result.error) return setError(result.error)
-    navigate('/map', { replace: true })
+    setError('')
+    const result = mode === 'login'
+      ? await signIn(form.email, form.password)
+      : await signUp(form)
+    if (result?.error) return setError(result.error)
+    navigate(`/city/milpitas`, { replace: true })
   }
 
-  function loginAsDemo(email) {
+  async function loginAsDemo(email) {
     setError('')
-    const result = signIn(email, DEMO_PASSWORD)
-    if (result.error) return setError(result.error)
-    navigate('/map', { replace: true })
+    const result = await signIn(email, DEMO_PASSWORD)
+    if (result?.error) return setError(result.error)
+    navigate(`/city/milpitas`, { replace: true })
   }
 
   return (

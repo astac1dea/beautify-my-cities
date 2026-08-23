@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import Topbar from '../components/layout/Topbar'
 import CommunityMap from '../components/map/CommunityMap'
 import FilterPills from '../components/map/FilterPills'
@@ -7,16 +7,14 @@ import PinPopup from '../components/map/PinPopup'
 import StatCard from '../components/dashboard/StatCard'
 import TopVotedPanel from '../components/dashboard/TopVotedPanel'
 import { useSpots } from '../hooks/useSpots'
-import { useAppState } from '../hooks/useStore'
-import { cityStats } from '../lib/store'
+import { useCityStats } from '../hooks/useCityStats'
 import { formatDate } from '../lib/format'
 import { useCity } from '../hooks/useCity'
 
 export default function MapPage() {
   const { spots } = useSpots()
   const { city } = useCity()
-  const state = useAppState()
-  const stats = useMemo(() => cityStats(state), [state])
+  const stats = useCityStats()
 
   const [filter, setFilter] = useState('all')
   const [placing, setPlacing] = useState(false)

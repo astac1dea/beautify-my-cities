@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react'
+import { supabase } from '../../lib/supabase'
 import Modal from '../ui/Modal'
 import Button from '../ui/Button'
 import Icon from '../ui/Icon'
 import { PIN_TYPES } from '../../lib/constants'
-import { addSpot, orgById } from '../../lib/store'
-import { orgIdFor } from '../../lib/cities'
+import { useSpots } from '../../hooks/useSpots'
 import { useCity } from '../../hooks/useCity'
 
 const inputStyle = {
@@ -214,27 +214,72 @@ function PhotoUpload({ photo, onPhoto }) {
 
 export default function AddPinModal({ coords, onClose, onCreated }) {
   const { city } = useCity()
+  const { addSpot } = useSpots()
   const [type, setType] = useState('trash')
+  const [submitting, setSubmitting] = useState(false)
   const [title, setTitle] = useState('')
   const [address, setAddress] = useState('')
   const [description, setDescription] = useState('')
   const [photo, setPhoto] = useState(null)
   const [error, setError] = useState('')
   const [created, setCreated] = useState(null)
+  const [org, setOrg] = useState(null)
 
-  const org = orgById(orgIdFor(city.id, type))
+  // Fetch org from Supabase based on city + type
+  useEffect(() => {
+    if (!city?.id) return
+    supabase
+      .from('org_categories')
+      .select('organizations(*)')
+      .eq('city_id', city.id)
+      .eq('type', type)
+      .single()
+      .then(({ data }) => {
+        setOrg(data?.organizations || null)
+      })
+  }, [city?.id, type])
 
-  function submit(e) {
+  async function geocodeAddress(addr) {
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addr + ' Milpitas California')}&format=json&limit=1&countrycodes=us`,
+        { headers: { 'Accept-Language': 'en' } }
+      )
+      const data = await res.json()
+      if (data.length > 0) {
+        return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) }
+      }
+    } catch {}
+    return null
+  }
+
+  async function submit(e) {
     e.preventDefault()
     if (!title.trim()) return setError('Give the spot a short name so people can find it.')
     if (!address.trim()) return setError('Add the street or landmark so the crew can find it.')
     if (!description.trim()) return setError('Describe what needs doing here.')
     setError('')
-    setCreated(addSpot({
-      type, title, address, description,
-      lat: coords.lat, lng: coords.lng,
-      photo: photo?.preview || null,
-    }))
+    setSubmitting(true)
+    try {
+      // Use clicked coords if precise, otherwise geocode from address
+      let lat = coords?.lat
+      let lng = coords?.lng
+      const isCityCenter = Math.abs(lat - 37.4323) < 0.001 && Math.abs(lng - (-121.8996)) < 0.001
+      if (!lat || !lng || isCityCenter) {
+        const geocoded = await geocodeAddress(address)
+        if (geocoded) { lat = geocoded.lat; lng = geocoded.lng }
+      }
+      const spot = await addSpot({
+        type, title, address, description,
+        lat, lng,
+        photo: photo?.preview || null,
+      })
+      setCreated(spot)
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (created) {
@@ -260,7 +305,7 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
             <Icon name="checkCircle" size="lg" style={{ marginTop: 1, color: 'var(--green)' }} />
             <div style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--text)' }}>
               <strong>{created.title}</strong> is on the {city.name} map, and the request
-              went to <strong>{org.name}</strong>.
+              went to <strong>{org?.name || 'our local partners'}</strong>.
             </div>
           </div>
           {created.photo && (
@@ -276,7 +321,9 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
           </div>
           <div style={{ fontSize: 13, color: 'var(--muted)', display: 'flex', alignItems: 'center', gap: 7 }}>
             <Icon name="mail" size="sm" />
-            <a href={`mailto:${org.email}`} style={{ fontWeight: 600 }}>{org.email}</a>
+            <a href={`mailto:${org?.email || 'hello@beautifymycities.org'}`} style={{ fontWeight: 600 }}>
+              {org?.email || 'hello@beautifymycities.org'}
+            </a>
           </div>
         </div>
       </Modal>
@@ -289,11 +336,11 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
       onClose={onClose}
       width={540}
       title="Report a spot that needs work"
-      subtitle={`Pin placed in ${city.name} at ${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}`}
+      subtitle={`Pin placed in ${city.name} — location set from address`}
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button onClick={submit}>Send request</Button>
+          <Button onClick={submit} disabled={submitting}>{submitting ? 'Sending...' : 'Send request'}</Button>
         </>
       }
     >
@@ -365,8 +412,8 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
           border: '1px solid var(--border)', borderRadius: 'var(--radius)',
         }}>
           <div style={{ fontSize: 12.5, color: 'var(--muted)', marginBottom: 4 }}>This request goes to</div>
-          <div style={{ fontSize: 14, fontWeight: 700 }}>{org.name}</div>
-          <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 2 }}>{org.focus}</div>
+          <div style={{ fontSize: 14, fontWeight: 700 }}>{org?.name || 'Local organization'}</div>
+          <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 2 }}>{org?.focus || 'We\'ll route this to the right team'}</div>
         </div>
 
         <div style={{

@@ -64,18 +64,16 @@ export default function PinMarker({ spot, onOpen, highlighted }) {
           <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 11 }}>
             {spot.upvotes} upvotes · {spot.org?.name}
           </div>
-          {!isPending && (
-            <button
-              onClick={() => onOpen(spot.id)}
-              style={{
-                width: '100%', padding: '8px 12px', borderRadius: 'var(--radius)',
-                cursor: 'pointer', background: 'var(--navy)', color: '#fff',
-                border: 'none', fontSize: 13, fontWeight: 600,
-              }}
-            >
-              View details
-            </button>
-          )}
+          <button
+            onClick={() => onOpen(spot.id)}
+            style={{
+              width: '100%', padding: '8px 12px', borderRadius: 'var(--radius)',
+              cursor: 'pointer', background: 'var(--navy)', color: '#fff',
+              border: 'none', fontSize: 13, fontWeight: 600,
+            }}
+          >
+            View details
+          </button>
         </div>
       </Popup>
     </Marker>

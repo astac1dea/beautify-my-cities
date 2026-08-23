@@ -1,16 +1,15 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Logo } from '../components/layout/Wordmark'
 import { CITIES } from '../lib/cities'
-import { useAppState } from '../hooks/useStore'
-import { cityStats } from '../lib/store'
+import { useCityStats } from '../hooks/useCityStats'
 import Icon from '../components/ui/Icon'
 
 const CITY_SHORT = {
-  'city-milpitas':  'MIL',
-  'city-fremont':   'FRE',
-  'city-sanjose':   'SJ',
-  'city-sunnyvale': 'SUN',
+  'milpitas':  'MIL',
+  'fremont':   'FRE',
+  'san-jose':  'SJ',
+  'sunnyvale': 'SUN',
 }
 
 const CORAL      = '#e8845a'
@@ -22,7 +21,7 @@ function CityCard({ c, selected, onSelect }) {
   const [hov, setHov] = useState(false)
   return (
     <button
-      onClick={() => onSelect(c.id)}
+      onClick={() => onSelect(c.slug)}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
@@ -41,7 +40,7 @@ function CityCard({ c, selected, onSelect }) {
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: 9.5, fontWeight: 700, letterSpacing: '0.02em',
       }}>
-        {CITY_SHORT[c.id] || c.name[0]}
+        {CITY_SHORT[c.slug] || c.name[0]}
       </span>
       <span style={{ fontSize: 12.5, fontWeight: 700, color: selected ? NAVY : '#fff', flex: 1 }}>
         {c.name}
@@ -106,9 +105,8 @@ function ActionCard({ icon, title, desc, onClick, primary }) {
 
 export default function LandingPage() {
   const navigate = useNavigate()
-  const [selectedCityId, setSelectedCityId] = useState('city-milpitas')
-  const state = useAppState()
-  const stats = useMemo(() => cityStats(state), [state])
+  const [selectedCityId, setSelectedCityId] = useState('milpitas')
+  const stats = useCityStats()
 
   function go(section) {
     navigate(`/city/${selectedCityId}${section ? '#' + section : ''}`)
@@ -243,8 +241,8 @@ export default function LandingPage() {
             }}>
               {CITIES.map(c => (
                 <CityCard
-                  key={c.id} c={c}
-                  selected={selectedCityId === c.id}
+                  key={c.slug} c={c}
+                  selected={selectedCityId === c.slug}
                   onSelect={setSelectedCityId}
                 />
               ))}

@@ -44,7 +44,6 @@ export async function fetchSpots(cityId) {
     .from('spots')
     .select(`
       *,
-      profiles (id, display_name, avatar_color),
       votes (id, user_id, voter_name)
     `)
     .eq('city_id', cityId)
@@ -137,7 +136,6 @@ export async function fetchEvents(cityId) {
     .from('events')
     .select(`
       *,
-      organizations (id, name, email, focus),
       event_signups (id, user_id)
     `)
     .eq('city_id', cityId)

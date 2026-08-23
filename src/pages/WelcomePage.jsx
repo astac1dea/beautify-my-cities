@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import PublicHeader from '../components/layout/PublicHeader'
 import { Logo } from '../components/layout/Wordmark'
 import Button from '../components/ui/Button'
@@ -11,8 +12,7 @@ import PinPopup from '../components/map/PinPopup'
 import EventModal from '../components/events/EventModal'
 import { useSpots } from '../hooks/useSpots'
 import { useEvents } from '../hooks/useEvents'
-import { useAppState } from '../hooks/useStore'
-import { cityStats } from '../lib/store'
+import { useCityStats } from '../hooks/useCityStats'
 import { AWARD_TIERS, PIN_TYPES } from '../lib/constants'
 import { formatDateLong, formatTimeRange, plural } from '../lib/format'
 import { useCity } from '../hooks/useCity'
@@ -88,7 +88,7 @@ function EventCard({ event, onOpen }) {
           </div>
           <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start' }}>
             <Icon name="building" size="sm" style={{ marginTop: 2, color: 'var(--muted-light)' }} />
-            {event.org.name}
+            {event.org?.name || 'Local organization'}
           </div>
         </div>
 
@@ -107,11 +107,13 @@ function EventCard({ event, onOpen }) {
 }
 
 export default function WelcomePage() {
+  const { cityId } = useParams()
   const { spots } = useSpots()
   const { upcoming } = useEvents()
-  const { city } = useCity()
-  const state = useAppState()
-  const stats = useMemo(() => cityStats(state), [state])
+  const { city, setCity } = useCity()
+  const stats = useCityStats()
+
+  useEffect(() => { if (cityId) setCity(cityId) }, [cityId])
 
   const [filter, setFilter] = useState('all')
   const [placing, setPlacing] = useState(false)

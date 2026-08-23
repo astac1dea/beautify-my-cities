@@ -1,7 +1,7 @@
 import { useMemo, useEffect, useState, useCallback } from 'react'
 import { useAppState } from './useStore'
-import { allSpots, mySpots, spotRanking, decorateSpot } from '../lib/store'
-import { fetchSpots, insertSpot, fetchOrgForSpot, subscribeToSpots } from '../lib/supabase-store'
+import { allSpots, mySpots, spotRanking } from '../lib/store'
+import { fetchSpots, insertSpot } from '../lib/supabase-store'
 import { supabase } from '../lib/supabase'
 import { useCity } from './useCity'
 import { useAuth } from './useAuth'
@@ -16,6 +16,11 @@ export function useSpots() {
   const [supaSpots, setSupaSpots] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  // Clear old localStorage demo data so Supabase takes over
+  useEffect(() => {
+    try { localStorage.removeItem('bmc.state.v2') } catch {}
+  }, [])
 
   const load = useCallback(async () => {
     if (!supabase || !city?.id) return
@@ -46,12 +51,11 @@ export function useSpots() {
   // Initial load
   useEffect(() => { load() }, [load])
 
-  // Realtime subscription — map updates instantly when anyone pins a spot
+  // Reload spots every 30 seconds as a simple alternative to realtime
   useEffect(() => {
-    if (!supabase || !city?.id) return
-    const channel = subscribeToSpots(city.id, () => load())
-    return () => supabase.removeChannel(channel)
-  }, [city?.id, load])
+    const interval = setInterval(() => load(), 30000)
+    return () => clearInterval(interval)
+  }, [load])
 
   // Use Supabase data if available, otherwise fall back to localStorage
   const spots = supaSpots ?? allSpots(state)
@@ -94,43 +98,32 @@ export function useSpots() {
 // ─── useSpot ──────────────────────────────────────────────────────────────────
 // Single spot — tries Supabase first, falls back to localStorage.
 
+// ─── useSpot ──────────────────────────────────────────────────────────────────
 export function useSpot(spotId) {
-  const state = useAppState()
   const { user } = useAuth()
   const [supaSpot, setSupaSpot] = useState(null)
 
-  useEffect(() => {
+  const loadSpot = useCallback(async () => {
     if (!supabase || !spotId) return
-    supabase
+    const { data, error } = await supabase
       .from('spots')
-      .select(`
-        *,
-        profiles (id, display_name, avatar_color),
-        votes (id, user_id, voter_name),
-        organizations (id, name, email, phone, focus, blurb, contact_name)
-      `)
+      .select(`*, votes (id, user_id, voter_name), organizations (id, name, email, phone, focus, blurb, contact_name)`)
       .eq('id', spotId)
       .single()
-      .then(({ data, error }) => {
-        if (error || !data) return
-        setSupaSpot({
-          ...data,
-          upvotes: (data.base_upvotes || 0) + (data.votes?.length || 0),
-          hasVoted: user
-            ? data.votes?.some(v => v.user_id === user.id)
-            : false,
-          reporter: data.profiles || null,
-          org: data.organizations || null,
-          event: null,
-        })
-      })
+    if (error || !data) return
+    setSupaSpot({
+      ...data,
+      upvotes: (data.base_upvotes || 0) + (data.votes?.length || 0),
+      hasVoted: user ? data.votes?.some(v => v.user_id === user.id || v.voter_name) : false,
+      reporter: null,
+      org: data.organizations || null,
+      event: null,
+    })
   }, [spotId, user?.id])
 
-  if (supaSpot) return supaSpot
+  useEffect(() => { loadSpot() }, [loadSpot])
 
-  // Fallback to localStorage
-  const raw = state.spots.find(s => s.id === spotId)
-  return raw ? decorateSpot(raw, state) : null
+  return [supaSpot, loadSpot]
 }
 
 export default useSpots

@@ -7,7 +7,6 @@ import Icon from '../components/ui/Icon'
 import EventModal from '../components/events/EventModal'
 import { useEvents } from '../hooks/useEvents'
 import { monthGrid, monthLabel, formatTimeRange, formatTimeCompact, formatDateLong, DAYS, plural } from '../lib/format'
-import { todayISO } from '../lib/store'
 
 function EventRow({ event, onOpen }) {
   return (
@@ -69,7 +68,7 @@ function EventRow({ event, onOpen }) {
 
 export default function CalendarPage() {
   const { mine } = useEvents()
-  const today = todayISO()
+  const today = new Date().toISOString().split('T')[0]
   const now = new Date()
   const [cursor, setCursor] = useState({ year: now.getFullYear(), month: now.getMonth() })
   const [openEventId, setOpenEventId] = useState(null)
