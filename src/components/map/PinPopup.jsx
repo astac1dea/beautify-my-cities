@@ -82,7 +82,7 @@ function OrgCard({ org, isAdmin }) {
             background: '#F7EEE1', border: '1px solid #E8C99A',
             borderRadius: 4, padding: '2px 7px',
           }}>
-            Admin view — contact info pending org confirmation
+            Unverified — reach out to confirm details with org
           </span>
         )}
       </div>

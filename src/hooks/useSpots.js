@@ -114,7 +114,9 @@ export function useSpot(spotId) {
     setSupaSpot({
       ...data,
       upvotes: (data.base_upvotes || 0) + (data.votes?.length || 0),
-      hasVoted: user ? data.votes?.some(v => v.user_id === user.id || v.voter_name) : false,
+      hasVoted: user
+        ? data.votes?.some(v => v.user_id === user.id)
+        : false,
       reporter: null,
       org: data.organizations || null,
       event: null,

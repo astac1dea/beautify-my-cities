@@ -8,7 +8,7 @@ export const CITIES = [
     state: 'California',
     lat: 37.4323,
     lng: -121.8996,
-    zoom: 13,
+    zoom: 14,
   },
   {
     id: '00000001-0000-0000-0000-000000000002',
@@ -17,7 +17,7 @@ export const CITIES = [
     state: 'California',
     lat: 37.5485,
     lng: -121.9886,
-    zoom: 12,
+    zoom: 13,
   },
   {
     id: '00000001-0000-0000-0000-000000000003',
@@ -26,7 +26,7 @@ export const CITIES = [
     state: 'California',
     lat: 37.3382,
     lng: -121.8863,
-    zoom: 12,
+    zoom: 13,
   },
   {
     id: '00000001-0000-0000-0000-000000000004',
@@ -35,7 +35,7 @@ export const CITIES = [
     state: 'California',
     lat: 37.3688,
     lng: -122.0363,
-    zoom: 13,
+    zoom: 14,
   },
 ]
 

@@ -2,39 +2,47 @@ import Icon from '../ui/Icon'
 
 export default function StatCard({ icon, number, label, trend, tone = 'neutral' }) {
   const tones = {
-    neutral: { color: 'var(--muted)', bg: '#EDF0F3' },
-    good:    { color: 'var(--green)', bg: 'var(--green-soft)' },
-    warn:    { color: 'var(--amber)', bg: 'var(--amber-soft)' },
-    brand:   { color: 'var(--navy)',  bg: 'var(--navy-soft)' },
+    neutral: { color: 'var(--muted)',  bg: '#EDF0F3' },
+    good:    { color: 'var(--green)',  bg: 'var(--green-soft)' },
+    warn:    { color: 'var(--amber)',  bg: 'var(--amber-soft)' },
+    brand:   { color: 'var(--navy)',   bg: 'var(--navy-soft)' },
   }
   const t = tones[tone] || tones.neutral
 
   return (
-    <div className="card" style={{ padding: '20px 22px' }}>
-      <div style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-        gap: 12, marginBottom: 16,
-      }}>
+    <div className="card" style={{ padding: '18px 20px', display: 'grid', gap: 12 }}>
+      {/* Top row: icon + trend badge */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
         <div style={{
-          width: 38, height: 38, borderRadius: 'var(--radius)',
-          background: 'var(--navy-soft)', color: 'var(--navy)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          width: 36, height: 36, borderRadius: 'var(--radius)',
+          background: t.bg, color: t.color,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
         }}>
           <Icon name={icon} size="md" />
         </div>
         {trend && (
           <span style={{
-            fontSize: 12, fontWeight: 600, padding: '3px 9px', borderRadius: 4,
+            fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 4,
             background: t.bg, color: t.color, whiteSpace: 'nowrap',
+            letterSpacing: '0.02em',
           }}>
             {trend}
           </span>
         )}
       </div>
-      <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.025em' }}>
-        {number}
+
+      {/* Number + label */}
+      <div>
+        <div style={{
+          fontSize: 30, fontWeight: 800, lineHeight: 1,
+          letterSpacing: '-0.025em', color: 'var(--text)',
+        }}>
+          {number ?? '—'}
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 5, fontWeight: 500 }}>
+          {label}
+        </div>
       </div>
-      <div style={{ fontSize: 13.5, color: 'var(--muted)', marginTop: 7 }}>{label}</div>
     </div>
   )
 }

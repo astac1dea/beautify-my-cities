@@ -239,42 +239,52 @@ export default function WelcomePage() {
       </div>
 
       {/* ------------------------------------------------------------- map */}
-      <section id="map" style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
-        {/* Section header — title left, pills right */}
-        <div style={{
-          display: 'flex', alignItems: 'flex-start',
-          justifyContent: 'space-between', gap: 24, flexWrap: 'wrap',
-          marginBottom: 24,
-        }}>
-          <div style={{ maxWidth: 560 }}>
-            <div className="eyebrow" style={{ color: 'var(--link)', marginBottom: 12 }}>
-              Every reported spot
+      <section id="map" style={{ paddingTop: 56, paddingBottom: 56 }}>
+        {/* Section header — centered, stays in SHELL */}
+        <div style={{ ...SHELL, marginBottom: 24 }}>
+          <div style={{
+            display: 'flex', alignItems: 'flex-start',
+            justifyContent: 'space-between', gap: 24, flexWrap: 'wrap',
+          }}>
+            <div style={{ maxWidth: 560 }}>
+              <div className="eyebrow" style={{ color: 'var(--link)', marginBottom: 12 }}>
+                Every reported spot
+              </div>
+              <h2 style={{ fontSize: 30, fontWeight: 800, marginBottom: 10 }}>
+                The {city.name} map
+              </h2>
+              <p style={{ fontSize: 15.5, color: 'var(--muted)', lineHeight: 1.6 }}>
+                Each pin is something a resident reported. Click one to see who is responsible for it,
+                where the request stands, and whether there is a volunteer day scheduled.
+              </p>
             </div>
-            <h2 style={{ fontSize: 30, fontWeight: 800, marginBottom: 10 }}>
-              The {city.name} map
-            </h2>
-            <p style={{ fontSize: 15.5, color: 'var(--muted)', lineHeight: 1.6 }}>
-              Each pin is something a resident reported. Click one to see who is responsible for it,
-              where the request stands, and whether there is a volunteer day scheduled.
-            </p>
-          </div>
-          <div style={{ paddingTop: 4 }}>
-            <FilterPills value={filter} onChange={v => { setFilter(v); setFocusSpotId(null) }} spots={spots} />
+            <div style={{ paddingTop: 4 }}>
+              <FilterPills value={filter} onChange={v => { setFilter(v); setFocusSpotId(null) }} spots={spots} />
+            </div>
           </div>
         </div>
 
-        <div className="split">
+        {/* Full-width map + leaderboard — breaks out of SHELL */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 340px',
+          borderTop: '1px solid var(--border)',
+          borderBottom: '1px solid var(--border)',
+          borderLeft: '1px solid var(--border)',
+          marginLeft: 28,
+          background: 'var(--surface)',
+        }}>
           {/* Map */}
-          <div className="card" style={{ overflow: 'hidden' }}>
-            {/* Toolbar just above the map */}
+          <div style={{ overflow: 'hidden', borderRight: '1px solid var(--border)' }}>
+            {/* Toolbar */}
             <div style={{
-              padding: '12px 16px', borderBottom: '1px solid var(--border)',
+              padding: '12px 20px', borderBottom: '1px solid var(--border)',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
               <span style={{ fontSize: 13, color: 'var(--muted)' }}>
                 {placing
                   ? 'Click the map to place your pin.'
-                  : `Showing ${visible.length} of ${spots.length} reported spots.`}
+                  : `Showing ${visible.length} of ${spots.length} reported spots${filter !== 'all' ? ` · ${filter}` : ''}.`}
               </span>
               <Button
                 variant={placing ? 'secondary' : 'primary'}
@@ -291,14 +301,14 @@ export default function WelcomePage() {
               draft={draft}
               onMapClick={handleMapClick}
               onOpenSpot={id => { setOpenSpotId(id); setFocusSpotId(id) }}
-              height={520}
+              height={580}
               focusSpotId={focusSpotId}
               filter={filter}
             />
           </div>
 
-          {/* Leaderboard — fixed height matching map, scrollable */}
-          <div className="card" style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: 568 }}>
+          {/* Leaderboard */}
+          <div style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: 628 }}>
             <div style={{
               padding: '15px 18px', borderBottom: '1px solid var(--border)',
               fontSize: 14.5, fontWeight: 700, flexShrink: 0,
