@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import Modal from '../ui/Modal'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
@@ -11,6 +12,7 @@ import { useVote } from '../../hooks/useVote'
 import { useAppState } from '../../hooks/useStore'
 import { spotRanking } from '../../lib/store'
 import { useCity } from '../../hooks/useCity'
+import { useAuth } from '../../hooks/useAuth'
 
 function StatusTimeline({ status }) {
   const current = SPOT_STATUS[status]?.step ?? 0
@@ -57,15 +59,24 @@ function StatusTimeline({ status }) {
   )
 }
 
-function OrgCard({ org }) {
+function OrgCard({ org, isAdmin }) {
   return (
     <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
       <div style={{
         padding: '11px 17px', background: 'var(--surface-alt)', borderBottom: '1px solid var(--border)',
         fontSize: 11.5, fontWeight: 700, letterSpacing: 0.05, textTransform: 'uppercase',
-        color: 'var(--muted)',
+        color: 'var(--muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
-        Who handles this
+        <span>Who handles this</span>
+        {isAdmin && (
+          <span style={{
+            fontSize: 10, fontWeight: 700, color: '#8A5417',
+            background: '#F7EEE1', border: '1px solid #E8C99A',
+            borderRadius: 4, padding: '2px 7px',
+          }}>
+            Admin view — contact info pending org confirmation
+          </span>
+        )}
       </div>
       <div style={{ padding: 17, display: 'grid', gap: 13 }}>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -85,117 +96,43 @@ function OrgCard({ org }) {
         <div style={{ fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.6 }}>{org.blurb}</div>
 
         <div style={{ display: 'grid', gap: 7, fontSize: 13.5, paddingTop: 2 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <Icon name="user" size="sm" style={{ color: 'var(--muted-light)' }} />
-            <span>{org.contact_name}</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <Icon name="mail" size="sm" style={{ color: 'var(--muted-light)' }} />
-            <a href={`mailto:${org.email}`} style={{ fontWeight: 600 }}>{org.email}</a>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <Icon name="phone" size="sm" style={{ color: 'var(--muted-light)' }} />
-            <span>{org.phone}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function VoteSection({ spot, rank, vote, voterName, setVoterName }) {
-  const [nameInput, setNameInput] = useState(voterName || '')
-  const [showNameField, setShowNameField] = useState(false)
-  const [nameError, setNameError] = useState('')
-  const [justVoted, setJustVoted] = useState(false)
-
-  function handleVoteClick() {
-    if (spot.hasVoted) {
-      vote(spot.id, voterName)
-      return
-    }
-    if (voterName) {
-      vote(spot.id, voterName)
-      setJustVoted(true)
-      return
-    }
-    setShowNameField(true)
-  }
-
-  function handleSubmitName() {
-    const n = nameInput.trim()
-    if (!n) return setNameError('Please enter your name to upvote.')
-    setNameError('')
-    setVoterName(n)
-    vote(spot.id, n)
-    setShowNameField(false)
-    setJustVoted(true)
-  }
-
-  return (
-    <div style={{
-      padding: '16px 20px', background: 'var(--surface-alt)',
-      border: '1px solid var(--border)', borderRadius: 'var(--radius)',
-      display: 'grid', gap: 14,
-    }}>
-      <div style={{
-        display: 'flex', alignItems: 'center',
-        justifyContent: 'space-between', gap: 16, flexWrap: 'wrap',
-      }}>
-        <div>
-          <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.02em' }}>
-            {spot.upvotes}
-          </div>
-          <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 4 }}>
-            upvotes{rank ? ` · ranked #${rank} in the city` : ''}
-          </div>
-        </div>
-        <Button
-          variant={spot.hasVoted || justVoted ? 'secondary' : 'primary'}
-          icon={spot.hasVoted || justVoted ? 'check' : 'thumbsUp'}
-          onClick={handleVoteClick}
-        >
-          {spot.hasVoted || justVoted ? 'Upvoted' : 'Upvote this spot'}
-        </Button>
-      </div>
-
-      {showNameField && (
-        <div style={{ display: 'grid', gap: 8 }}>
-          <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5 }}>
-            Just your name — no account needed. Helps keep votes meaningful.
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <input
-              autoFocus
-              value={nameInput}
-              onChange={e => { setNameInput(e.target.value); setNameError('') }}
-              onKeyDown={e => e.key === 'Enter' && handleSubmitName()}
-              placeholder="Your name"
-              style={{
-                flex: 1, padding: '8px 12px', borderRadius: 'var(--radius)',
-                border: `1px solid ${nameError ? 'var(--red)' : 'var(--border-firm)'}`,
-                background: 'var(--surface)', fontSize: 14, color: 'var(--text)',
-              }}
-            />
-            <Button onClick={handleSubmitName}>Submit</Button>
-          </div>
-          {nameError && (
-            <div style={{ fontSize: 12.5, color: 'var(--red)' }}>{nameError}</div>
+          {isAdmin ? (
+            // Admin sees real contact info with pending confirmation note
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                <Icon name="user" size="sm" style={{ color: 'var(--muted-light)' }} />
+                <span style={{ color: 'var(--muted)' }}>{org.contact_name || '—'}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                <Icon name="mail" size="sm" style={{ color: 'var(--muted-light)' }} />
+                <a href={`mailto:${org.email}`} style={{ fontWeight: 600 }}>{org.email}</a>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                <Icon name="phone" size="sm" style={{ color: 'var(--muted-light)' }} />
+                <span style={{ color: 'var(--muted)' }}>{org.phone || '—'}</span>
+              </div>
+            </>
+          ) : (
+            // Public sees placeholder until org confirms partnership
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                <Icon name="mail" size="sm" style={{ color: 'var(--muted-light)' }} />
+                <a href="mailto:hello@beautifymycities.org" style={{ fontWeight: 600 }}>
+                  hello@beautifymycities.org
+                </a>
+              </div>
+              <div style={{
+                fontSize: 12, color: 'var(--muted)', fontStyle: 'italic',
+                background: 'var(--surface-alt)', padding: '8px 10px',
+                borderRadius: 'var(--radius)', border: '1px solid var(--border)',
+              }}>
+                We are working with {org.name} to coordinate this request.
+                Contact us at hello@beautifymycities.org for updates.
+              </div>
+            </>
           )}
         </div>
-      )}
-
-      {voterName && !showNameField && spot.hasVoted && (
-        <div style={{ fontSize: 12, color: 'var(--muted)' }}>
-          Voting as <strong>{voterName}</strong> ·{' '}
-          <button
-            onClick={() => { setShowNameField(true); setNameInput('') }}
-            style={{ background: 'none', border: 'none', color: 'var(--link)', cursor: 'pointer', fontSize: 12, padding: 0 }}
-          >
-            change
-          </button>
-        </div>
-      )}
+      </div>
     </div>
   )
 }
@@ -204,7 +141,9 @@ export default function PinPopup({ spotId, onClose }) {
   const spot = useSpot(spotId)
   const state = useAppState()
   const { city } = useCity()
-  const { vote, voterName, setVoterName } = useVote()
+  const { vote, canVote } = useVote()
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'admin'
 
   const rank = useMemo(() => {
     if (!spot) return null
@@ -257,7 +196,33 @@ export default function PinPopup({ spotId, onClose }) {
         <div style={{ fontSize: 15, lineHeight: 1.65 }}>{spot.description}</div>
 
         {/* Upvote */}
-        <VoteSection spot={spot} rank={rank} vote={vote} voterName={voterName} setVoterName={setVoterName} />
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          gap: 16, padding: '16px 20px', background: 'var(--surface-alt)',
+          border: '1px solid var(--border)', borderRadius: 'var(--radius)', flexWrap: 'wrap',
+        }}>
+          <div>
+            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.02em' }}>
+              {spot.upvotes}
+            </div>
+            <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 4 }}>
+              upvotes{rank ? ` · ranked #${rank} in the city` : ''}
+            </div>
+          </div>
+          {canVote ? (
+            <Button
+              variant={spot.hasVoted ? 'secondary' : 'primary'}
+              icon={spot.hasVoted ? 'check' : 'thumbsUp'}
+              onClick={() => vote(spot.id)}
+            >
+              {spot.hasVoted ? 'Upvoted' : 'Upvote this spot'}
+            </Button>
+          ) : (
+            <Link to="/login" style={{ textDecoration: 'none' }}>
+              <Button variant="secondary" iconAfter="arrowRight">Log in to upvote</Button>
+            </Link>
+          )}
+        </div>
 
         {/* Where the request stands */}
         <div style={{ display: 'grid', gap: 13 }}>
@@ -266,7 +231,7 @@ export default function PinPopup({ spotId, onClose }) {
           <div style={{ fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.6 }}>{status.blurb}</div>
         </div>
 
-        <OrgCard org={spot.org} />
+        <OrgCard org={spot.org} isAdmin={isAdmin} />
 
         {/* The volunteer event for this spot, if one exists yet */}
         <div style={{ display: 'grid', gap: 15 }}>
