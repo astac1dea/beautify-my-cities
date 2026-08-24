@@ -23,7 +23,7 @@ export default function Modal({ open, onClose, title, subtitle, width = 580, chi
         position: 'fixed', inset: 0, zIndex: 1000,
         background: 'rgba(14, 27, 42, .55)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: 20,
+        padding: 'var(--modal-gutter, 20px)',
       }}
     >
       <div
@@ -32,13 +32,13 @@ export default function Modal({ open, onClose, title, subtitle, width = 580, chi
           background: 'var(--surface)',
           borderRadius: 'var(--radius-lg)',
           width: '100%', maxWidth: width,
-          maxHeight: 'calc(100vh - 40px)',
+          maxHeight: 'calc(100dvh - 2 * var(--modal-gutter, 20px))',
           display: 'flex', flexDirection: 'column',
           boxShadow: 'var(--shadow-lg)',
         }}
       >
         <div style={{
-          padding: '20px 26px', borderBottom: '1px solid var(--border)',
+          padding: 'var(--modal-pad, 20px 26px)', borderBottom: '1px solid var(--border)',
           display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 18,
         }}>
           <div style={{ minWidth: 0 }}>
@@ -61,13 +61,13 @@ export default function Modal({ open, onClose, title, subtitle, width = 580, chi
           </button>
         </div>
 
-        <div style={{ padding: '24px 26px', overflowY: 'auto', flex: 1 }}>
+        <div style={{ padding: 'var(--modal-body-pad, 24px 26px)', overflowY: 'auto', flex: 1 }}>
           {children}
         </div>
 
         {footer && (
-          <div style={{
-            padding: '16px 26px', borderTop: '1px solid var(--border)',
+          <div className="modal-footer" style={{
+            padding: 'var(--modal-pad, 16px 26px)', borderTop: '1px solid var(--border)',
             display: 'flex', gap: 10, justifyContent: 'flex-end', flexWrap: 'wrap',
             background: 'var(--surface-alt)',
             borderBottomLeftRadius: 'var(--radius-lg)',

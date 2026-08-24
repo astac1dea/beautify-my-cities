@@ -76,7 +76,7 @@ export default function ProfilePage() {
         actions={<Button variant="secondary" onClick={logOut}>Log out</Button>}
       />
 
-      <div className="split" style={{ padding: 32 }}>
+      <div className="split page-pad">
         <div style={{ display: 'grid', gap: 20 }}>
           <Card title="Your details">
             <form onSubmit={save} style={{ display: 'grid', gap: 16 }}>

@@ -51,7 +51,7 @@ export default function DashboardPage() {
         }
       />
 
-      <div style={{ padding: 32, display: 'grid', gap: 20 }}>
+      <div className="page-pad" style={{ display: 'grid', gap: 20 }}>
         {/* Headline numbers */}
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16,

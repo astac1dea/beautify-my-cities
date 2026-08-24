@@ -39,7 +39,7 @@ export default function MapPage() {
         addPinLabel={placing ? 'Cancel' : 'Report a spot'}
       />
 
-      <div style={{ padding: 32 }}>
+      <div className="page-pad">
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
           gap: 16, marginBottom: 28,

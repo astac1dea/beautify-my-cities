@@ -35,6 +35,17 @@ The login page has one-tap buttons for all three. Password for each is `demo1234
 
 Signing up creates a real (local) account too.
 
+## Mobile
+
+The layout breaks at 860px. Below it the fixed sidebar becomes a drawer behind
+a hamburger in a slim top bar, the public header folds its city picker, nav and
+buttons into a menu panel, page gutters tighten from 32px to 16px, modals go
+near full-bleed with stacked footer buttons, and the calendar drops its month
+grid for the event lists, because seven columns of day cells cannot be read on
+a phone. Wide tables keep their own horizontal scroll rather than stretching
+the page, and `overflow-x` is pinned shut on `html, body` so nothing can push
+the page sideways.
+
 ## Design
 
 One typeface (Public Sans), a deep navy against warm greys, and outline SVG

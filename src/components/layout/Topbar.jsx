@@ -11,7 +11,7 @@ export default function Topbar({
     <header style={{
       background: 'var(--surface)',
       borderBottom: '1px solid var(--border)',
-      padding: '17px 32px',
+      padding: 'var(--topbar-pad, 17px 32px)',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',

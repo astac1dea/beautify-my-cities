@@ -130,3 +130,77 @@ table tbody tr:hover { background: var(--surface-alt); }
 .leaflet-popup-content { margin: 14px 16px; }
 .leaflet-popup-content-wrapper { border-radius: var(--radius); box-shadow: var(--shadow-lg); }
 .leaflet-bar a { color: var(--text) !important; }
+
+/* ------------------------------------------------------------- responsive */
+
+/* Standard page padding, tightened on small screens where 32px of gutter
+   costs more than it buys. */
+.page-pad { padding: 32px; }
+
+/* The centred container the public pages sit in. */
+.shell { max-width: 1220px; margin: 0 auto; padding: 0 28px; }
+
+@media (max-width: 860px) {
+  .page-pad { padding: 16px; }
+  .shell { padding: 0 16px; }
+  .split { gap: 16px; }
+}
+
+@media (max-width: 560px) {
+  .page-pad { padding: 14px; }
+  .shell { padding: 0 14px; }
+}
+
+/* Show/hide by breakpoint. `sm` means phone-sized. */
+.hide-sm { display: revert; }
+.only-sm { display: none; }
+
+@media (max-width: 860px) {
+  .hide-sm { display: none !important; }
+  .only-sm { display: revert !important; }
+}
+
+/* Tables keep their own horizontal scroll rather than stretching the page. */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Nothing may push the page sideways. */
+html, body { max-width: 100%; overflow-x: hidden; }
+
+/* Touch targets stay thumb-sized on small screens. */
+@media (max-width: 860px) {
+  button, a { -webkit-tap-highlight-color: rgba(20, 57, 94, .12); }
+}
+
+/* Topbar gutters match the page gutters at each breakpoint. */
+:root { --topbar-pad: 17px 32px; }
+@media (max-width: 860px) { :root { --topbar-pad: 14px 16px; } }
+@media (max-width: 560px) { :root { --topbar-pad: 12px 14px; } }
+
+/* A month grid is unreadable on a phone; the event lists carry it instead. */
+@media (max-width: 760px) {
+  .month-grid { display: none !important; }
+}
+
+/* Modals: full-bleed gutters and tighter padding on phones. */
+:root {
+  --modal-gutter: 20px;
+  --modal-pad: 20px 26px;
+  --modal-body-pad: 24px 26px;
+}
+
+@media (max-width: 560px) {
+  :root {
+    --modal-gutter: 10px;
+    --modal-pad: 15px 17px;
+    --modal-body-pad: 18px 17px;
+  }
+}
+
+@media (max-width: 460px) {
+  .modal-footer { flex-direction: column-reverse; }
+  .modal-footer > * { width: 100%; }
+  .modal-footer button { width: 100%; }
+}

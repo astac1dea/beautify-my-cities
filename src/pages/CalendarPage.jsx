@@ -103,9 +103,10 @@ export default function CalendarPage() {
         }
       />
 
-      <div className="split" style={{ padding: 32 }}>
-        {/* Month grid */}
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+      <div className="split page-pad">
+        {/* Month grid. Hidden on phones - seven columns of day cells cannot
+            be read at that width, so the lists below carry the page. */}
+        <div className="month-grid" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
           <div style={{
             padding: '16px 20px', borderBottom: '1px solid var(--border)',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
@@ -134,7 +135,7 @@ export default function CalendarPage() {
               const isToday = cell.iso === today
               return (
                 <div key={cell.iso} style={{
-                  minHeight: 92, padding: 7, borderBottom: '1px solid var(--border)',
+                  minHeight: 78, padding: 6, borderBottom: '1px solid var(--border)',
                   borderRight: '1px solid var(--border)',
                   background: cell.inMonth ? 'var(--surface)' : 'var(--bg)',
                   opacity: cell.inMonth ? 1 : 0.55,

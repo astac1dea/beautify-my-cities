@@ -16,8 +16,7 @@ import { cityStats } from '../lib/store'
 import { AWARD_TIERS, PIN_TYPES } from '../lib/constants'
 import { formatDateLong, formatTimeRange, plural } from '../lib/format'
 import { useCity } from '../hooks/useCity'
-
-const SHELL = { maxWidth: 1220, margin: '0 auto', padding: '0 28px' }
+import { useIsMobile } from '../hooks/useMediaQuery'
 
 const STEPS = [
   { icon: 'pinPlus', title: 'Put it on the map',
@@ -113,6 +112,9 @@ export default function WelcomePage() {
   const state = useAppState()
   const stats = useMemo(() => cityStats(state), [state])
 
+  const isMobile = useIsMobile()
+  const mapHeight = isMobile ? 380 : 520
+
   const [filter, setFilter] = useState('all')
   const [placing, setPlacing] = useState(false)
   const [draft, setDraft] = useState(null)
@@ -136,8 +138,8 @@ export default function WelcomePage() {
       <PublicHeader />
 
       {/* ------------------------------------------------------------ hero */}
-      <section style={{ background: 'var(--navy)', color: '#fff', paddingTop: 64 }}>
-        <div style={{ ...SHELL, paddingBottom: 90 }}>
+      <section style={{ background: 'var(--navy)', color: '#fff', paddingTop: 52 }}>
+        <div className="shell" style={{ paddingBottom: 90 }}>
           <div className="eyebrow" style={{ color: 'rgba(255,255,255,.7)', marginBottom: 20 }}>
             {city.name}, {city.state}
           </div>
@@ -159,7 +161,7 @@ export default function WelcomePage() {
             spot or sign up. Not your city? Switch it at the top of the page.
           </p>
 
-          <div style={{ display: 'flex', gap: 34, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', rowGap: 20 }}>
             {[
               [stats.open, 'spots open'],
               [stats.resolved, 'resolved'],
@@ -180,7 +182,7 @@ export default function WelcomePage() {
       </section>
 
       {/* Action bar, overlapping the hero the way volunteer.gov does */}
-      <div style={{ ...SHELL, marginTop: -52, position: 'relative', zIndex: 10 }}>
+      <div className="shell" style={{ marginTop: -52, position: 'relative', zIndex: 10 }}>
         <div className="card" style={{
           padding: 22, boxShadow: 'var(--shadow-lg)',
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16,
@@ -236,7 +238,7 @@ export default function WelcomePage() {
       </div>
 
       {/* ------------------------------------------------------------- map */}
-      <section id="map" style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
+      <section id="map" className="shell" style={{ paddingTop: 56, paddingBottom: 56 }}>
         <SectionHead
           eyebrow="Every reported spot"
           title={`The ${city.name} map`}
@@ -252,7 +254,7 @@ export default function WelcomePage() {
               draft={draft}
               onMapClick={handleMapClick}
               onOpenSpot={setOpenSpotId}
-              height={520}
+              height={mapHeight}
             />
             <div style={{
               padding: '14px 20px', borderTop: '1px solid var(--border)',
@@ -328,7 +330,7 @@ export default function WelcomePage() {
 
       {/* ---------------------------------------------------------- events */}
       <section id="events" style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
+        <div className="shell" style={{ paddingTop: 56, paddingBottom: 56 }}>
           <SectionHead
             eyebrow="Coming up"
             title={`Volunteer events in ${city.name}`}
@@ -346,7 +348,7 @@ export default function WelcomePage() {
       </section>
 
       {/* ------------------------------------------------------------- how */}
-      <section id="how" style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
+      <section id="how" className="shell" style={{ paddingTop: 56, paddingBottom: 56 }}>
         <SectionHead
           eyebrow="Start to finish"
           title="How it works"
@@ -380,10 +382,10 @@ export default function WelcomePage() {
 
       {/* ----------------------------------------------------------- award */}
       <section id="award" style={{ background: 'var(--navy)', color: '#fff' }}>
-        <div style={{
-          ...SHELL, paddingTop: 64, paddingBottom: 64,
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: 52, alignItems: 'start',
+        <div className="shell" style={{
+          paddingTop: 56, paddingBottom: 56,
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: 40, alignItems: 'start',
         }}>
           <div>
             <div className="eyebrow" style={{ color: 'rgba(255,255,255,.7)', marginBottom: 18 }}>
@@ -429,10 +431,10 @@ export default function WelcomePage() {
 
       {/* ---------------------------------------------------------- footer */}
       <footer style={{ background: 'var(--navy-dark)', color: 'rgba(255,255,255,.6)' }}>
-        <div style={{
-          ...SHELL, paddingTop: 40, paddingBottom: 40,
+        <div className="shell" style={{
+          paddingTop: 36, paddingBottom: 36,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          gap: 24, flexWrap: 'wrap',
+          gap: 20, flexWrap: 'wrap',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <Logo size={32} background="rgba(255,255,255,.14)" />

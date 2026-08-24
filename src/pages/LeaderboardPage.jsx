@@ -94,7 +94,7 @@ export default function LeaderboardPage() {
         subtitle={`The spots ${city.name} most wants dealt with`}
       />
 
-      <div style={{ padding: 32, display: 'grid', gap: 20 }}>
+      <div className="page-pad" style={{ display: 'grid', gap: 20 }}>
         {myBest && (
           <div style={{
             background: 'var(--navy)', color: 'white', borderRadius: 'var(--radius-lg)',

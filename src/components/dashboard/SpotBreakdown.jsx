@@ -29,7 +29,7 @@ export default function SpotBreakdown({ spots, rankOf, onOpen }) {
           You have not pinned anything yet. Open the map and drop a pin on a spot that needs work.
         </div>
       ) : (
-        <div style={{ overflowX: 'auto' }}>
+        <div className="table-scroll">
           <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 640 }}>
             <thead>
               <tr>

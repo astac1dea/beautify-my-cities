@@ -60,10 +60,10 @@ export default function AuthPage() {
   return (
     <div style={{
       minHeight: '100vh', background: 'var(--bg)',
-      display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))',
+      display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 340px), 1fr))',
     }}>
       {/* Form */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '52px 30px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'clamp(28px, 6vw, 52px) clamp(18px, 5vw, 30px)' }}>
         <div style={{ width: '100%', maxWidth: 400 }}>
           <Link
             to="/"
@@ -151,7 +151,7 @@ export default function AuthPage() {
 
       {/* Demo accounts */}
       <div style={{
-        background: 'var(--navy)', color: '#fff', padding: '52px 30px',
+        background: 'var(--navy)', color: '#fff', padding: 'clamp(32px, 6vw, 52px) clamp(18px, 5vw, 30px)',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
       }}>
         <div style={{ width: '100%', maxWidth: 400 }}>

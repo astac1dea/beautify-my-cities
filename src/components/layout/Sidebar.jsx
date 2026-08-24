@@ -13,7 +13,8 @@ const NAV = [
   { to: '/profile',     icon: 'user',     label: 'Profile' },
 ]
 
-export default function Sidebar() {
+// `fullWidth` renders it as a drawer panel instead of a fixed rail.
+export default function Sidebar({ fullWidth = false, onNavigate }) {
   const { user, signOut } = useAuth()
   const { totals } = useHours()
   const navigate = useNavigate()
@@ -25,10 +26,12 @@ export default function Sidebar() {
 
   return (
     <div style={{
-      width: 244, background: 'var(--navy-dark)',
+      width: fullWidth ? '100%' : 244,
+      background: 'var(--navy-dark)',
       minHeight: '100vh', padding: '22px 16px',
       display: 'flex', flexDirection: 'column',
-      position: 'fixed', left: 0, top: 0, bottom: 0, zIndex: 100,
+      position: fullWidth ? 'relative' : 'fixed',
+      left: 0, top: 0, bottom: 0, zIndex: 100,
       overflowY: 'auto',
     }}>
       <div style={{ padding: '0 6px 20px', borderBottom: '1px solid rgba(255,255,255,.1)' }}>
@@ -43,7 +46,7 @@ export default function Sidebar() {
         <ul style={{ listStyle: 'none' }}>
           {NAV.map(({ to, icon, label }) => (
             <li key={to} style={{ marginBottom: 2 }}>
-              <NavLink to={to} style={({ isActive }) => ({
+              <NavLink to={to} onClick={onNavigate} style={({ isActive }) => ({
                 display: 'flex', alignItems: 'center', gap: 11,
                 padding: '10px 12px', borderRadius: 'var(--radius)', textDecoration: 'none',
                 fontSize: 14, fontWeight: isActive ? 600 : 500,

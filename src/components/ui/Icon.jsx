@@ -15,6 +15,7 @@ const PATHS = {
 
   // actions
   plus:       <path d="M12 5v14M5 12h14" />,
+  menu:       <path d="M4 7h16M4 12h16M4 17h16" />,
   check:      <path d="m4.5 12.6 5 5L19.5 6.8" />,
   checkCircle:<><circle cx="12" cy="12" r="8.6" /><path d="m8.2 12.2 2.7 2.7 5-5.3" /></>,
   close:      <path d="m6 6 12 12M18 6 6 18" />,

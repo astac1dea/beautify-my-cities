@@ -97,7 +97,7 @@ export default function HoursTable({ rows, totals, volunteerName }) {
         </div>
       ) : (
         <>
-          <div style={{ overflowX: 'auto' }}>
+          <div className="table-scroll">
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 720 }}>
               <thead>
                 <tr>
