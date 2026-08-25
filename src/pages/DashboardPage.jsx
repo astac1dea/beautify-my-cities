@@ -10,34 +10,31 @@ import UpcomingEvents from '../components/dashboard/UpcomingEvents'
 import PinPopup from '../components/map/PinPopup'
 import EventModal from '../components/events/EventModal'
 import { useAuth } from '../hooks/useAuth'
-import { useAppState } from '../hooks/useStore'
-import { useHours } from '../hooks/useEvents'
-import { mySpots, myEvents, spotRanking, residentRanking, todayISO } from '../lib/store'
+import { useHours, useEvents } from '../hooks/useEvents'
+import { useSpots } from '../hooks/useSpots'
 import { plural } from '../lib/format'
 import { useCity } from '../hooks/useCity'
 
 export default function DashboardPage() {
   const { user } = useAuth()
   const { city } = useCity()
-  const state = useAppState()
   const { rows, totals } = useHours()
+  const { mine: pins, ranking: spotRankData } = useSpots()
+  const { mine: myEventsList } = useEvents()
   const [openSpotId, setOpenSpotId] = useState(null)
   const [openEventId, setOpenEventId] = useState(null)
 
-  const { pins, ranking, upcoming, myRank, totalUpvotes, bestRank } = useMemo(() => {
-    const pins = mySpots(state)
-    const ranking = spotRanking(state)
-    const rankIndex = new Map(ranking.map(s => [s.id, s.rank]))
-    const today = todayISO()
+  const { ranking, upcoming, totalUpvotes, bestRank } = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0]
+    const rankIndex = new Map((spotRankData || []).map(s => [s.id, s.rank]))
     return {
-      pins,
       ranking: rankIndex,
-      upcoming: myEvents(state).filter(e => e.event_date >= today),
-      myRank: residentRanking(state).find(r => r.profile.id === user?.id) || null,
+      upcoming: myEventsList.filter(e => e.event_date >= today),
       totalUpvotes: pins.reduce((n, s) => n + s.upvotes, 0),
       bestRank: pins.length ? Math.min(...pins.map(s => rankIndex.get(s.id) ?? Infinity)) : null,
     }
-  }, [state, user])
+  }, [spotRankData, myEventsList, pins])
+  const myRank = null
 
   return (
     <div>

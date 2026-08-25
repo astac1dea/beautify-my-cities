@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import { PIN_TYPES } from '../../lib/constants'
 import Icon from '../ui/Icon'
 
-export default function TopVotedPanel({ spots = [], onSelect, limit = 5 }) {
+export default function TopVotedPanel({ spots = [], onSelect, focusSpotId, limit = 8 }) {
   const ranked = [...spots].sort((a, b) => b.upvotes - a.upvotes).slice(0, limit)
 
   return (
@@ -15,56 +15,73 @@ export default function TopVotedPanel({ spots = [], onSelect, limit = 5 }) {
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         fontWeight: 700, fontSize: 13,
       }}>
-        Top Voted Spots
+        Most upvoted right now
         <Link to="/leaderboard" style={{ fontSize: 11, color: 'var(--navy)', textDecoration: 'none', fontWeight: 600 }}>
           See all
         </Link>
       </div>
 
-      {ranked.map((spot, i) => (
-        <button
-          key={spot.id}
-          onClick={() => onSelect?.(spot.id)}
-          style={{
-            padding: '12px 16px', display: 'flex', gap: 11, alignItems: 'flex-start',
-            borderBottom: '1px solid var(--border)', cursor: 'pointer', width: '100%',
-            textAlign: 'left', background: 'none', border: 'none',
-            borderBottomWidth: 1, borderBottomStyle: 'solid', borderBottomColor: 'var(--border)',
-            fontFamily: 'inherit',
-          }}
-        >
-          <div style={{
-            width: 20, flexShrink: 0, fontSize: 11, fontWeight: 800,
-            color: i === 0 ? 'var(--amber)' : 'var(--muted)', paddingTop: 9,
-          }}>
-            #{i + 1}
-          </div>
-          <div style={{
-            width: 34, height: 34, borderRadius: 'var(--radius)', flexShrink: 0,
-            background: PIN_TYPES[spot.type]?.bg, color: PIN_TYPES[spot.type]?.color,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            <Icon name={PIN_TYPES[spot.type]?.icon} size="sm" />
-          </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
+      {ranked.map((spot, i) => {
+        const type = PIN_TYPES[spot.type] || PIN_TYPES.trash
+        const focused = spot.id === focusSpotId
+        return (
+          <button
+            key={spot.id}
+            onClick={() => onSelect?.(spot.id)}
+            style={{
+              padding: '11px 14px', display: 'flex', gap: 11, alignItems: 'center',
+              width: '100%', textAlign: 'left', cursor: 'pointer', fontFamily: 'inherit',
+              background: focused ? 'var(--navy-soft)' : 'none',
+              border: 'none',
+              borderBottom: i < ranked.length - 1 ? '1px solid var(--border)' : 'none',
+              transition: 'background 0.13s',
+            }}
+            onMouseEnter={e => { if (!focused) e.currentTarget.style.background = 'var(--surface-alt)' }}
+            onMouseLeave={e => { if (!focused) e.currentTarget.style.background = 'none' }}
+          >
+            {/* Rank */}
             <div style={{
-              fontSize: 12, fontWeight: 700, marginBottom: 3,
-              overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+              width: 20, flexShrink: 0, fontSize: 11, fontWeight: 800, textAlign: 'center',
+              color: i === 0 ? 'var(--amber)' : focused ? 'var(--navy)' : 'var(--muted-light)',
             }}>
-              {spot.title}
+              #{i + 1}
             </div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-              <span style={{
-                fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 4,
-                background: PIN_TYPES[spot.type]?.bg, color: PIN_TYPES[spot.type]?.color,
+
+            {/* Category icon */}
+            <div style={{
+              width: 32, height: 32, borderRadius: 'var(--radius)', flexShrink: 0,
+              background: type.bg, color: type.color,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              border: focused ? `1.5px solid ${type.color}` : '1.5px solid transparent',
+              transition: 'border 0.13s',
+            }}>
+              <Icon name={type.icon} size="sm" />
+            </div>
+
+            {/* Title + label */}
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{
+                fontSize: 12.5, fontWeight: 700, marginBottom: 2,
+                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                color: focused ? 'var(--navy)' : 'var(--text)',
               }}>
-                {PIN_TYPES[spot.type]?.label}
-              </span>
-              <span style={{ fontSize: 10, color: 'var(--muted)' }}>{spot.upvotes} upvotes</span>
+                {spot.title}
+              </div>
+              <div style={{ fontSize: 11, color: type.color, fontWeight: 600 }}>
+                {type.label}
+              </div>
             </div>
-          </div>
-        </button>
-      ))}
+
+            {/* Upvote count */}
+            <div style={{
+              fontSize: 13, fontWeight: 700, flexShrink: 0,
+              color: focused ? 'var(--navy)' : 'var(--text)',
+            }}>
+              {spot.upvotes}
+            </div>
+          </button>
+        )
+      })}
     </div>
   )
 }

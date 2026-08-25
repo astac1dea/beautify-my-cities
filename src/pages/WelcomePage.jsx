@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import PublicHeader from '../components/layout/PublicHeader'
 import { Logo } from '../components/layout/Wordmark'
 import Button from '../components/ui/Button'
@@ -11,12 +12,13 @@ import PinPopup from '../components/map/PinPopup'
 import EventModal from '../components/events/EventModal'
 import { useSpots } from '../hooks/useSpots'
 import { useEvents } from '../hooks/useEvents'
-import { useAppState } from '../hooks/useStore'
-import { cityStats } from '../lib/store'
+import { useCityStats } from '../hooks/useCityStats'
 import { AWARD_TIERS, PIN_TYPES } from '../lib/constants'
 import { formatDateLong, formatTimeRange, plural } from '../lib/format'
 import { useCity } from '../hooks/useCity'
 import { useIsMobile } from '../hooks/useMediaQuery'
+
+const SHELL = { maxWidth: 1220, margin: '0 auto', padding: '0 var(--shell-pad, 28px)' }
 
 const STEPS = [
   { icon: 'pinPlus', title: 'Put it on the map',
@@ -87,7 +89,7 @@ function EventCard({ event, onOpen }) {
           </div>
           <div style={{ display: 'flex', gap: 9, alignItems: 'flex-start' }}>
             <Icon name="building" size="sm" style={{ marginTop: 2, color: 'var(--muted-light)' }} />
-            {event.org.name}
+            {event.org?.name || 'Local organization'}
           </div>
         </div>
 
@@ -106,20 +108,22 @@ function EventCard({ event, onOpen }) {
 }
 
 export default function WelcomePage() {
+  const { cityId } = useParams()
   const { spots } = useSpots()
   const { upcoming } = useEvents()
-  const { city } = useCity()
-  const state = useAppState()
-  const stats = useMemo(() => cityStats(state), [state])
+  const { city, setCity } = useCity()
+  const stats = useCityStats()
+
+  useEffect(() => { if (cityId) setCity(cityId) }, [cityId])
 
   const isMobile = useIsMobile()
-  const mapHeight = isMobile ? 380 : 520
 
   const [filter, setFilter] = useState('all')
   const [placing, setPlacing] = useState(false)
   const [draft, setDraft] = useState(null)
   const [openSpotId, setOpenSpotId] = useState(null)
   const [openEventId, setOpenEventId] = useState(null)
+  const [focusSpotId, setFocusSpotId] = useState(null)
 
   const visible = filter === 'all' ? spots : spots.filter(s => s.type === filter)
   const topSpots = useMemo(
@@ -138,8 +142,8 @@ export default function WelcomePage() {
       <PublicHeader />
 
       {/* ------------------------------------------------------------ hero */}
-      <section style={{ background: 'var(--navy)', color: '#fff', paddingTop: 52 }}>
-        <div className="shell" style={{ paddingBottom: 90 }}>
+      <section style={{ background: 'var(--navy)', color: '#fff', paddingTop: 64 }}>
+        <div style={{ ...SHELL, paddingBottom: 90 }}>
           <div className="eyebrow" style={{ color: 'rgba(255,255,255,.7)', marginBottom: 20 }}>
             {city.name}, {city.state}
           </div>
@@ -161,7 +165,7 @@ export default function WelcomePage() {
             spot or sign up. Not your city? Switch it at the top of the page.
           </p>
 
-          <div style={{ display: 'flex', gap: 28, flexWrap: 'wrap', rowGap: 20 }}>
+          <div style={{ display: 'flex', gap: 34, flexWrap: 'wrap' }}>
             {[
               [stats.open, 'spots open'],
               [stats.resolved, 'resolved'],
@@ -182,7 +186,7 @@ export default function WelcomePage() {
       </section>
 
       {/* Action bar, overlapping the hero the way volunteer.gov does */}
-      <div className="shell" style={{ marginTop: -52, position: 'relative', zIndex: 10 }}>
+      <div style={{ ...SHELL, marginTop: -52, position: 'relative', zIndex: 10 }}>
         <div className="card" style={{
           padding: 22, boxShadow: 'var(--shadow-lg)',
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16,
@@ -238,33 +242,56 @@ export default function WelcomePage() {
       </div>
 
       {/* ------------------------------------------------------------- map */}
-      <section id="map" className="shell" style={{ paddingTop: 56, paddingBottom: 56 }}>
-        <SectionHead
-          eyebrow="Every reported spot"
-          title={`The ${city.name} map`}
-          blurb="Each pin is something a resident reported. Click one to see who is responsible for it, where the request stands, and whether there is a volunteer day scheduled."
-          action={<FilterPills value={filter} onChange={setFilter} />}
-        />
+      <section id="map" style={{ paddingTop: 56, paddingBottom: 56 }}>
+        {/* Section header — centered, stays in SHELL */}
+        <div style={{ ...SHELL, marginBottom: 24 }}>
+          <div style={{
+            display: 'flex', alignItems: 'flex-start',
+            justifyContent: 'space-between', gap: 24, flexWrap: 'wrap',
+          }}>
+            <div style={{ maxWidth: 560 }}>
+              <div className="eyebrow" style={{ color: 'var(--link)', marginBottom: 12 }}>
+                Every reported spot
+              </div>
+              <h2 style={{ fontSize: 30, fontWeight: 800, marginBottom: 10 }}>
+                The {city.name} map
+              </h2>
+              <p style={{ fontSize: 15.5, color: 'var(--muted)', lineHeight: 1.6 }}>
+                Each pin is something a resident reported. Click one to see who is responsible for it,
+                where the request stands, and whether there is a volunteer day scheduled.
+              </p>
+            </div>
+            <div style={{ paddingTop: 4 }}>
+              <FilterPills value={filter} onChange={v => { setFilter(v); setFocusSpotId(null) }} spots={spots} />
+            </div>
+          </div>
+        </div>
 
-        <div className="split">
-          <div className="card" style={{ overflow: 'hidden' }}>
-            <CommunityMap
-              spots={visible}
-              placing={placing}
-              draft={draft}
-              onMapClick={handleMapClick}
-              onOpenSpot={setOpenSpotId}
-              height={mapHeight}
-            />
+        {/* Full-width map + leaderboard — breaks out of SHELL */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? 'minmax(0, 1fr)' : '1fr 340px',
+          borderTop: '1px solid var(--border)',
+          borderBottom: '1px solid var(--border)',
+          borderLeft: isMobile ? 'none' : '1px solid var(--border)',
+          marginLeft: isMobile ? 0 : 28,
+          background: 'var(--surface)',
+        }}>
+          {/* Map */}
+          <div style={{
+            overflow: 'hidden', minWidth: 0,
+            borderRight: isMobile ? 'none' : '1px solid var(--border)',
+            borderBottom: isMobile ? '1px solid var(--border)' : 'none',
+          }}>
+            {/* Toolbar */}
             <div style={{
-              padding: '14px 20px', borderTop: '1px solid var(--border)',
+              padding: '12px 20px', borderBottom: '1px solid var(--border)',
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              gap: 14, flexWrap: 'wrap',
             }}>
-              <span style={{ fontSize: 13.5, color: 'var(--muted)' }}>
+              <span style={{ fontSize: 13, color: 'var(--muted)' }}>
                 {placing
                   ? 'Click the map to place your pin.'
-                  : `Showing ${visible.length} of ${spots.length} reported spots.`}
+                  : `Showing ${visible.length} of ${spots.length} reported spots${filter !== 'all' ? ` · ${filter}` : ''}.`}
               </span>
               <Button
                 variant={placing ? 'secondary' : 'primary'}
@@ -275,62 +302,87 @@ export default function WelcomePage() {
                 {placing ? 'Cancel' : 'Report a spot'}
               </Button>
             </div>
+            <CommunityMap
+              spots={visible}
+              placing={placing}
+              draft={draft}
+              onMapClick={handleMapClick}
+              onOpenSpot={id => { setOpenSpotId(id); setFocusSpotId(id) }}
+              height={isMobile ? 380 : 580}
+              focusSpotId={focusSpotId}
+              filter={filter}
+            />
           </div>
 
-          <div className="card" style={{ overflow: 'hidden' }}>
+          {/* Leaderboard */}
+          <div style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column', maxHeight: 628 }}>
             <div style={{
               padding: '15px 18px', borderBottom: '1px solid var(--border)',
-              fontSize: 14.5, fontWeight: 700,
+              fontSize: 14.5, fontWeight: 700, flexShrink: 0,
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             }}>
-              Most upvoted right now
+              <span>Most upvoted right now</span>
+              <span style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 400 }}>
+                Click to locate on map
+              </span>
             </div>
-            {topSpots.map((spot, i) => {
-              const type = PIN_TYPES[spot.type] || PIN_TYPES.trash
-              return (
-                <button
-                  key={spot.id}
-                  onClick={() => setOpenSpotId(spot.id)}
-                  style={{
-                    display: 'flex', gap: 12, alignItems: 'center', width: '100%',
-                    textAlign: 'left', padding: '13px 18px', cursor: 'pointer',
-                    background: 'none', border: 'none',
-                    borderBottom: i === topSpots.length - 1 ? 'none' : '1px solid var(--border)',
-                  }}
-                >
-                  <span style={{
-                    width: 22, fontSize: 13, fontWeight: 700, color: 'var(--muted-light)', flexShrink: 0,
-                  }}>
-                    {i + 1}
-                  </span>
-                  <span style={{
-                    width: 34, height: 34, borderRadius: 'var(--radius)', flexShrink: 0,
-                    background: type.bg, color: type.color,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  }}>
-                    <Icon name={type.icon} size="sm" />
-                  </span>
-                  <span style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ overflowY: 'auto', flex: 1 }}>
+              {topSpots.map((spot, i) => {
+                const type = PIN_TYPES[spot.type] || PIN_TYPES.trash
+                const focused = spot.id === focusSpotId
+                return (
+                  <button
+                    key={spot.id}
+                    onClick={() => {
+                      setFocusSpotId(spot.id)
+                      setOpenSpotId(spot.id)
+                    }}
+                    style={{
+                      display: 'flex', gap: 12, alignItems: 'center', width: '100%',
+                      textAlign: 'left', padding: '13px 18px', cursor: 'pointer',
+                      background: focused ? 'var(--navy-soft)' : 'none',
+                      border: 'none',
+                      borderBottom: i === topSpots.length - 1 ? 'none' : '1px solid var(--border)',
+                      transition: 'background 0.15s',
+                    }}
+                  >
                     <span style={{
-                      display: 'block', fontSize: 13.5, fontWeight: 600,
-                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                      width: 22, fontSize: 13, fontWeight: 700,
+                      color: focused ? 'var(--navy)' : 'var(--muted-light)', flexShrink: 0,
                     }}>
-                      {spot.title}
+                      {i + 1}
                     </span>
-                    <span style={{ display: 'block', fontSize: 12.5, color: 'var(--muted)', marginTop: 2 }}>
-                      {type.label}
+                    <span style={{
+                      width: 34, height: 34, borderRadius: 'var(--radius)', flexShrink: 0,
+                      background: type.bg, color: type.color,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <Icon name={type.icon} size="sm" />
                     </span>
-                  </span>
-                  <span style={{ fontSize: 15, fontWeight: 700, flexShrink: 0 }}>{spot.upvotes}</span>
-                </button>
-              )
-            })}
+                    <span style={{ flex: 1, minWidth: 0 }}>
+                      <span style={{
+                        display: 'block', fontSize: 13.5, fontWeight: 600,
+                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                        color: focused ? 'var(--navy)' : 'inherit',
+                      }}>
+                        {spot.title}
+                      </span>
+                      <span style={{ display: 'block', fontSize: 12.5, color: 'var(--muted)', marginTop: 2 }}>
+                        {type.label}
+                      </span>
+                    </span>
+                    <span style={{ fontSize: 15, fontWeight: 700, flexShrink: 0 }}>{spot.upvotes}</span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
         </div>
       </section>
 
       {/* ---------------------------------------------------------- events */}
       <section id="events" style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)' }}>
-        <div className="shell" style={{ paddingTop: 56, paddingBottom: 56 }}>
+        <div style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
           <SectionHead
             eyebrow="Coming up"
             title={`Volunteer events in ${city.name}`}
@@ -348,7 +400,7 @@ export default function WelcomePage() {
       </section>
 
       {/* ------------------------------------------------------------- how */}
-      <section id="how" className="shell" style={{ paddingTop: 56, paddingBottom: 56 }}>
+      <section id="how" style={{ ...SHELL, paddingTop: 64, paddingBottom: 64 }}>
         <SectionHead
           eyebrow="Start to finish"
           title="How it works"
@@ -382,10 +434,10 @@ export default function WelcomePage() {
 
       {/* ----------------------------------------------------------- award */}
       <section id="award" style={{ background: 'var(--navy)', color: '#fff' }}>
-        <div className="shell" style={{
-          paddingTop: 56, paddingBottom: 56,
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 40, alignItems: 'start',
+        <div style={{
+          ...SHELL, paddingTop: 64, paddingBottom: 64,
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: 52, alignItems: 'start',
         }}>
           <div>
             <div className="eyebrow" style={{ color: 'rgba(255,255,255,.7)', marginBottom: 18 }}>
@@ -431,10 +483,10 @@ export default function WelcomePage() {
 
       {/* ---------------------------------------------------------- footer */}
       <footer style={{ background: 'var(--navy-dark)', color: 'rgba(255,255,255,.6)' }}>
-        <div className="shell" style={{
-          paddingTop: 36, paddingBottom: 36,
+        <div style={{
+          ...SHELL, paddingTop: 40, paddingBottom: 40,
           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          gap: 20, flexWrap: 'wrap',
+          gap: 24, flexWrap: 'wrap',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <Logo size={32} background="rgba(255,255,255,.14)" />

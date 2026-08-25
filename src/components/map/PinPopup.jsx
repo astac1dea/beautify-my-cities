@@ -1,5 +1,4 @@
-import { useMemo } from 'react'
-import { Link } from 'react-router-dom'
+import { useMemo, useState } from 'react'
 import Modal from '../ui/Modal'
 import Badge from '../ui/Badge'
 import Button from '../ui/Button'
@@ -9,9 +8,10 @@ import { PIN_TYPES, SPOT_STATUS, STATUS_ORDER } from '../../lib/constants'
 import { formatDate } from '../../lib/format'
 import { useSpot } from '../../hooks/useSpots'
 import { useVote } from '../../hooks/useVote'
-import { useAppState } from '../../hooks/useStore'
-import { spotRanking } from '../../lib/store'
+import { supabase } from '../../lib/supabase'
+import { useSpots } from '../../hooks/useSpots'
 import { useCity } from '../../hooks/useCity'
+import { useAuth } from '../../hooks/useAuth'
 
 function StatusTimeline({ status }) {
   const current = SPOT_STATUS[status]?.step ?? 0
@@ -58,15 +58,33 @@ function StatusTimeline({ status }) {
   )
 }
 
-function OrgCard({ org }) {
+function OrgCard({ org, isAdmin }) {
+  if (!org) return (
+    <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '15px 17px' }}>
+      <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 8 }}>Who handles this</div>
+      <div style={{ fontSize: 13.5, color: 'var(--muted)' }}>
+        We'll route this to the right local organization.{' '}
+        <a href="mailto:hello@beautifymycities.org" style={{ fontWeight: 600 }}>hello@beautifymycities.org</a>
+      </div>
+    </div>
+  )
   return (
     <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
       <div style={{
         padding: '11px 17px', background: 'var(--surface-alt)', borderBottom: '1px solid var(--border)',
         fontSize: 11.5, fontWeight: 700, letterSpacing: 0.05, textTransform: 'uppercase',
-        color: 'var(--muted)',
+        color: 'var(--muted)', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
-        Who handles this
+        <span>Who handles this</span>
+        {isAdmin && (
+          <span style={{
+            fontSize: 10, fontWeight: 700, color: '#8A5417',
+            background: '#F7EEE1', border: '1px solid #E8C99A',
+            borderRadius: 4, padding: '2px 7px',
+          }}>
+            Unverified — reach out to confirm details with org
+          </span>
+        )}
       </div>
       <div style={{ padding: 17, display: 'grid', gap: 13 }}>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
@@ -78,42 +96,115 @@ function OrgCard({ org }) {
             <Icon name="building" size="md" />
           </div>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 15, fontWeight: 700 }}>{org.name}</div>
-            <div style={{ fontSize: 12.5, color: 'var(--muted)' }}>{org.focus}</div>
+            <div style={{ fontSize: 15, fontWeight: 700 }}>{org?.name || 'Local organization'}</div>
+            <div style={{ fontSize: 12.5, color: 'var(--muted)' }}>{org?.focus}</div>
           </div>
         </div>
 
-        <div style={{ fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.6 }}>{org.blurb}</div>
+        {org?.blurb && <div style={{ fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.6 }}>{org.blurb}</div>}
 
         <div style={{ display: 'grid', gap: 7, fontSize: 13.5, paddingTop: 2 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <Icon name="user" size="sm" style={{ color: 'var(--muted-light)' }} />
-            <span>{org.contact_name}</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <Icon name="mail" size="sm" style={{ color: 'var(--muted-light)' }} />
-            <a href={`mailto:${org.email}`} style={{ fontWeight: 600 }}>{org.email}</a>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
-            <Icon name="phone" size="sm" style={{ color: 'var(--muted-light)' }} />
-            <span>{org.phone}</span>
-          </div>
+          {isAdmin ? (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                <Icon name="user" size="sm" style={{ color: 'var(--muted-light)' }} />
+                <span style={{ color: 'var(--muted)' }}>{org?.contact_name || '—'}</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                <Icon name="mail" size="sm" style={{ color: 'var(--muted-light)' }} />
+                <a href={`mailto:${org?.email || 'hello@beautifymycities.org'}`} style={{ fontWeight: 600 }}>
+                  {org?.email || 'hello@beautifymycities.org'}
+                </a>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                <Icon name="phone" size="sm" style={{ color: 'var(--muted-light)' }} />
+                <span style={{ color: 'var(--muted)' }}>{org?.phone || '—'}</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
+                <Icon name="mail" size="sm" style={{ color: 'var(--muted-light)' }} />
+                <a href="mailto:hello@beautifymycities.org" style={{ fontWeight: 600 }}>
+                  hello@beautifymycities.org
+                </a>
+              </div>
+              <div style={{
+                fontSize: 12, color: 'var(--muted)', fontStyle: 'italic',
+                background: 'var(--surface-alt)', padding: '8px 10px',
+                borderRadius: 'var(--radius)', border: '1px solid var(--border)',
+              }}>
+                We are working with {org?.name || 'local partners'} to coordinate this request.
+                Contact us at hello@beautifymycities.org for updates.
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
+function AdminDelete({ spotId, title, onDeleted }) {
+  const [confirming, setConfirming] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  if (confirming) return (
+    <div style={{
+      display: 'flex', gap: 8, alignItems: 'center',
+      padding: '8px 10px', background: '#FFEBEE',
+      border: '1px solid #FFCDD2', borderRadius: 6, flexWrap: 'wrap',
+    }}>
+      <span style={{ fontSize: 12, color: '#B71C1C', flex: 1 }}>
+        Delete <strong>{title}</strong>? This cannot be undone.
+      </span>
+      <button
+        onClick={() => setConfirming(false)}
+        style={{ padding: '4px 10px', borderRadius: 5, border: '1px solid #ccc', background: '#fff', fontSize: 12, cursor: 'pointer' }}
+      >
+        Cancel
+      </button>
+      <button
+        disabled={deleting}
+        onClick={async () => {
+          setDeleting(true)
+          const { error } = await supabase.from('spots').delete().eq('id', spotId)
+          if (error) { alert('Delete failed: ' + error.message); setDeleting(false); return }
+          onDeleted()
+        }}
+        style={{ padding: '4px 10px', borderRadius: 5, border: 'none', background: '#B71C1C', color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+      >
+        {deleting ? 'Deleting...' : 'Yes, delete'}
+      </button>
+    </div>
+  )
+
+  return (
+    <button
+      onClick={() => setConfirming(true)}
+      style={{ padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600, background: '#B71C1C', color: '#fff', border: 'none', alignSelf: 'flex-start' }}
+    >
+      Delete spot
+    </button>
+  )
+}
+
 export default function PinPopup({ spotId, onClose }) {
-  const spot = useSpot(spotId)
-  const state = useAppState()
+  const [spot, reloadSpot] = useSpot(spotId)
   const { city } = useCity()
-  const { vote, canVote } = useVote()
+  const { vote, voterName, setVoterName } = useVote()
+  const { ranking } = useSpots()
+  const { user } = useAuth()
+  const isAdmin = user?.role === 'admin'
+  const [showNameField, setShowNameField] = useState(false)
+  const [nameInput, setNameInput] = useState('')
+  const [nameError, setNameError] = useState('')
+  const [voting, setVoting] = useState(false)
 
   const rank = useMemo(() => {
     if (!spot) return null
-    return spotRanking(state).find(s => s.id === spot.id)?.rank ?? null
-  }, [state, spot])
+    return ranking.find(s => s.id === spot.id)?.rank ?? null
+  }, [ranking, spot])
 
   if (!spot) return null
 
@@ -126,7 +217,7 @@ export default function PinPopup({ spotId, onClose }) {
       onClose={onClose}
       width={640}
       title={spot.title}
-      subtitle={`Reported by ${spot.reporter?.display_name || 'a resident'} on ${formatDate(spot.created_at)}`}
+      subtitle={`Reported by ${spot.reporter?.display_name || 'a resident'}${spot.created_at ? ' on ' + formatDate(spot.created_at) : ''}`}
     >
       <div style={{ display: 'grid', gap: 24 }}>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -162,30 +253,91 @@ export default function PinPopup({ spotId, onClose }) {
 
         {/* Upvote */}
         <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 16, padding: '16px 20px', background: 'var(--surface-alt)',
-          border: '1px solid var(--border)', borderRadius: 'var(--radius)', flexWrap: 'wrap',
+          padding: '16px 20px', background: 'var(--surface-alt)',
+          border: '1px solid var(--border)', borderRadius: 'var(--radius)',
+          display: 'grid', gap: 12,
         }}>
-          <div>
-            <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.02em' }}>
-              {spot.upvotes}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ fontSize: 28, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.02em' }}>
+                {spot.upvotes}
+              </div>
+              <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 4 }}>
+                upvotes{rank ? ` · ranked #${rank} in the city` : ''}
+              </div>
             </div>
-            <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 4 }}>
-              upvotes{rank ? ` · ranked #${rank} in the city` : ''}
-            </div>
-          </div>
-          {canVote ? (
             <Button
               variant={spot.hasVoted ? 'secondary' : 'primary'}
               icon={spot.hasVoted ? 'check' : 'thumbsUp'}
-              onClick={() => vote(spot.id)}
+              disabled={voting}
+              onClick={async () => {
+                if (spot.hasVoted || voterName) {
+                  setVoting(true)
+                  await vote(spot.id, voterName)
+                  await reloadSpot()
+                  setVoting(false)
+                } else {
+                  setShowNameField(true)
+                }
+              }}
             >
-              {spot.hasVoted ? 'Upvoted' : 'Upvote this spot'}
+              {voting ? 'Saving...' : spot.hasVoted ? 'Upvoted' : 'Upvote this spot'}
             </Button>
-          ) : (
-            <Link to="/login" style={{ textDecoration: 'none' }}>
-              <Button variant="secondary" iconAfter="arrowRight">Log in to upvote</Button>
-            </Link>
+          </div>
+
+          {showNameField && !voterName && (
+            <div style={{ display: 'grid', gap: 8 }}>
+              <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.5 }}>
+                Just your name — no account needed.
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input
+                  autoFocus
+                  value={nameInput}
+                  onChange={e => { setNameInput(e.target.value); setNameError('') }}
+                  onKeyDown={async e => {
+                    if (e.key !== 'Enter') return
+                    const n = nameInput.trim()
+                    if (!n) return setNameError('Please enter your name.')
+                    setVoterName(n)
+                    setShowNameField(false)
+                    setVoting(true)
+                    await vote(spot.id, n)
+                    await reloadSpot()
+                    setVoting(false)
+                  }}
+                  placeholder="Your name"
+                  style={{
+                    flex: 1, padding: '8px 12px', borderRadius: 'var(--radius)',
+                    border: `1px solid ${nameError ? 'var(--red)' : 'var(--border-firm)'}`,
+                    background: 'var(--surface)', fontSize: 14, color: 'var(--text)',
+                  }}
+                />
+                <Button onClick={async () => {
+                  const n = nameInput.trim()
+                  if (!n) return setNameError('Please enter your name.')
+                  setVoterName(n)
+                  setShowNameField(false)
+                  setVoting(true)
+                  await vote(spot.id, n)
+                  await reloadSpot()
+                  setVoting(false)
+                }}>Submit</Button>
+              </div>
+              {nameError && <div style={{ fontSize: 12.5, color: 'var(--red)' }}>{nameError}</div>}
+            </div>
+          )}
+
+          {voterName && spot.hasVoted && (
+            <div style={{ fontSize: 12, color: 'var(--muted)' }}>
+              Voting as <strong>{voterName}</strong> ·{' '}
+              <button
+                onClick={() => { setVoterName(''); setShowNameField(true); setNameInput('') }}
+                style={{ background: 'none', border: 'none', color: 'var(--link)', cursor: 'pointer', fontSize: 12, padding: 0 }}
+              >
+                change
+              </button>
+            </div>
           )}
         </div>
 
@@ -196,7 +348,7 @@ export default function PinPopup({ spotId, onClose }) {
           <div style={{ fontSize: 13.5, color: 'var(--muted)', lineHeight: 1.6 }}>{status.blurb}</div>
         </div>
 
-        <OrgCard org={spot.org} />
+        <OrgCard org={spot.org} isAdmin={isAdmin} />
 
         {/* The volunteer event for this spot, if one exists yet */}
         <div style={{ display: 'grid', gap: 15 }}>
@@ -212,12 +364,44 @@ export default function PinPopup({ spotId, onClose }) {
               borderRadius: 'var(--radius)', fontSize: 13.5, color: 'var(--muted)',
               lineHeight: 1.65, background: 'var(--surface-alt)',
             }}>
-              No event scheduled here yet. {spot.org.name} reviews new reports as they come in,
+              No event scheduled here yet. {spot.org?.name || 'The responsible organization'} reviews new reports as they come in,
               and schedules a work day once enough residents upvote a spot. Upvoting helps push
               it up the list.
             </div>
           )}
         </div>
+        {/* Admin actions */}
+        {isAdmin && (
+          <div style={{
+            display: 'grid', gap: 10,
+            padding: '14px 16px', background: '#FFF8E1',
+            border: '1px solid #F0D080', borderRadius: 'var(--radius)',
+          }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#7B5800' }}>
+              Admin actions
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              {['reported','reviewing','scheduled','resolved','rejected'].map(s => (
+                <button
+                  key={s}
+                  onClick={async () => {
+                    await supabase.from('spots').update({ status: s }).eq('id', spot.id)
+                    await reloadSpot()
+                  }}
+                  style={{
+                    padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600,
+                    background: spot.status === s ? '#1a3352' : '#fff',
+                    color: spot.status === s ? '#fff' : '#1a3352',
+                    border: '1px solid #1a3352',
+                  }}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+            <AdminDelete spotId={spot.id} title={spot.title} onDeleted={onClose} />
+          </div>
+        )}
       </div>
     </Modal>
   )

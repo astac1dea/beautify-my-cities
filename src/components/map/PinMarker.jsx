@@ -1,10 +1,36 @@
+import { useEffect } from 'react'
 import { Marker, Popup } from 'react-leaflet'
 import { PIN_TYPES, SPOT_STATUS } from '../../lib/constants'
 import { createPinIcon } from '../../lib/maps'
 
-export default function PinMarker({ spot, onOpen }) {
+// Inject pulse keyframe once
+if (typeof document !== 'undefined' && !document.getElementById('bmc-pulse-style')) {
+  const style = document.createElement('style')
+  style.id = 'bmc-pulse-style'
+  style.textContent = `
+    @keyframes bmc-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(232,132,90,0.7), 0 2px 6px rgba(23,34,46,.28); }
+      50%  { box-shadow: 0 0 0 12px rgba(232,132,90,0), 0 2px 6px rgba(23,34,46,.28); }
+      100% { box-shadow: 0 0 0 0 rgba(232,132,90,0), 0 2px 6px rgba(23,34,46,.28); }
+    }
+    .bmc-pin-pulse > div > div:first-child {
+      animation: bmc-pulse 1.2s ease-out 3;
+    }
+  `
+  document.head.appendChild(style)
+}
+
+export default function PinMarker({ spot, onOpen, highlighted }) {
   const type = PIN_TYPES[spot.type] || PIN_TYPES.trash
   const status = SPOT_STATUS[spot.status] || SPOT_STATUS.reported
+
+  // Visual style per status
+  const isPending  = spot.status === 'pending'
+  const isResolved = spot.status === 'resolved'
+  const isRejected = spot.status === 'rejected'
+
+  // Don't show rejected pins on the map at all
+  if (isRejected) return null
 
   const chip = (color, bg, text) => (
     <span style={{
@@ -16,11 +42,29 @@ export default function PinMarker({ spot, onOpen }) {
   return (
     <Marker
       position={[spot.lat, spot.lng]}
-      icon={createPinIcon(spot.type, { muted: spot.status === 'resolved' })}
+      icon={createPinIcon(spot.type, {
+        muted: isResolved || isPending,
+        opacity: isPending ? 0.5 : isResolved ? 0.65 : 1,
+        active: highlighted,
+      })}
+      className={highlighted ? 'bmc-pin-pulse' : ''}
     >
       <Popup>
         <div style={{ minWidth: 208 }}>
-          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 5, lineHeight: 1.35 }}>
+          {isPending && (
+            <div style={{
+              fontSize: 11.5, fontWeight: 600, color: '#888780',
+              background: '#F1EFE8', border: '1px solid #D3D1C7',
+              borderRadius: 4, padding: '4px 8px', marginBottom: 8,
+              display: 'flex', alignItems: 'center', gap: 5,
+            }}>
+              ⏳ Pending review — not yet public
+            </div>
+          )}
+          <div style={{
+            fontWeight: 700, fontSize: 14, marginBottom: 5, lineHeight: 1.35,
+            opacity: isPending ? 0.7 : 1,
+          }}>
             {spot.title}
           </div>
           {spot.address && (
@@ -38,7 +82,7 @@ export default function PinMarker({ spot, onOpen }) {
             {chip(status.color, status.bg, status.label)}
           </div>
           <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 11 }}>
-            {spot.upvotes} upvotes · {spot.org.name}
+            {spot.upvotes} upvotes · {spot.org?.name}
           </div>
           <button
             onClick={() => onOpen(spot.id)}

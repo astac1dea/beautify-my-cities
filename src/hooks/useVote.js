@@ -1,16 +1,57 @@
-import { useCallback } from 'react'
-import { toggleVote } from '../lib/store'
-import { useAuth } from './useAuth'
+import { useCallback, useState } from 'react'
+import { supabase } from '../lib/supabase'
 
-// Upvoting is one vote per resident per spot, and toggles off if you click again.
+// Voting requires a name but no account.
+// Name is stored in localStorage so the user only has to enter it once.
+// Votes are stored in Supabase votes table.
+const NAME_KEY = 'bmc.voterName'
+
 export function useVote() {
-  const { isAuthed } = useAuth()
-  const vote = useCallback(spotId => {
-    if (!isAuthed) return false
-    toggleVote(spotId)
-    return true
-  }, [isAuthed])
-  return { vote, canVote: isAuthed }
+  const [voterName, setVoterNameState] = useState(() => localStorage.getItem(NAME_KEY) || '')
+
+  function setVoterName(name) {
+    localStorage.setItem(NAME_KEY, name)
+    setVoterNameState(name)
+  }
+
+  const vote = useCallback(async (spotId, name) => {
+    const n = (name || voterName).trim()
+    if (!n) return false
+
+    // Save name locally for next time
+    localStorage.setItem(NAME_KEY, n)
+    setVoterNameState(n)
+
+    if (!supabase) return false
+
+    try {
+      // Check if already voted
+      const { data: existing } = await supabase
+        .from('votes')
+        .select('id')
+        .eq('spot_id', spotId)
+        .eq('voter_name', n)
+        .maybeSingle()
+
+      if (existing) {
+        // Toggle off — remove vote
+        await supabase.from('votes').delete().eq('id', existing.id)
+      } else {
+        // Add vote
+        await supabase.from('votes').insert({
+          spot_id: spotId,
+          user_id: null,
+          voter_name: n,
+        })
+      }
+      return true
+    } catch (err) {
+      console.error('Vote failed:', err)
+      return false
+    }
+  }, [voterName])
+
+  return { vote, voterName, setVoterName, canVote: true }
 }
 
 export default useVote

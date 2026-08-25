@@ -3,9 +3,8 @@ import Topbar from '../components/layout/Topbar'
 import Badge from '../components/ui/Badge'
 import Leaderboard from '../components/dashboard/Leaderboard'
 import PinPopup from '../components/map/PinPopup'
-import { useAppState } from '../hooks/useStore'
 import { useAuth } from '../hooks/useAuth'
-import { spotRanking, residentRanking } from '../lib/store'
+import { useSpots } from '../hooks/useSpots'
 import { plural } from '../lib/format'
 import { useCity } from '../hooks/useCity'
 
@@ -72,20 +71,20 @@ function ResidentTable({ residents, currentUserId }) {
 }
 
 export default function LeaderboardPage() {
-  const state = useAppState()
   const { user } = useAuth()
+  const { spots: allSpots, ranking: spotRankingData } = useSpots()
   const { city } = useCity()
   const [openSpotId, setOpenSpotId] = useState(null)
 
-  const { spots, residents, myBest } = useMemo(() => {
-    const spots = spotRanking(state)
+  const { spots, myBest } = useMemo(() => {
+    const spots = spotRankingData || []
     const mine = spots.filter(s => s.user_id === user?.id)
     return {
       spots,
-      residents: residentRanking(state),
       myBest: mine.length ? mine.reduce((a, b) => (a.rank < b.rank ? a : b)) : null,
     }
-  }, [state, user])
+  }, [spotRankingData, user])
+  const residents = []
 
   return (
     <div>

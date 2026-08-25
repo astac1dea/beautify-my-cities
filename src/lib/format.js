@@ -5,11 +5,15 @@ const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 // Dates are plain 'YYYY-MM-DD' strings, parsed as local time so they never
 // shift a day across timezones the way `new Date('2026-08-22')` does.
 export function parseDate(iso) {
-  const [y, m, d] = iso.split('-').map(Number)
+  if (!iso) return new Date()
+  // Handle full ISO timestamps from Supabase (2026-08-01T00:00:00+00:00)
+  const dateStr = iso.includes('T') ? iso.split('T')[0] : iso
+  const [y, m, d] = dateStr.split('-').map(Number)
   return new Date(y, m - 1, d)
 }
 
 export function formatDate(iso) {
+  if (!iso) return ''
   const d = parseDate(iso)
   return `${MONTHS[d.getMonth()].slice(0, 3)} ${d.getDate()}, ${d.getFullYear()}`
 }
@@ -37,6 +41,7 @@ export function formatTimeCompact(hhmm) {
 }
 
 export function formatTimeRange(start, end) {
+  if (!start) return ''
   if (!start) return ''
   return end ? `${formatTime(start)} – ${formatTime(end)}` : formatTime(start)
 }

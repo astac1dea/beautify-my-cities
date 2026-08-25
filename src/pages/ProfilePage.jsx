@@ -3,9 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import Topbar from '../components/layout/Topbar'
 import Button from '../components/ui/Button'
 import { useAuth } from '../hooks/useAuth'
-import { useAppState } from '../hooks/useStore'
 import { useHours } from '../hooks/useEvents'
-import { mySpots, resetDemoData } from '../lib/store'
+import { useSpots } from '../hooks/useSpots'
 import { formatDate } from '../lib/format'
 import { useCity } from '../hooks/useCity'
 
@@ -42,8 +41,8 @@ function Card({ title, children }) {
 export default function ProfilePage() {
   const { user, updateProfile, signOut } = useAuth()
   const { city } = useCity()
-  const state = useAppState()
   const { totals } = useHours()
+  const { mine: spots } = useSpots()
   const navigate = useNavigate()
 
   const [form, setForm] = useState({
@@ -54,7 +53,7 @@ export default function ProfilePage() {
   })
   const [saved, setSaved] = useState(false)
 
-  const pins = useMemo(() => mySpots(state), [state])
+
   const set = (k, v) => { setForm(f => ({ ...f, [k]: v })); setSaved(false) }
 
   function save(e) {
@@ -84,7 +83,7 @@ export default function ProfilePage() {
                 <input style={inputStyle} value={form.display_name} onChange={e => set('display_name', e.target.value)} />
               </Field>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 12 }}>
                 <Field label="School">
                   <input style={inputStyle} value={form.school} onChange={e => set('school', e.target.value)} placeholder="Your school" />
                 </Field>
@@ -114,13 +113,6 @@ export default function ProfilePage() {
             </form>
           </Card>
 
-          <Card title="Demo data">
-            <div style={{ fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, marginBottom: 14 }}>
-              Pins, signups and hours are stored in this browser. Resetting puts everything back
-              to how the demo accounts started, which is handy before showing someone the app.
-            </div>
-            <Button variant="danger" onClick={resetDemoData}>Reset demo data</Button>
-          </Card>
         </div>
 
         <div style={{ display: 'grid', gap: 20 }}>
@@ -154,8 +146,8 @@ export default function ProfilePage() {
               {[
                 ['Verified service hours', totals.verified],
                 ['Hours awaiting verification', totals.pending],
-                ['Spots pinned', pins.length],
-                ['Upvotes collected', pins.reduce((n, s) => n + s.upvotes, 0)],
+                ['Spots pinned', spots.length],
+                ['Upvotes collected', spots.reduce((n, s) => n + s.upvotes, 0)],
               ].map(([label, value]) => (
                 <div key={label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
                   <span style={{ color: 'var(--muted)' }}>{label}</span>
