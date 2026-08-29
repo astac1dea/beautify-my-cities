@@ -37,7 +37,7 @@ export default function EventDetails({ event, showJoin = true }) {
   return (
     <div style={{ display: 'grid', gap: 22 }}>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-        <Badge color="var(--navy)" bg="var(--navy-soft)">{event.org.name}</Badge>
+        <Badge color="var(--navy-deep)" bg="var(--navy-soft)">{event.org.name}</Badge>
         {event.isPast
           ? <Badge>Completed</Badge>
           : <Badge color="var(--green)" bg="var(--green-soft)">Open for signup</Badge>}

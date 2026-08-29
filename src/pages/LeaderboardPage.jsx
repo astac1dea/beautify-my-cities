@@ -50,7 +50,7 @@ function ResidentTable({ residents, currentUserId }) {
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 13, fontWeight: 700, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                 {row.profile.display_name}
-                {isMe && <Badge color="var(--navy)" bg="var(--navy-soft)" size="sm">You</Badge>}
+                {isMe && <Badge color="var(--navy-deep)" bg="var(--navy-soft)" size="sm">You</Badge>}
               </div>
               <div style={{ fontSize: 11, color: 'var(--muted)', marginTop: 2 }}>
                 {plural(row.pins, 'pin')} · {row.hours} verified hours

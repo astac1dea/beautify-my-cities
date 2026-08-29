@@ -30,11 +30,11 @@ const BAND_IMAGE = '/band.jpg'
 // still reads as a deliberate dark band rather than a broken page.
 function photoBand(src, dim = 0.55) {
   return {
-    backgroundColor: '#1A1A1A',
+    backgroundColor: '#0E0E0E',
     backgroundImage: [
       `linear-gradient(rgba(12,12,12,${dim}), rgba(12,12,12,${dim}))`,
       `url("${src}")`,
-      'repeating-linear-gradient(135deg, #1F1F1F 0 14px, #191919 14px 28px)',
+      'repeating-linear-gradient(135deg, #131313 0 14px, #0C0C0C 14px 28px)',
     ].join(', '),
     backgroundSize: 'cover, cover, auto',
     backgroundPosition: 'center, center, center',
@@ -60,30 +60,6 @@ function SectionTitle({ title, blurb }) {
       <div className="rule" />
       {blurb && <p>{blurb}</p>}
     </div>
-  )
-}
-
-// One of the dark "find the right fit" tiles. Clicking it filters the map.
-function FitTile({ icon, label, onClick }) {
-  const [hov, setHov] = useState(false)
-  return (
-    <button
-      onClick={onClick}
-      onMouseEnter={() => setHov(true)}
-      onMouseLeave={() => setHov(false)}
-      style={{
-        all: 'unset', cursor: 'pointer', boxSizing: 'border-box',
-        height: 190, borderRadius: 'var(--radius)', padding: 18,
-        background: hov ? '#111' : 'var(--navy)', color: '#fff',
-        display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center', gap: 14,
-        transition: 'background .15s ease, transform .15s ease',
-        transform: hov ? 'translateY(-2px)' : 'none',
-      }}
-    >
-      <Icon name={icon} size={38} stroke={1.4} />
-      <span style={{ fontSize: 15, fontWeight: 700, textAlign: 'center' }}>{label}</span>
-    </button>
   )
 }
 
@@ -116,7 +92,7 @@ function EventCard({ event, onOpen }) {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, margin: '16px 0 20px' }}>
-          <Badge color="var(--navy)" bg="var(--navy-soft)">{event.hours} service hours</Badge>
+          <Badge color="var(--navy-deep)" bg="var(--navy-soft)">{event.hours} service hours</Badge>
           <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>
             {spotsLeft} of {event.max_volunteers} spots left
           </span>
@@ -168,12 +144,6 @@ export default function WelcomePage() {
     setPlacing(false)
   }
 
-  function showOnMap(type) {
-    setFilter(type)
-    setFocusSpotId(null)
-    document.getElementById('map')?.scrollIntoView({ behavior: 'smooth' })
-  }
-
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <PublicHeader />
@@ -181,15 +151,11 @@ export default function WelcomePage() {
       {/* ------------------------------------------------------------ hero */}
       <section style={{ ...photoBand(HERO_IMAGE), color: '#fff', position: 'relative' }}>
         <div style={{ ...SHELL, paddingTop: isMobile ? 64 : 108, paddingBottom: isMobile ? 96 : 132 }}>
-          <div className="eyebrow" style={{ color: '#fff', marginBottom: 22 }}>
-            Find a spot. Fix it together.
-          </div>
-
           <h1 style={{
             fontSize: 'clamp(30px, 4.4vw, 50px)', fontWeight: 800,
             lineHeight: 1.14, maxWidth: 920, marginBottom: 18,
           }}>
-            See what needs work in {city.name}, and join the people already fixing it.
+            See what needs work in your city, and join the people already fixing it.
           </h1>
 
           <p style={{
@@ -213,10 +179,11 @@ export default function WelcomePage() {
       </section>
 
       {/* The search bar, overlapping the hero the way volunteer.gov does */}
-      <div style={{ ...SHELL, marginTop: isMobile ? -44 : -52, position: 'relative', zIndex: 500 }}>
+      <div style={{ ...SHELL, marginTop: isMobile ? -26 : -30, position: 'relative', zIndex: 500 }}>
         <div className="card" style={{
-          padding: isMobile ? 16 : '26px 34px', boxShadow: 'var(--shadow-lg)',
-          maxWidth: 1080, margin: '0 auto',
+          padding: isMobile ? 14 : '14px 16px', boxShadow: 'var(--shadow-lg)',
+          borderRadius: 'var(--radius-hard)',
+          maxWidth: 1020, margin: '0 auto',
         }}>
           <CitySearch size={isMobile ? 'sm' : 'lg'} placeholder="Search for your city" />
         </div>
@@ -236,7 +203,10 @@ export default function WelcomePage() {
             [stats.upcoming, 'events scheduled'],
           ].map(([n, label]) => (
             <div key={label} style={{ background: 'var(--surface)', padding: '22px 24px', textAlign: 'center' }}>
-              <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.025em' }}>
+              <div style={{
+                fontSize: 32, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.025em',
+                color: 'var(--navy)', fontVariantNumeric: 'tabular-nums',
+              }}>
                 {n}
               </div>
               <div style={{ fontSize: 13.5, color: 'var(--muted)', marginTop: 8 }}>{label}</div>
@@ -245,24 +215,8 @@ export default function WelcomePage() {
         </div>
       </div>
 
-      {/* ------------------------------------------------------- right fit */}
-      <section style={{ ...SHELL, paddingTop: 72, paddingBottom: 72 }}>
-        <SectionTitle
-          title="Find the right fit"
-          blurb={`The work in ${city.name} comes in all shapes and sizes. Pick the kind you care about and the map filters to it.`}
-        />
-
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(212px, 1fr))', gap: 16,
-        }}>
-          {Object.entries(PIN_TYPES).map(([key, meta]) => (
-            <FitTile key={key} icon={meta.icon} label={meta.label} onClick={() => showOnMap(key)} />
-          ))}
-        </div>
-      </section>
-
       {/* ------------------------------------------------------------- map */}
-      <section id="map" style={{ paddingTop: 16, paddingBottom: 72 }}>
+      <section id="map" style={{ paddingTop: 72, paddingBottom: 72 }}>
         <div style={{ ...SHELL }}>
           <SectionTitle
             title={`The ${city.name} map`}

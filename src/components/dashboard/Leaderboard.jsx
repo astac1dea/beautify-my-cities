@@ -54,7 +54,7 @@ export default function Leaderboard({ spots, currentUserId, cityName, onOpen }) 
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 5, display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                 {spot.title}
-                {isMine && <Badge color="var(--navy)" bg="var(--navy-soft)" size="sm">Your pin</Badge>}
+                {isMine && <Badge color="var(--navy-deep)" bg="var(--navy-soft)" size="sm">Your pin</Badge>}
                 {spot.rank === 1 && <Badge color="var(--amber)" bg="var(--amber-soft)" size="sm">Most popular</Badge>}
               </div>
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>

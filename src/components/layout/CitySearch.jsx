@@ -50,7 +50,7 @@ export default function CitySearch({ size = 'lg', placeholder = 'Search for your
   }
 
   const big = size === 'lg'
-  const h = big ? 62 : 40
+  const h = big ? 50 : 40
 
   return (
     <div ref={ref} style={{ position: 'relative', width: '100%' }}>
@@ -64,13 +64,13 @@ export default function CitySearch({ size = 'lg', placeholder = 'Search for your
           aria-label="Search for your city"
           style={{
             flex: 1, minWidth: 0, height: '100%',
-            padding: big ? '0 20px' : '0 12px',
-            fontSize: big ? 17 : 13.5,
+            padding: big ? '0 16px' : '0 12px',
+            fontSize: big ? 15.5 : 13.5,
             background: 'var(--surface)',
             color: 'var(--text)',
             border: '1px solid var(--border-firm)',
             borderRight: 'none',
-            borderRadius: 'var(--radius) 0 0 var(--radius)',
+            borderRadius: 'var(--radius-hard) 0 0 var(--radius-hard)',
             outline: 'none',
           }}
         />
@@ -78,10 +78,10 @@ export default function CitySearch({ size = 'lg', placeholder = 'Search for your
           onClick={() => (open && matches.length ? go(matches[active]) : setOpen(true))}
           aria-label="Search"
           style={{
-            width: big ? 76 : 42, height: '100%', flexShrink: 0, cursor: 'pointer',
+            width: big ? 68 : 42, height: '100%', flexShrink: 0, cursor: 'pointer',
             background: 'var(--navy)', color: '#fff',
             border: '1px solid var(--navy)',
-            borderRadius: '0 var(--radius) var(--radius) 0',
+            borderRadius: '0 var(--radius-hard) var(--radius-hard) 0',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
