@@ -4,7 +4,7 @@ import Topbar from '../components/layout/Topbar'
 import Button from '../components/ui/Button'
 import StatCard from '../components/dashboard/StatCard'
 import HoursTable from '../components/dashboard/HoursTable'
-import AwardProgress from '../components/dashboard/AwardProgress'
+import HoursSummary from '../components/dashboard/HoursSummary'
 import SpotBreakdown from '../components/dashboard/SpotBreakdown'
 import UpcomingEvents from '../components/dashboard/UpcomingEvents'
 import PinPopup from '../components/map/PinPopup'
@@ -62,9 +62,9 @@ export default function DashboardPage() {
           <StatCard icon="calendar" number={upcoming.length} label="Events coming up" trend={`${rows.length} attended`} />
         </div>
 
-        {/* Award tracking + what's next */}
+        {/* Hours at a glance + what's next */}
         <div className="split">
-          <AwardProgress verified={totals.verified} pending={totals.pending} />
+          <HoursSummary rows={rows} verified={totals.verified} pending={totals.pending} />
           <UpcomingEvents events={upcoming} onOpen={setOpenEventId} />
         </div>
 

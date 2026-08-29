@@ -14,7 +14,7 @@ const td = {
 }
 
 // Builds a mailto the volunteer can send to the organization to ask them to
-// confirm the hours - this is what the Congressional Award needs signed off.
+// confirm the hours, so the log is something they have actually signed off on.
 function verifyMailto(org, rows, volunteerName) {
   const theirs = rows.filter(r => r.org.id === org.id)
   const total = theirs.reduce((n, r) => n + r.hours, 0)
@@ -23,8 +23,8 @@ function verifyMailto(org, rows, volunteerName) {
     `Hello ${org.contact_name},`,
     '',
     `My name is ${volunteerName} and I volunteered with ${org.name} through Beautify My City.`,
-    'I am recording service hours for the Congressional Award and need them verified by a',
-    'supervising adult from the organization.',
+    'I am keeping a record of my service hours and need them verified by a supervising',
+    'adult from the organization.',
     '',
     'Here is what I have logged with you:',
     ...lines,
@@ -161,7 +161,7 @@ export default function HoursTable({ rows, totals, volunteerName }) {
               Ask an organization to verify your hours
             </div>
             <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.6, marginBottom: 12 }}>
-              The Congressional Award needs a supervising adult to confirm you were there. These
+              Hours count for more when a supervising adult confirms you were there. These
               buttons open an email with your logged hours already filled in.
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>

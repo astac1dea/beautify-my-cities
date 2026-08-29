@@ -11,7 +11,6 @@ const LINKS = [
   { href: '#map', label: 'The map' },
   { href: '#events', label: 'Volunteer events' },
   { href: '#how', label: 'How it works' },
-  { href: '#award', label: 'Congressional Award' },
 ]
 
 const linkStyle = {

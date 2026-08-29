@@ -25,15 +25,6 @@ export const SPOT_STATUS = {
 
 export const STATUS_ORDER = ['reported', 'reviewing', 'scheduled', 'resolved']
 
-export const AWARD_TIERS = [
-  { id: 'bronze-cert',  label: 'Bronze Certificate', hours: 30 },
-  { id: 'silver-cert',  label: 'Silver Certificate', hours: 45 },
-  { id: 'gold-cert',    label: 'Gold Certificate',   hours: 60 },
-  { id: 'bronze-medal', label: 'Bronze Medal',       hours: 100 },
-  { id: 'silver-medal', label: 'Silver Medal',       hours: 200 },
-  { id: 'gold-medal',   label: 'Gold Medal',         hours: 400 },
-]
-
 export const HOUR_STATUS = {
   pending:  { label: 'Awaiting verification', color: '#8A5417', bg: '#F7EEE1' },
   verified: { label: 'Verified',              color: '#1F6E45', bg: '#E3F0E8' },

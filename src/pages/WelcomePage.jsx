@@ -13,7 +13,7 @@ import EventModal from '../components/events/EventModal'
 import { useSpots } from '../hooks/useSpots'
 import { useEvents } from '../hooks/useEvents'
 import { useCityStats } from '../hooks/useCityStats'
-import { AWARD_TIERS, PIN_TYPES } from '../lib/constants'
+import { PIN_TYPES } from '../lib/constants'
 import { formatDateLong, formatTimeRange, plural } from '../lib/format'
 import { useCity } from '../hooks/useCity'
 import { useIsMobile } from '../hooks/useMediaQuery'
@@ -429,55 +429,6 @@ export default function WelcomePage() {
               <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.6 }}>{step.body}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------------- award */}
-      <section id="award" style={{ background: 'var(--navy)', color: '#fff' }}>
-        <div style={{
-          ...SHELL, paddingTop: 64, paddingBottom: 64,
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-          gap: 52, alignItems: 'start',
-        }}>
-          <div>
-            <div className="eyebrow" style={{ color: 'rgba(255,255,255,.7)', marginBottom: 18 }}>
-              Congressional Award
-            </div>
-            <h2 style={{ fontSize: 30, fontWeight: 800, marginBottom: 18, maxWidth: 460 }}>
-              Hours that an organization will actually vouch for
-            </h2>
-            <p style={{ fontSize: 15.5, color: 'rgba(255,255,255,.72)', lineHeight: 1.7, marginBottom: 18 }}>
-              The Congressional Award is the United States Congress&rsquo; award for young people,
-              earned partly through voluntary public service. It only counts if a supervising
-              adult confirms you were there.
-            </p>
-            <p style={{ fontSize: 15.5, color: 'rgba(255,255,255,.72)', lineHeight: 1.7 }}>
-              Every hour logged here is tied to the organization that supervised it, with their
-              email attached, so when you submit your record you know exactly who to ask.
-            </p>
-          </div>
-
-          <div>
-            <div style={{
-              fontSize: 12, fontWeight: 700, letterSpacing: 0.07, textTransform: 'uppercase',
-              color: 'rgba(255,255,255,.5)', marginBottom: 14,
-            }}>
-              Service hours required
-            </div>
-            <div style={{ display: 'grid', gap: 1, background: 'rgba(255,255,255,.12)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
-              {AWARD_TIERS.map(tier => (
-                <div key={tier.id} style={{
-                  display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                  padding: '13px 17px', background: 'var(--navy)', fontSize: 14.5,
-                }}>
-                  <span style={{ fontWeight: 500 }}>{tier.label}</span>
-                  <span style={{ color: 'rgba(255,255,255,.62)', fontWeight: 700 }}>
-                    {tier.hours} hrs
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
