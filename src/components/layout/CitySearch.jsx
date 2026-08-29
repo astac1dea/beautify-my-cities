@@ -101,7 +101,7 @@ export default function CitySearch({ size = 'lg', placeholder = 'Search for your
             fontSize: 11, fontWeight: 700, letterSpacing: 0.07,
             textTransform: 'uppercase', color: 'var(--muted)',
           }}>
-            {matches.length ? 'Cities on Beautify My City' : 'No match'}
+            {matches.length ? 'Cities we cover' : 'No match'}
           </div>
 
           {matches.length === 0 ? (

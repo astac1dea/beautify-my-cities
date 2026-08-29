@@ -38,7 +38,7 @@ export default function Wordmark({ dark = false, size = 34, subtitle }) {
           fontSize: size > 30 ? 16 : 15, fontWeight: 800, lineHeight: 1.2,
           letterSpacing: '-0.02em', color: dark ? '#fff' : 'var(--text)',
         }}>
-          Beautify My City
+          Beautify Our Cities
         </div>
         {subtitle && (
           <div style={{

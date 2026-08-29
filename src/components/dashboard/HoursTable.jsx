@@ -22,7 +22,7 @@ function verifyMailto(org, rows, volunteerName) {
   const body = [
     `Hello ${org.contact_name},`,
     '',
-    `My name is ${volunteerName} and I volunteered with ${org.name} through Beautify My City.`,
+    `My name is ${volunteerName} and I volunteered with ${org.name} through Beautify Our Cities.`,
     'I am keeping a record of my service hours and need them verified by a supervising',
     'adult from the organization.',
     '',

@@ -425,7 +425,7 @@ export default function WelcomePage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
             <Logo size={32} />
             <div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>Beautify My City</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>Beautify Our Cities</div>
               <div style={{ fontSize: 12.5, marginTop: 2 }}>A civic platform for {city.name}, {city.state}</div>
             </div>
           </div>

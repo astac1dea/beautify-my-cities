@@ -1,4 +1,4 @@
-# Beautify My City
+# Beautify Our Cities
 
 A civic platform for your city. Residents pin spots that need work, neighbours
 upvote them, local organizations schedule volunteer days, and volunteers walk
