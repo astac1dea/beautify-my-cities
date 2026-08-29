@@ -43,13 +43,13 @@ function photoBand(src, dim = 0.55) {
 
 const STEPS = [
   { icon: 'pinPlus', title: 'Put it on the map',
-    body: 'Drop a pin on the spot: an overflowing bin, a tagged wall, a bus stop with no shade. The report goes to the organization that handles that kind of work.' },
-  { icon: 'thumbsUp', title: 'Neighbours back it',
-    body: 'Spots with the most support move up the list. Watch a pin climb the city ranking and see when an organization puts a work day on the calendar for it.' },
-  { icon: 'users', title: 'Join a work day',
-    body: 'Every scheduled event lists the date, the place and exactly what you would be doing. One tap to sign up, and it lands on your calendar.' },
-  { icon: 'clock', title: 'Get the hours signed off',
-    body: 'Hours are logged as a spreadsheet you can hand to anyone, with the email of the organization that can confirm you were there.' },
+    body: 'See something that needs attention? You can add it to the map with a pin, photo and description. Anyone can see what needs improvement' },
+  { icon: 'thumbsUp', title: 'Get your community behind it',
+    body: 'Upvote pins that you think matter. Watch the leaderboard of pins and see issues get fixed.' },
+  { icon: 'users', title: 'Join the action!',
+    body: 'Join the volunteer effort - see the date, the place and exactly what you would be doing. One tap to sign up, and it lands on your calendar.' },
+  { icon: 'clock', title: 'See the impact',
+    body: 'Make your community more beautify! Create an account and track your work and volunteer hours.' },
 ]
 
 function SectionTitle({ title, blurb }) {
@@ -153,16 +153,16 @@ export default function WelcomePage() {
             fontSize: 'clamp(30px, 4.4vw, 50px)', fontWeight: 800,
             lineHeight: 1.14, maxWidth: 920, marginBottom: 18,
           }}>
-            See what needs work in your city, and join the people already fixing it.
+            See what needs work in your city. Find a way to help. 
           </h1>
 
           <p style={{
             fontSize: 'clamp(16px, 1.5vw, 20px)', lineHeight: 1.55,
             color: 'rgba(255,255,255,.85)', maxWidth: 760, marginBottom: 30,
           }}>
-            Every pin on this map was put there by a resident. Local organizations run the
-            volunteer days that clear them, and the hours you put in get signed off by the
-            organization that supervised you.
+            Residents can report local issues directly onto the map, such as litter, grafitti
+            and damaged public spaces. Local organizations can organize volunteer 
+            efforts to address these issues, and volunteers can get hours signed off! 
           </p>
 
           <a href="#how" style={{
