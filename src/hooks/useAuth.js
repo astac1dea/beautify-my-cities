@@ -84,7 +84,7 @@ export function useAuth() {
         role: 'resident',
         school: school?.trim() || '',
         grade: grade?.trim() || '',
-        avatar_color: '#205C99',
+        avatar_color: '#1A1A1A',
         city_id: '00000001-0000-0000-0000-000000000001',
       })
     if (profileError) return { error: profileError.message }

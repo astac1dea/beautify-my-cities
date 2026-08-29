@@ -77,7 +77,7 @@ export function signUp({ name, email, password, school, grade }) {
   if (!email?.includes('@')) return { error: 'Please enter a valid email address.' }
   if ((password || '').length < 8) return { error: 'Password needs to be at least 8 characters.' }
   const id = `u-${Date.now()}`
-  const profile = { id, display_name: name.trim(), email, password, role: 'resident', school, grade, avatar_color: '#205C99' }
+  const profile = { id, display_name: name.trim(), email, password, role: 'resident', school, grade, avatar_color: '#1A1A1A' }
   commit({ ...state, profiles: [...state.profiles, profile], sessionUserId: id })
   return { user: profile }
 }

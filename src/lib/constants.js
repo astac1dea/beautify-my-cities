@@ -15,7 +15,7 @@ export const SPOT_STATUS = {
                blurb: 'Your report was sent to the organization that handles this.' },
   reviewing: { label: 'Under review',   color: '#8A5417', bg: '#F7EEE1', step: 2,
                blurb: 'The organization has seen it and is checking the site.' },
-  scheduled: { label: 'Event scheduled',color: '#14395E', bg: '#E8EEF4', step: 3,
+  scheduled: { label: 'Event scheduled',color: '#1A1A1A', bg: '#F2F2F2', step: 3,
                blurb: 'A volunteer event is on the calendar for this spot.' },
   resolved:  { label: 'Resolved',       color: '#1F6E45', bg: '#E3F0E8', step: 4,
                blurb: 'Work is done. Thanks for reporting it.' },

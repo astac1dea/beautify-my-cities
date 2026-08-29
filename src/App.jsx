@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AppLayout from './components/layout/AppLayout'
-import LandingPage from './pages/LandingPage'
 import WelcomePage from './pages/WelcomePage'
 import AuthPage from './pages/AuthPage'
 import MapPage from './pages/MapPage'
@@ -13,10 +12,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Landing — city selector + what to do */}
-        <Route path="/" element={<LandingPage />} />
-
-        {/* City home — full map/events page */}
+        {/* Straight into the city page. The search bar in the hero and the
+            header is how you switch to another one. */}
+        <Route path="/" element={<WelcomePage />} />
         <Route path="/city/:cityId" element={<WelcomePage />} />
 
         {/* Auth */}

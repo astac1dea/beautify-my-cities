@@ -61,7 +61,7 @@ export function createDraftIcon() {
       <div style="position:relative;width:34px;height:34px;">
         <div style="
           width:34px;height:34px;border-radius:50%;
-          background:#14395E;border:2px solid #fff;
+          background:#1A1A1A;border:2px solid #fff;
           box-shadow:0 3px 10px rgba(20,57,94,.45);
           display:flex;align-items:center;justify-content:center;">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#fff"
@@ -69,7 +69,7 @@ export function createDraftIcon() {
         </div>
         <div style="
           position:absolute;left:50%;bottom:-5px;transform:translateX(-50%) rotate(45deg);
-          width:8px;height:8px;background:#14395E;"></div>
+          width:8px;height:8px;background:#1A1A1A;"></div>
       </div>`,
     iconSize: [34, 39],
     iconAnchor: [17, 39],

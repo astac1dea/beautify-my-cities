@@ -191,7 +191,7 @@ export async function signUp({ email, password, name, school, grade }) {
       role: 'resident',
       school: school?.trim() || '',
       grade: grade?.trim() || '',
-      avatar_color: '#205C99',
+      avatar_color: '#1A1A1A',
       email: email.trim().toLowerCase(),
     })
   if (profileError) return { error: profileError.message }

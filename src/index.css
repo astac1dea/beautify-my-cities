@@ -3,22 +3,23 @@
 /* ------------------------------------------------------------------ tokens */
 
 :root {
-  /* Deep civic navy carries the brand; everything else stays quiet. */
-  --navy:        #14395E;
-  --navy-dark:   #0E2A46;
-  --navy-soft:   #E8EEF4;
-  --link:        #205C99;
+  /* The brand colour is black on white. The dark token is what carries the
+     hero, the footer and the primary buttons; nothing else is coloured. */
+  --navy:        #1A1A1A;
+  --navy-dark:   #0D0D0D;
+  --navy-soft:   #F2F2F2;
+  --link:        #1A1A1A;
 
-  /* Neutrals are warm grey rather than blue-tinted, so the navy reads as
-     the only real colour on the page. */
-  --bg:          #F5F6F8;
+  /* Neutrals are a true grey ramp, so the page reads as white and the only
+     contrast comes from type and hairlines. */
+  --bg:          #FFFFFF;
   --surface:     #FFFFFF;
-  --surface-alt: #FAFBFC;
-  --border:      #DEE3E9;
-  --border-firm: #C6CFD8;
-  --text:        #17222E;
-  --muted:       #5C6B7A;
-  --muted-light: #8494A3;
+  --surface-alt: #FAFAFA;
+  --border:      #E6E6E6;
+  --border-firm: #D2D2D2;
+  --text:        #161616;
+  --muted:       #6A6A6A;
+  --muted-light: #9B9B9B;
 
   /* Status. Deeper and less saturated than a default palette so nothing
      shouts louder than the content. */
@@ -31,8 +32,8 @@
 
   --radius:      6px;
   --radius-lg:   10px;
-  --shadow:      0 1px 2px rgba(23, 34, 46, .06), 0 1px 3px rgba(23, 34, 46, .04);
-  --shadow-lg:   0 12px 32px rgba(23, 34, 46, .12);
+  --shadow:      0 1px 2px rgba(0, 0, 0, .05), 0 1px 3px rgba(0, 0, 0, .04);
+  --shadow-lg:   0 12px 32px rgba(0, 0, 0, .13);
 }
 
 /* ------------------------------------------------------------------- base */
@@ -53,6 +54,31 @@ h1, h2, h3, h4 {
 }
 
 a { color: var(--link); }
+
+/* The centred section heading volunteer.gov uses: title, short rule, blurb. */
+.section-title {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 40px;
+}
+
+.section-title h2 {
+  font-size: clamp(28px, 3.4vw, 40px);
+  font-weight: 800;
+}
+
+.section-title .rule {
+  width: 92px;
+  height: 1px;
+  background: var(--border-firm);
+  margin: 22px auto;
+}
+
+.section-title p {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--muted);
+}
 
 button, input, textarea, select { font-family: inherit; }
 
@@ -178,7 +204,7 @@ html, body { max-width: 100%; overflow-x: hidden; }
 
 /* Touch targets stay thumb-sized on small screens. */
 @media (max-width: 860px) {
-  button, a { -webkit-tap-highlight-color: rgba(20, 57, 94, .12); }
+  button, a { -webkit-tap-highlight-color: rgba(0, 0, 0, .1); }
 }
 
 /* Topbar gutters match the page gutters at each breakpoint. */
