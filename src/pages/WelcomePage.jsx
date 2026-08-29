@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useLocation } from 'react-router-dom'
 import PublicHeader from '../components/layout/PublicHeader'
 import PublicFooter from '../components/layout/PublicFooter'
 import Button from '../components/ui/Button'
@@ -120,6 +120,35 @@ export default function WelcomePage() {
   const { city, setCity } = useCity()
 
   useEffect(() => { if (cityId) setCity(cityId) }, [cityId])
+
+  // The public nav links here as /#map and friends, from this page or another.
+  // Arriving from another page, the section is not laid out yet on the first
+  // frame, and the map settling afterwards moves it again - so scroll once the
+  // target exists, then correct once more when everything has stopped moving.
+  const { hash } = useLocation()
+  useEffect(() => {
+    if (!hash) return
+    let cancelled = false
+    const timers = []
+
+    const scroll = behavior => {
+      const el = document.querySelector(hash)
+      if (el) el.scrollIntoView({ behavior })
+      return !!el
+    }
+
+    const attempt = tries => {
+      if (cancelled) return
+      if (scroll('smooth')) {
+        timers.push(setTimeout(() => { if (!cancelled) scroll('auto') }, 600))
+      } else if (tries < 20) {
+        timers.push(setTimeout(() => attempt(tries + 1), 50))
+      }
+    }
+
+    timers.push(setTimeout(() => attempt(0), 60))
+    return () => { cancelled = true; timers.forEach(clearTimeout) }
+  }, [hash])
 
   const isMobile = useIsMobile()
 
@@ -388,6 +417,17 @@ export default function WelcomePage() {
             title="How it works"
             blurb="Four steps, from noticing a problem to holding the hours that prove you helped fix it."
           />
+
+          <div style={{ textAlign: 'center', marginTop: -22, marginBottom: 34 }}>
+            <Link to="/learn-more" style={{
+              display: 'inline-flex', alignItems: 'center', gap: 9,
+              fontSize: 15.5, fontWeight: 700, color: 'var(--link)',
+              textDecoration: 'underline', textUnderlineOffset: 4,
+            }}>
+              Learn more about why we built this
+              <Icon name="arrowRight" size="sm" />
+            </Link>
+          </div>
 
           <div style={{
             display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(238px, 1fr))', gap: 18,

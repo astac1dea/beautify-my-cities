@@ -125,6 +125,9 @@ button, input, textarea, select { font-family: inherit; }
   flex-shrink: 0;
 }
 
+/* The public header is sticky, so an anchored section needs room above it. */
+section[id] { scroll-margin-top: 76px; }
+
 .card {
   background: var(--surface);
   border: 1px solid var(--border);

@@ -7,19 +7,18 @@ import CitySearch from './CitySearch'
 import { useAuth } from '../../hooks/useAuth'
 import { useIsMobile } from '../../hooks/useMediaQuery'
 
+// Every entry is a route, hash included, so the nav works from any page and
+// not just the one the section happens to live on. WelcomePage does the
+// scrolling when it sees a hash.
 const LINKS = [
-  { href: '#map', label: 'The map' },
-  { href: '#events', label: 'Volunteer events' },
-  { href: '#how', label: 'How it works' },
+  { to: '/#map', label: 'The map' },
+  { to: '/#events', label: 'Volunteer events' },
+  { to: '/#how', label: 'How it works' },
   { to: '/learn-more', label: 'Learn more' },
 ]
 
-// Anchors only resolve on the welcome page; a `to` entry is a real route.
 function NavLink({ link, style, onClick }) {
-  if (link.to) {
-    return <Link to={link.to} style={style} onClick={onClick}>{link.label}</Link>
-  }
-  return <a href={link.href} style={style} onClick={onClick}>{link.label}</a>
+  return <Link to={link.to} style={style} onClick={onClick}>{link.label}</Link>
 }
 
 const linkStyle = {
