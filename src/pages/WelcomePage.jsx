@@ -149,6 +149,13 @@ export default function WelcomePage() {
       {/* ------------------------------------------------------------ hero */}
       <section style={{ ...photoBand(HERO_IMAGE), color: '#fff', position: 'relative' }}>
         <div style={{ ...SHELL, paddingTop: isMobile ? 64 : 108, paddingBottom: isMobile ? 96 : 132 }}>
+          <div className="eyebrow" style={{
+            color: '#fff', marginBottom: 20, textTransform: 'none',
+            fontSize: 15, letterSpacing: 0,
+          }}>
+            Join us to make our cities more beautiful!
+          </div>
+
           <h1 style={{
             fontSize: 'clamp(30px, 4.4vw, 50px)', fontWeight: 800,
             lineHeight: 1.14, maxWidth: 920, marginBottom: 18,
