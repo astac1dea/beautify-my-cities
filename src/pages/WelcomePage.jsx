@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import PublicHeader from '../components/layout/PublicHeader'
-import { Logo } from '../components/layout/Wordmark'
+import PublicFooter from '../components/layout/PublicFooter'
 import Button from '../components/ui/Button'
 import Badge from '../components/ui/Badge'
 import Icon from '../components/ui/Icon'
@@ -172,14 +172,14 @@ export default function WelcomePage() {
             efforts to address these issues, and volunteers can get hours signed off! 
           </p>
 
-          <a href="#how" style={{
+          <Link to="/learn-more" style={{
             display: 'inline-flex', alignItems: 'center', gap: 12,
             color: '#fff', fontSize: 17, fontWeight: 700, textDecoration: 'underline',
             textUnderlineOffset: 5,
           }}>
             <Icon name="checkCircle" size="lg" />
             Find out more
-          </a>
+          </Link>
         </div>
       </section>
 
@@ -415,25 +415,7 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* ---------------------------------------------------------- footer */}
-      <footer style={{ background: 'var(--surface-alt)', color: 'var(--muted)' }}>
-        <div style={{
-          ...SHELL, paddingTop: 40, paddingBottom: 40,
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          gap: 24, flexWrap: 'wrap',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <Logo size={32} />
-            <div>
-              <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>Beautify Our Cities</div>
-              <div style={{ fontSize: 12.5, marginTop: 2 }}>A civic platform for {city.name}, {city.state}</div>
-            </div>
-          </div>
-          <div style={{ fontSize: 13.5 }}>
-            Map data © OpenStreetMap contributors
-          </div>
-        </div>
-      </footer>
+      <PublicFooter />
 
       {draft && (
         <AddPinModal

@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import AppLayout from './components/layout/AppLayout'
 import WelcomePage from './pages/WelcomePage'
+import LearnMorePage from './pages/LearnMorePage'
 import AuthPage from './pages/AuthPage'
 import MapPage from './pages/MapPage'
 import CalendarPage from './pages/CalendarPage'
@@ -16,6 +17,9 @@ function App() {
             header is how you switch to another one. */}
         <Route path="/" element={<WelcomePage />} />
         <Route path="/city/:cityId" element={<WelcomePage />} />
+
+        {/* Our story, and what the site is for */}
+        <Route path="/learn-more" element={<LearnMorePage />} />
 
         {/* Auth */}
         <Route path="/login" element={<AuthPage />} />

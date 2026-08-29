@@ -11,7 +11,16 @@ const LINKS = [
   { href: '#map', label: 'The map' },
   { href: '#events', label: 'Volunteer events' },
   { href: '#how', label: 'How it works' },
+  { to: '/learn-more', label: 'Learn more' },
 ]
+
+// Anchors only resolve on the welcome page; a `to` entry is a real route.
+function NavLink({ link, style, onClick }) {
+  if (link.to) {
+    return <Link to={link.to} style={style} onClick={onClick}>{link.label}</Link>
+  }
+  return <a href={link.href} style={style} onClick={onClick}>{link.label}</a>
+}
 
 const linkStyle = {
   fontSize: 14.5, fontWeight: 600, color: 'var(--text)',
@@ -81,7 +90,7 @@ export default function PublicHeader() {
           <>
             <nav style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginRight: 'auto' }}>
               {LINKS.map(l => (
-                <a key={l.href} href={l.href} style={linkStyle}>{l.label}</a>
+                <NavLink key={l.label} link={l} style={linkStyle} />
               ))}
             </nav>
             <div style={{ width: 250, flexShrink: 0 }}>
@@ -103,17 +112,15 @@ export default function PublicHeader() {
 
           <nav style={{ display: 'grid', gap: 2 }}>
             {LINKS.map(l => (
-              <a
-                key={l.href}
-                href={l.href}
+              <NavLink
+                key={l.label}
+                link={l}
                 onClick={() => setMenuOpen(false)}
                 style={{
                   ...linkStyle, fontSize: 15,
                   padding: '11px 4px', borderBottom: '1px solid var(--border)',
                 }}
-              >
-                {l.label}
-              </a>
+              />
             ))}
           </nav>
 
