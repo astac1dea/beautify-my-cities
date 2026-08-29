@@ -14,7 +14,7 @@ const DEMO_ACCOUNTS = [
 const DEMO_PASSWORD = 'demo1234'
 
 const inputStyle = {
-  width: '100%', padding: '11px 13px', borderRadius: 'var(--radius)',
+  width: '100%', padding: '11px 13px', borderRadius: 0,
   border: '1px solid var(--border-firm)', background: 'var(--surface)',
   fontSize: 14, color: 'var(--text)',
 }
@@ -128,7 +128,7 @@ export default function AuthPage() {
             {error && (
               <div style={{
                 fontSize: 13, color: 'var(--red)', background: 'var(--red-soft)',
-                border: '1px solid #E4C7C8', borderRadius: 'var(--radius)', padding: '11px 13px',
+                border: '1px solid #E4C7C8', borderRadius: 0, padding: '11px 13px',
               }}>{error}</div>
             )}
 
@@ -176,14 +176,14 @@ export default function AuthPage() {
                 onClick={() => loginAsDemo(acct.email)}
                 style={{
                   display: 'flex', gap: 13, alignItems: 'center', textAlign: 'left',
-                  padding: '15px 16px', borderRadius: 'var(--radius)', cursor: 'pointer',
+                  padding: '15px 16px', borderRadius: 0, cursor: 'pointer',
                   background: 'rgba(255,255,255,.07)',
                   border: '1px solid rgba(255,255,255,.14)',
                   color: '#fff', width: '100%',
                 }}
               >
                 <span style={{
-                  width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
+                  width: 36, height: 36, borderRadius: 0, flexShrink: 0,
                   background: 'rgba(255,255,255,.16)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontWeight: 700, fontSize: 14,
@@ -203,7 +203,7 @@ export default function AuthPage() {
           </div>
 
           <div style={{
-            marginTop: 20, padding: '13px 15px', borderRadius: 'var(--radius)',
+            marginTop: 20, padding: '13px 15px', borderRadius: 0,
             background: 'rgba(255,255,255,.05)', fontSize: 12.5,
             color: 'rgba(255,255,255,.58)', lineHeight: 1.6,
           }}>

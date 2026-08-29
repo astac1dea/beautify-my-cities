@@ -8,7 +8,7 @@ export default function TopVotedPanel({ spots = [], onSelect, focusSpotId, limit
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
+      borderRadius: 0, overflow: 'hidden',
     }}>
       <div style={{
         padding: '14px 16px', borderBottom: '1px solid var(--border)',
@@ -49,7 +49,7 @@ export default function TopVotedPanel({ spots = [], onSelect, focusSpotId, limit
 
             {/* Category icon */}
             <div style={{
-              width: 32, height: 32, borderRadius: 'var(--radius)', flexShrink: 0,
+              width: 32, height: 32, borderRadius: 0, flexShrink: 0,
               background: type.bg, color: type.color,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               border: focused ? `1.5px solid ${type.color}` : '1.5px solid transparent',

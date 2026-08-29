@@ -31,7 +31,7 @@ export default function CityPicker({ dark = false, label = 'Your city' }) {
         style={{
           display: 'flex', alignItems: 'center', gap: 10, width: '100%',
           padding: dark ? '11px 13px' : '8px 12px',
-          borderRadius: 'var(--radius)', cursor: 'pointer', textAlign: 'left',
+          borderRadius: 0, cursor: 'pointer', textAlign: 'left',
           background: dark ? 'rgba(255,255,255,.07)' : 'var(--surface)',
           border: `1px solid ${dark ? 'rgba(255,255,255,.14)' : 'var(--border-firm)'}`,
           color: fg,
@@ -69,7 +69,7 @@ export default function CityPicker({ dark = false, label = 'Your city' }) {
         <div style={{
           position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0, minWidth: 210,
           background: 'var(--surface)', border: '1px solid var(--border)',
-          borderRadius: 'var(--radius)', boxShadow: 'var(--shadow-lg)',
+          borderRadius: 0, boxShadow: 'var(--shadow-lg)',
           zIndex: 900, overflow: 'hidden',
         }}>
           <div style={{

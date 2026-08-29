@@ -96,7 +96,7 @@ export default function CommunityMap({
           {/* Instruction banner */}
           <div style={{
             background: 'var(--navy)', color: '#fff',
-            padding: '10px 18px', borderRadius: 'var(--radius)',
+            padding: '10px 18px', borderRadius: 0,
             fontSize: 13.5, fontWeight: 600,
             boxShadow: 'var(--shadow-lg)',
             display: 'flex', alignItems: 'center', gap: 9,
@@ -114,7 +114,7 @@ export default function CommunityMap({
             }}
             style={{
               pointerEvents: 'all',
-              width: 64, height: 64, borderRadius: '50%',
+              width: 64, height: 64, borderRadius: 0,
               background: 'var(--navy)', color: '#fff', border: 'none',
               fontSize: 36, fontWeight: 300, lineHeight: 1,
               cursor: 'pointer', boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
@@ -129,7 +129,7 @@ export default function CommunityMap({
           </button>
           <div style={{
             fontSize: 12, color: '#fff', fontWeight: 500,
-            background: 'rgba(0,0,0,0.5)', padding: '3px 10px', borderRadius: 20,
+            background: 'rgba(0,0,0,0.5)', padding: '3px 10px', borderRadius: 0,
           }}>
             or click the map for exact location
           </div>

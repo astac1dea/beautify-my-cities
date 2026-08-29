@@ -72,7 +72,7 @@ export default function HoursTable({ rows, totals, volunteerName }) {
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
+      borderRadius: 0, overflow: 'hidden',
     }}>
       <div style={{
         padding: '16px 20px', borderBottom: '1px solid var(--border)',

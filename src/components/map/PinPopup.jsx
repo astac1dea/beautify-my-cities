@@ -25,7 +25,7 @@ function StatusTimeline({ status }) {
           return (
             <div key={key} style={{ display: 'flex', alignItems: 'center', flex: last ? '0 0 auto' : 1 }}>
               <div style={{
-                width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
+                width: 22, height: 22, borderRadius: 0, flexShrink: 0,
                 background: done ? 'var(--navy)' : 'var(--surface)',
                 border: `1.5px solid ${done ? 'var(--navy)' : 'var(--border-firm)'}`,
                 color: '#fff',
@@ -60,7 +60,7 @@ function StatusTimeline({ status }) {
 
 function OrgCard({ org, isAdmin }) {
   if (!org) return (
-    <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', padding: '15px 17px' }}>
+    <div style={{ border: '1px solid var(--border)', borderRadius: 0, padding: '15px 17px' }}>
       <div style={{ fontSize: 11.5, fontWeight: 700, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 8 }}>Who handles this</div>
       <div style={{ fontSize: 13.5, color: 'var(--muted)' }}>
         We'll route this to the right local organization.{' '}
@@ -69,7 +69,7 @@ function OrgCard({ org, isAdmin }) {
     </div>
   )
   return (
-    <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
+    <div style={{ border: '1px solid var(--border)', borderRadius: 0, overflow: 'hidden' }}>
       <div style={{
         padding: '11px 17px', background: 'var(--surface-alt)', borderBottom: '1px solid var(--border)',
         fontSize: 11.5, fontWeight: 700, letterSpacing: 0.05, textTransform: 'uppercase',
@@ -80,7 +80,7 @@ function OrgCard({ org, isAdmin }) {
           <span style={{
             fontSize: 10, fontWeight: 700, color: '#8A5417',
             background: '#F7EEE1', border: '1px solid #E8C99A',
-            borderRadius: 4, padding: '2px 7px',
+            borderRadius: 0, padding: '2px 7px',
           }}>
             Unverified — reach out to confirm details with org
           </span>
@@ -89,7 +89,7 @@ function OrgCard({ org, isAdmin }) {
       <div style={{ padding: 17, display: 'grid', gap: 13 }}>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
           <div style={{
-            width: 38, height: 38, borderRadius: 'var(--radius)', flexShrink: 0,
+            width: 38, height: 38, borderRadius: 0, flexShrink: 0,
             background: 'var(--navy-soft)', color: 'var(--navy)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
@@ -132,7 +132,7 @@ function OrgCard({ org, isAdmin }) {
               <div style={{
                 fontSize: 12, color: 'var(--muted)', fontStyle: 'italic',
                 background: 'var(--surface-alt)', padding: '8px 10px',
-                borderRadius: 'var(--radius)', border: '1px solid var(--border)',
+                borderRadius: 0, border: '1px solid var(--border)',
               }}>
                 We are working with {org?.name || 'local partners'} to coordinate this request.
                 Contact us at hello@beautifymycities.org for updates.
@@ -153,14 +153,14 @@ function AdminDelete({ spotId, title, onDeleted }) {
     <div style={{
       display: 'flex', gap: 8, alignItems: 'center',
       padding: '8px 10px', background: '#FFEBEE',
-      border: '1px solid #FFCDD2', borderRadius: 6, flexWrap: 'wrap',
+      border: '1px solid #FFCDD2', borderRadius: 0, flexWrap: 'wrap',
     }}>
       <span style={{ fontSize: 12, color: '#B71C1C', flex: 1 }}>
         Delete <strong>{title}</strong>? This cannot be undone.
       </span>
       <button
         onClick={() => setConfirming(false)}
-        style={{ padding: '4px 10px', borderRadius: 5, border: '1px solid #ccc', background: '#fff', fontSize: 12, cursor: 'pointer' }}
+        style={{ padding: '4px 10px', borderRadius: 0, border: '1px solid #ccc', background: '#fff', fontSize: 12, cursor: 'pointer' }}
       >
         Cancel
       </button>
@@ -172,7 +172,7 @@ function AdminDelete({ spotId, title, onDeleted }) {
           if (error) { alert('Delete failed: ' + error.message); setDeleting(false); return }
           onDeleted()
         }}
-        style={{ padding: '4px 10px', borderRadius: 5, border: 'none', background: '#B71C1C', color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
+        style={{ padding: '4px 10px', borderRadius: 0, border: 'none', background: '#B71C1C', color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer' }}
       >
         {deleting ? 'Deleting...' : 'Yes, delete'}
       </button>
@@ -182,7 +182,7 @@ function AdminDelete({ spotId, title, onDeleted }) {
   return (
     <button
       onClick={() => setConfirming(true)}
-      style={{ padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600, background: '#B71C1C', color: '#fff', border: 'none', alignSelf: 'flex-start' }}
+      style={{ padding: '5px 12px', borderRadius: 0, cursor: 'pointer', fontSize: 12, fontWeight: 600, background: '#B71C1C', color: '#fff', border: 'none', alignSelf: 'flex-start' }}
     >
       Delete spot
     </button>
@@ -234,7 +234,7 @@ export default function PinPopup({ spotId, onClose }) {
           <div style={{
             display: 'flex', gap: 11, alignItems: 'flex-start',
             padding: '13px 16px', background: 'var(--surface-alt)',
-            border: '1px solid var(--border)', borderRadius: 'var(--radius)',
+            border: '1px solid var(--border)', borderRadius: 0,
           }}>
             <Icon name="pin" size="sm" style={{ marginTop: 2, color: 'var(--muted-light)' }} />
             <div>
@@ -254,7 +254,7 @@ export default function PinPopup({ spotId, onClose }) {
         {/* Upvote */}
         <div style={{
           padding: '16px 20px', background: 'var(--surface-alt)',
-          border: '1px solid var(--border)', borderRadius: 'var(--radius)',
+          border: '1px solid var(--border)', borderRadius: 0,
           display: 'grid', gap: 12,
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
@@ -308,7 +308,7 @@ export default function PinPopup({ spotId, onClose }) {
                   }}
                   placeholder="Your name"
                   style={{
-                    flex: 1, padding: '8px 12px', borderRadius: 'var(--radius)',
+                    flex: 1, padding: '8px 12px', borderRadius: 0,
                     border: `1px solid ${nameError ? 'var(--red)' : 'var(--border-firm)'}`,
                     background: 'var(--surface)', fontSize: 14, color: 'var(--text)',
                   }}
@@ -361,7 +361,7 @@ export default function PinPopup({ spotId, onClose }) {
           ) : (
             <div style={{
               padding: '20px 22px', border: '1px dashed var(--border-firm)',
-              borderRadius: 'var(--radius)', fontSize: 13.5, color: 'var(--muted)',
+              borderRadius: 0, fontSize: 13.5, color: 'var(--muted)',
               lineHeight: 1.65, background: 'var(--surface-alt)',
             }}>
               No event scheduled here yet. {spot.org?.name || 'The responsible organization'} reviews new reports as they come in,
@@ -375,7 +375,7 @@ export default function PinPopup({ spotId, onClose }) {
           <div style={{
             display: 'grid', gap: 10,
             padding: '14px 16px', background: '#FFF8E1',
-            border: '1px solid #F0D080', borderRadius: 'var(--radius)',
+            border: '1px solid #F0D080', borderRadius: 0,
           }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: '#7B5800' }}>
               Admin actions
@@ -389,7 +389,7 @@ export default function PinPopup({ spotId, onClose }) {
                     await reloadSpot()
                   }}
                   style={{
-                    padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 12, fontWeight: 600,
+                    padding: '5px 12px', borderRadius: 0, cursor: 'pointer', fontSize: 12, fontWeight: 600,
                     background: spot.status === s ? '#1a3352' : '#fff',
                     color: spot.status === s ? '#fff' : '#1a3352',
                     border: '1px solid #1a3352',

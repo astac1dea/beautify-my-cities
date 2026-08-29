@@ -14,7 +14,7 @@ export default function StatCard({ icon, number, label, trend, tone = 'neutral' 
       {/* Top row: icon + trend badge */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
         <div style={{
-          width: 36, height: 36, borderRadius: 'var(--radius)',
+          width: 36, height: 36, borderRadius: 0,
           background: t.bg, color: t.color,
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
         }}>
@@ -22,7 +22,7 @@ export default function StatCard({ icon, number, label, trend, tone = 'neutral' 
         </div>
         {trend && (
           <span style={{
-            fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 4,
+            fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 0,
             background: t.bg, color: t.color, whiteSpace: 'nowrap',
             letterSpacing: '0.02em',
           }}>

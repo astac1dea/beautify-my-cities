@@ -8,7 +8,7 @@ export default function Leaderboard({ spots, currentUserId, cityName, onOpen }) 
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
+      borderRadius: 0, overflow: 'hidden',
     }}>
       <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontSize: 15, fontWeight: 800 }}>Most wanted spots in {cityName}</div>
@@ -44,7 +44,7 @@ export default function Leaderboard({ spots, currentUserId, cityName, onOpen }) 
             </div>
 
             <div style={{
-              width: 38, height: 38, borderRadius: 'var(--radius)', flexShrink: 0,
+              width: 38, height: 38, borderRadius: 0, flexShrink: 0,
               background: type.bg, color: type.color,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>

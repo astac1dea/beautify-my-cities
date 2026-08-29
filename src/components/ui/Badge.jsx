@@ -12,7 +12,7 @@ export default function Badge({
       ...dims,
       color,
       background: bg,
-      borderRadius: 4,
+      borderRadius: 0,
       fontWeight: 600,
       display: 'inline-flex',
       alignItems: 'center',

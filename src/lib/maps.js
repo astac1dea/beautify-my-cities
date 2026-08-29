@@ -37,7 +37,7 @@ export function createPinIcon(type, { muted = false, active = false } = {}) {
     html: `
       <div style="position:relative;width:${size}px;height:${size}px;opacity:${muted ? 0.55 : 1};">
         <div style="
-          width:${size}px;height:${size}px;border-radius:50%;
+          width:${size}px;height:${size}px;border-radius:0;
           background:#fff;border:2px solid ${meta.color};
           box-shadow:0 2px 6px rgba(23,34,46,.28);
           display:flex;align-items:center;justify-content:center;">
@@ -60,7 +60,7 @@ export function createDraftIcon() {
     html: `
       <div style="position:relative;width:34px;height:34px;">
         <div style="
-          width:34px;height:34px;border-radius:50%;
+          width:34px;height:34px;border-radius:0;
           background:#1A1A1A;border:2px solid #fff;
           box-shadow:0 3px 10px rgba(20,57,94,.45);
           display:flex;align-items:center;justify-content:center;">

@@ -35,7 +35,7 @@ export default function PinMarker({ spot, onOpen, highlighted }) {
   const chip = (color, bg, text) => (
     <span style={{
       fontSize: 11, fontWeight: 600, padding: '2px 8px',
-      borderRadius: 4, background: bg, color,
+      borderRadius: 0, background: bg, color,
     }}>{text}</span>
   )
 
@@ -55,7 +55,7 @@ export default function PinMarker({ spot, onOpen, highlighted }) {
             <div style={{
               fontSize: 11.5, fontWeight: 600, color: '#888780',
               background: '#F1EFE8', border: '1px solid #D3D1C7',
-              borderRadius: 4, padding: '4px 8px', marginBottom: 8,
+              borderRadius: 0, padding: '4px 8px', marginBottom: 8,
               display: 'flex', alignItems: 'center', gap: 5,
             }}>
               ⏳ Pending review — not yet public
@@ -87,7 +87,7 @@ export default function PinMarker({ spot, onOpen, highlighted }) {
           <button
             onClick={() => onOpen(spot.id)}
             style={{
-              width: '100%', padding: '8px 12px', borderRadius: 'var(--radius)',
+              width: '100%', padding: '8px 12px', borderRadius: 0,
               cursor: 'pointer', background: 'var(--navy)', color: '#fff',
               border: 'none', fontSize: 13, fontWeight: 600,
             }}

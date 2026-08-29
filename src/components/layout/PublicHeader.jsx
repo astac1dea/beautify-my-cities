@@ -69,7 +69,7 @@ export default function PublicHeader() {
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             style={{
               marginLeft: 'auto', width: 40, height: 40, flexShrink: 0,
-              borderRadius: 'var(--radius)', cursor: 'pointer',
+              borderRadius: 0, cursor: 'pointer',
               background: 'var(--surface)', border: '1px solid var(--border-firm)',
               color: 'var(--text)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',

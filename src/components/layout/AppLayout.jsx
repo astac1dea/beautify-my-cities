@@ -21,7 +21,7 @@ function MobileBar({ onOpen }) {
         onClick={onOpen}
         aria-label="Open menu"
         style={{
-          width: 40, height: 40, borderRadius: 'var(--radius)', flexShrink: 0,
+          width: 40, height: 40, borderRadius: 0, flexShrink: 0,
           background: 'rgba(255,255,255,.1)', border: '1px solid rgba(255,255,255,.16)',
           color: '#fff', cursor: 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center',

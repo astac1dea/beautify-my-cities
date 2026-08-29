@@ -13,7 +13,6 @@ import PinPopup from '../components/map/PinPopup'
 import EventModal from '../components/events/EventModal'
 import { useSpots } from '../hooks/useSpots'
 import { useEvents } from '../hooks/useEvents'
-import { useCityStats } from '../hooks/useCityStats'
 import { PIN_TYPES } from '../lib/constants'
 import { formatDateLong, formatTimeRange } from '../lib/format'
 import { useCity } from '../hooks/useCity'
@@ -119,7 +118,6 @@ export default function WelcomePage() {
   const { spots } = useSpots()
   const { upcoming } = useEvents()
   const { city, setCity } = useCity()
-  const stats = useCityStats()
 
   useEffect(() => { if (cityId) setCity(cityId) }, [cityId])
 
@@ -182,36 +180,10 @@ export default function WelcomePage() {
       <div style={{ ...SHELL, marginTop: isMobile ? -26 : -30, position: 'relative', zIndex: 500 }}>
         <div className="card" style={{
           padding: isMobile ? 14 : '14px 16px', boxShadow: 'var(--shadow-lg)',
-          borderRadius: 'var(--radius-hard)',
+          borderRadius: 0,
           maxWidth: 1020, margin: '0 auto',
         }}>
           <CitySearch size={isMobile ? 'sm' : 'lg'} placeholder="Search for your city" />
-        </div>
-      </div>
-
-      {/* City numbers */}
-      <div style={{ ...SHELL, paddingTop: 44 }}>
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-          gap: 1, background: 'var(--border)',
-          border: '1px solid var(--border)', borderRadius: 'var(--radius)', overflow: 'hidden',
-        }}>
-          {[
-            [stats.open, 'spots open'],
-            [stats.resolved, 'resolved'],
-            [stats.volunteers, 'volunteers'],
-            [stats.upcoming, 'events scheduled'],
-          ].map(([n, label]) => (
-            <div key={label} style={{ background: 'var(--surface)', padding: '22px 24px', textAlign: 'center' }}>
-              <div style={{
-                fontSize: 32, fontWeight: 800, lineHeight: 1, letterSpacing: '-0.025em',
-                color: 'var(--navy)', fontVariantNumeric: 'tabular-nums',
-              }}>
-                {n}
-              </div>
-              <div style={{ fontSize: 13.5, color: 'var(--muted)', marginTop: 8 }}>{label}</div>
-            </div>
-          ))}
         </div>
       </div>
 
@@ -313,7 +285,7 @@ export default function WelcomePage() {
                       {i + 1}
                     </span>
                     <span style={{
-                      width: 34, height: 34, borderRadius: 'var(--radius)', flexShrink: 0,
+                      width: 34, height: 34, borderRadius: 0, flexShrink: 0,
                       background: type.bg, color: type.color,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                     }}>
@@ -344,7 +316,7 @@ export default function WelcomePage() {
       <section style={{ ...photoBand(BAND_IMAGE, 0.42) }}>
         <div style={{ ...SHELL, paddingTop: 72, paddingBottom: 72 }}>
           <div style={{
-            background: 'rgba(255,255,255,.94)', borderRadius: 'var(--radius)',
+            background: 'rgba(255,255,255,.94)', borderRadius: 0,
             padding: isMobile ? '32px 22px' : '46px 40px', textAlign: 'center',
             maxWidth: 900, margin: '0 auto',
           }}>
@@ -390,7 +362,7 @@ export default function WelcomePage() {
             <div style={{
               marginTop: 26, maxWidth: 640, marginLeft: 'auto', marginRight: 'auto',
               padding: '18px 20px', textAlign: 'center', cursor: 'pointer',
-              border: '1px solid var(--border-firm)', borderRadius: 'var(--radius)',
+              border: '1px solid var(--border-firm)', borderRadius: 0,
               fontSize: 15, fontWeight: 700, color: 'var(--text)', background: 'var(--surface)',
             }}>
               See all {upcoming.length} events
@@ -416,7 +388,7 @@ export default function WelcomePage() {
             {STEPS.map((step, i) => (
               <div key={step.title} className="card" style={{ padding: '26px 22px' }}>
                 <div style={{
-                  width: 46, height: 46, borderRadius: 'var(--radius)', marginBottom: 18,
+                  width: 46, height: 46, borderRadius: 0, marginBottom: 18,
                   background: 'var(--navy)', color: '#fff',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}>

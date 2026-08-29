@@ -8,10 +8,14 @@ function todayISO() {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`
 }
 
+// No single event credits more than this, however long it runs.
+export const MAX_EVENT_HOURS = 4
+
 function decorateEvent(event, userId) {
   const signups = event.event_signups || []
   return {
     ...event,
+    hours: Math.min(Number(event.hours) || 0, MAX_EVENT_HOURS),
     org: event.organizations || null,
     volunteerCount: signups.length,
     isJoined: signups.some(s => s.user_id === userId),

@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 export function Logo({ size = 34, background = 'var(--navy)', color = '#fff' }) {
   return (
     <div style={{
-      width: size, height: size, borderRadius: 7, background, flexShrink: 0,
+      width: size, height: size, borderRadius: 0, background, flexShrink: 0,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       <svg width={size * 0.6} height={size * 0.6} viewBox="0 0 24 24" fill="none"

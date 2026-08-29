@@ -48,7 +48,7 @@ export default function Sidebar({ fullWidth = false, onNavigate }) {
             <li key={to} style={{ marginBottom: 2 }}>
               <NavLink to={to} onClick={onNavigate} style={({ isActive }) => ({
                 display: 'flex', alignItems: 'center', gap: 11,
-                padding: '10px 12px', borderRadius: 'var(--radius)', textDecoration: 'none',
+                padding: '10px 12px', borderRadius: 0, textDecoration: 'none',
                 fontSize: 14, fontWeight: isActive ? 600 : 500,
                 color: isActive ? '#fff' : 'rgba(255,255,255,.62)',
                 background: isActive ? 'rgba(255,255,255,.12)' : 'transparent',
@@ -63,7 +63,7 @@ export default function Sidebar({ fullWidth = false, onNavigate }) {
 
       {/* Service hour summary, since it is the thing people come back for */}
       <div style={{
-        background: 'rgba(255,255,255,.07)', borderRadius: 'var(--radius)',
+        background: 'rgba(255,255,255,.07)', borderRadius: 0,
         padding: '15px 16px', marginTop: 24,
       }}>
         <div style={{
@@ -83,11 +83,11 @@ export default function Sidebar({ fullWidth = false, onNavigate }) {
       <div style={{ marginTop: 'auto', paddingTop: 20 }}>
         <div style={{
           display: 'flex', alignItems: 'center', gap: 11,
-          padding: '10px 12px', borderRadius: 'var(--radius)',
+          padding: '10px 12px', borderRadius: 0,
           background: 'rgba(255,255,255,.06)', marginBottom: 8,
         }}>
           <div style={{
-            width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+            width: 32, height: 32, borderRadius: 0, flexShrink: 0,
             background: 'rgba(255,255,255,.16)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 13, color: '#fff', fontWeight: 700,
@@ -108,7 +108,7 @@ export default function Sidebar({ fullWidth = false, onNavigate }) {
         <button
           onClick={logOut}
           style={{
-            width: '100%', padding: '9px 12px', borderRadius: 'var(--radius)', cursor: 'pointer',
+            width: '100%', padding: '9px 12px', borderRadius: 0, cursor: 'pointer',
             background: 'transparent', border: '1px solid rgba(255,255,255,.16)',
             color: 'rgba(255,255,255,.62)', fontSize: 13, fontWeight: 600,
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,

@@ -9,7 +9,7 @@ import { formatDate } from '../lib/format'
 import { useCity } from '../hooks/useCity'
 
 const inputStyle = {
-  width: '100%', padding: '10px 12px', borderRadius: 9,
+  width: '100%', padding: '10px 12px', borderRadius: 0,
   border: '1px solid var(--border)', background: 'var(--surface)',
   fontSize: 13, fontFamily: 'inherit', color: 'var(--text)',
 }
@@ -27,7 +27,7 @@ function Card({ title, children }) {
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
+      borderRadius: 0, overflow: 'hidden',
     }}>
       <div style={{
         padding: '15px 20px', borderBottom: '1px solid var(--border)',
@@ -118,10 +118,10 @@ export default function ProfilePage() {
         <div style={{ display: 'grid', gap: 20 }}>
           <div style={{
             background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-lg)', padding: '26px 22px', textAlign: 'center',
+            borderRadius: 0, padding: '26px 22px', textAlign: 'center',
           }}>
             <div style={{
-              width: 64, height: 64, borderRadius: '50%', margin: '0 auto 14px',
+              width: 64, height: 64, borderRadius: 0, margin: '0 auto 14px',
               background: user.avatar_color || 'var(--navy)', color: 'white',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 26, fontWeight: 800,

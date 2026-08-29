@@ -49,7 +49,7 @@ export default function EventDetails({ event, showJoin = true }) {
       <div style={{
         display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(158px, 1fr))',
         gap: 18, padding: '18px 20px', background: 'var(--surface-alt)',
-        border: '1px solid var(--border)', borderRadius: 'var(--radius)',
+        border: '1px solid var(--border)', borderRadius: 0,
       }}>
         <Fact icon="calendar" label="Date">{formatDateLong(event.event_date)}</Fact>
         <Fact icon="clock" label="Time">{formatTimeRange(event.start_time, event.end_time)}</Fact>
@@ -67,7 +67,7 @@ export default function EventDetails({ event, showJoin = true }) {
           {event.tasks?.map((task, i) => (
             <li key={i} style={{ display: 'flex', gap: 11, alignItems: 'flex-start' }}>
               <span style={{
-                width: 20, height: 20, borderRadius: 4, background: 'var(--navy-soft)',
+                width: 20, height: 20, borderRadius: 0, background: 'var(--navy-soft)',
                 color: 'var(--navy)', fontSize: 11, fontWeight: 700, flexShrink: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 2,
               }}>{i + 1}</span>

@@ -21,7 +21,7 @@ export default function FilterPills({ value, onChange, spots = [] }) {
             onClick={() => onChange(key)}
             style={{
               padding: isAll ? '6px 14px' : '6px 11px',
-              borderRadius: 'var(--radius)', cursor: 'pointer',
+              borderRadius: 0, cursor: 'pointer',
               fontSize: 13, fontWeight: isAll ? 700 : 600,
               display: 'inline-flex', alignItems: 'center', gap: 6,
               background: active
@@ -44,7 +44,7 @@ export default function FilterPills({ value, onChange, spots = [] }) {
                 ? isAll ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.25)'
                 : 'var(--surface-alt)',
               color: active ? (isAll ? '#fff' : meta.color) : 'var(--muted)',
-              borderRadius: 20,
+              borderRadius: 0,
               padding: '1px 6px',
               minWidth: 18,
               textAlign: 'center',

@@ -82,7 +82,7 @@ export default function DashboardPage() {
         {myRank && (
           <div style={{
             background: 'var(--surface)', border: '1px solid var(--border)',
-            borderRadius: 'var(--radius-lg)', padding: '20px 24px',
+            borderRadius: 0, padding: '20px 24px',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             gap: 16, flexWrap: 'wrap',
           }}>

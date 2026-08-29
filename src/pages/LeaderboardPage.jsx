@@ -12,7 +12,7 @@ function ResidentTable({ residents, currentUserId }) {
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
+      borderRadius: 0, overflow: 'hidden',
     }}>
       <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ fontSize: 15, fontWeight: 800 }}>Residents</div>
@@ -39,7 +39,7 @@ function ResidentTable({ residents, currentUserId }) {
             </div>
 
             <div style={{
-              width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
+              width: 34, height: 34, borderRadius: 0, flexShrink: 0,
               background: row.profile.avatar_color || 'var(--navy)',
               color: 'white', fontWeight: 800, fontSize: 14,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -96,7 +96,7 @@ export default function LeaderboardPage() {
       <div className="page-pad" style={{ display: 'grid', gap: 20 }}>
         {myBest && (
           <div style={{
-            background: 'var(--navy)', color: 'white', borderRadius: 'var(--radius-lg)',
+            background: 'var(--navy)', color: 'white', borderRadius: 0,
             padding: '20px 24px', display: 'flex', justifyContent: 'space-between',
             alignItems: 'center', gap: 16, flexWrap: 'wrap',
           }}>

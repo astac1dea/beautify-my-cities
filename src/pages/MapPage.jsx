@@ -55,7 +55,7 @@ export default function MapPage() {
           <FilterPills value={filter} onChange={v => { setFilter(v); setFocusSpotId(null) }} spots={spots} />
         </div>
         <div className="split">
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+          <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 0, overflow: 'hidden' }}>
             <div style={{ padding: '10px 14px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
               <span style={{ fontSize: 12.5, color: 'var(--muted)' }}>
                 {placing ? 'Click the map to place your pin.' : `Showing ${visible.length} of ${spots.length} spots${filter !== 'all' ? ` · ${filter}` : ''}.`}

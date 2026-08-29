@@ -18,7 +18,7 @@ export default function HoursSummary({ rows, verified, pending }) {
   )
 
   return (
-    <div style={{ background: 'var(--navy)', color: '#fff', borderRadius: 'var(--radius-lg)', padding: '24px 26px' }}>
+    <div style={{ background: 'var(--navy)', color: '#fff', borderRadius: 0, padding: '24px 26px' }}>
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
         gap: 16, marginBottom: 20,
@@ -44,7 +44,7 @@ export default function HoursSummary({ rows, verified, pending }) {
       </div>
 
       <div style={{
-        height: 8, borderRadius: 4, background: 'rgba(255,255,255,.15)',
+        height: 8, borderRadius: 0, background: 'rgba(255,255,255,.15)',
         overflow: 'hidden', display: 'flex', marginBottom: 12,
       }}>
         <div style={{ width: `${pct}%`, background: '#5FBF8C' }} />

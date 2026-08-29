@@ -30,7 +30,7 @@ export default function Button({
         ...SIZES[size],
         borderWidth: 1,
         borderStyle: 'solid',
-        borderRadius: 'var(--radius)',
+        borderRadius: 0,
         fontWeight: 600,
         cursor: disabled ? 'not-allowed' : 'pointer',
         opacity: disabled ? 0.45 : 1,

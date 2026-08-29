@@ -6,7 +6,7 @@ export default function UpcomingEvents({ events = [], onOpen, limit = 4 }) {
   return (
     <div style={{
       background: 'var(--surface)', border: '1px solid var(--border)',
-      borderRadius: 'var(--radius-lg)', overflow: 'hidden',
+      borderRadius: 0, overflow: 'hidden',
     }}>
       <div style={{
         padding: '14px 18px', borderBottom: '1px solid var(--border)',
@@ -35,7 +35,7 @@ export default function UpcomingEvents({ events = [], onOpen, limit = 4 }) {
             }}
           >
             <div style={{
-              width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
+              width: 8, height: 8, borderRadius: 0, flexShrink: 0,
               background: event.org.color, marginTop: 5,
             }} />
             <div style={{ minWidth: 0, flex: 1 }}>
@@ -53,7 +53,7 @@ export default function UpcomingEvents({ events = [], onOpen, limit = 4 }) {
             </div>
             <div style={{
               fontSize: 11, fontWeight: 800, color: 'var(--navy)',
-              background: 'var(--navy-soft)', padding: '3px 8px', borderRadius: 4,
+              background: 'var(--navy-soft)', padding: '3px 8px', borderRadius: 0,
               flexShrink: 0, whiteSpace: 'nowrap',
             }}>
               {event.hours} hrs

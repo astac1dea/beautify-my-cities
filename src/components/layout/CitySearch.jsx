@@ -70,7 +70,7 @@ export default function CitySearch({ size = 'lg', placeholder = 'Search for your
             color: 'var(--text)',
             border: '1px solid var(--border-firm)',
             borderRight: 'none',
-            borderRadius: 'var(--radius-hard) 0 0 var(--radius-hard)',
+            borderRadius: 0,
             outline: 'none',
           }}
         />
@@ -81,7 +81,7 @@ export default function CitySearch({ size = 'lg', placeholder = 'Search for your
             width: big ? 68 : 42, height: '100%', flexShrink: 0, cursor: 'pointer',
             background: 'var(--navy)', color: '#fff',
             border: '1px solid var(--navy)',
-            borderRadius: '0 var(--radius-hard) var(--radius-hard) 0',
+            borderRadius: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >
@@ -93,7 +93,7 @@ export default function CitySearch({ size = 'lg', placeholder = 'Search for your
         <div style={{
           position: 'absolute', top: 'calc(100% + 6px)', left: 0, right: 0,
           background: 'var(--surface)', border: '1px solid var(--border)',
-          borderRadius: 'var(--radius)', boxShadow: 'var(--shadow-lg)',
+          borderRadius: 0, boxShadow: 'var(--shadow-lg)',
           zIndex: 900, overflow: 'hidden', textAlign: 'left',
         }}>
           <div style={{

@@ -8,7 +8,7 @@ import { useSpots } from '../../hooks/useSpots'
 import { useCity } from '../../hooks/useCity'
 
 const inputStyle = {
-  width: '100%', padding: '10px 12px', borderRadius: 'var(--radius)',
+  width: '100%', padding: '10px 12px', borderRadius: 0,
   border: '1px solid var(--border-firm)', background: 'var(--surface)',
   fontSize: 14, color: 'var(--text)',
 }
@@ -95,7 +95,7 @@ function AddressAutocomplete({ value, onChange }) {
         <div style={{
           position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 999,
           background: '#fff', border: '1px solid var(--border-firm)',
-          borderRadius: 'var(--radius)', boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+          borderRadius: 0, boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
           marginTop: 2, overflow: 'hidden',
         }}>
           {suggestions.map((s, i) => (
@@ -145,7 +145,7 @@ function PhotoUpload({ photo, onPhoto }) {
 
   if (photo) {
     return (
-      <div style={{ position: 'relative', borderRadius: 'var(--radius)', overflow: 'hidden' }}>
+      <div style={{ position: 'relative', borderRadius: 0, overflow: 'hidden' }}>
         <img
           src={photo.preview}
           alt="Preview"
@@ -157,7 +157,7 @@ function PhotoUpload({ photo, onPhoto }) {
           style={{
             position: 'absolute', top: 8, right: 8,
             background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff',
-            borderRadius: '50%', width: 28, height: 28, cursor: 'pointer',
+            borderRadius: 0, width: 28, height: 28, cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 14,
           }}
@@ -167,7 +167,7 @@ function PhotoUpload({ photo, onPhoto }) {
         <div style={{
           position: 'absolute', bottom: 8, left: 8,
           background: 'rgba(0,0,0,0.55)', color: '#fff',
-          fontSize: 11.5, padding: '3px 8px', borderRadius: 4,
+          fontSize: 11.5, padding: '3px 8px', borderRadius: 0,
         }}>
           {photo.file.name}
         </div>
@@ -182,7 +182,7 @@ function PhotoUpload({ photo, onPhoto }) {
       onClick={() => inputRef.current?.click()}
       style={{
         border: '1.5px dashed var(--border-firm)',
-        borderRadius: 'var(--radius)',
+        borderRadius: 0,
         padding: '28px 20px',
         textAlign: 'center',
         cursor: 'pointer',
@@ -300,7 +300,7 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
           <div style={{
             display: 'flex', gap: 13, alignItems: 'flex-start',
             padding: '15px 17px', background: 'var(--green-soft)',
-            border: '1px solid #C8E0D2', borderRadius: 'var(--radius)',
+            border: '1px solid #C8E0D2', borderRadius: 0,
           }}>
             <Icon name="checkCircle" size="lg" style={{ marginTop: 1, color: 'var(--green)' }} />
             <div style={{ fontSize: 14, lineHeight: 1.6, color: 'var(--text)' }}>
@@ -312,7 +312,7 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
             <img
               src={created.photo}
               alt="Submitted"
-              style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 'var(--radius)' }}
+              style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 0 }}
             />
           )}
           <div style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.65 }}>
@@ -356,7 +356,7 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
                   type="button"
                   onClick={() => setType(key)}
                   style={{
-                    padding: '8px 14px', borderRadius: 'var(--radius)', cursor: 'pointer',
+                    padding: '8px 14px', borderRadius: 0, cursor: 'pointer',
                     fontSize: 13.5, fontWeight: 600,
                     display: 'inline-flex', alignItems: 'center', gap: 7,
                     background: active ? meta.bg : 'var(--surface)',
@@ -409,7 +409,7 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
 
         <div style={{
           padding: '13px 15px', background: 'var(--surface-alt)',
-          border: '1px solid var(--border)', borderRadius: 'var(--radius)',
+          border: '1px solid var(--border)', borderRadius: 0,
         }}>
           <div style={{ fontSize: 12.5, color: 'var(--muted)', marginBottom: 4 }}>This request goes to</div>
           <div style={{ fontSize: 14, fontWeight: 700 }}>{org?.name || 'Local organization'}</div>
@@ -419,7 +419,7 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
         <div style={{
           display: 'flex', gap: 10, alignItems: 'flex-start',
           padding: '11px 13px', background: 'var(--surface-alt)',
-          border: '1px solid var(--border)', borderRadius: 'var(--radius)',
+          border: '1px solid var(--border)', borderRadius: 0,
           fontSize: 12.5, color: 'var(--muted)',
         }}>
           <Icon name="info" size="sm" style={{ marginTop: 1, flexShrink: 0 }} />
@@ -435,7 +435,7 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
         {error && (
           <div style={{
             fontSize: 13, color: 'var(--red)', background: 'var(--red-soft)',
-            border: '1px solid #E4C7C8', borderRadius: 'var(--radius)', padding: '10px 13px',
+            border: '1px solid #E4C7C8', borderRadius: 0, padding: '10px 13px',
           }}>{error}</div>
         )}
 

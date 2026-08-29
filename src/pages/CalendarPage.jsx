@@ -15,13 +15,13 @@ function EventRow({ event, onOpen }) {
       style={{
         display: 'flex', gap: 16, alignItems: 'center', width: '100%', textAlign: 'left',
         padding: '16px 18px', background: 'var(--surface)', cursor: 'pointer',
-        border: '1px solid var(--border)', borderRadius: 'var(--radius)', fontFamily: 'inherit',
+        border: '1px solid var(--border)', borderRadius: 0, fontFamily: 'inherit',
       }}
     >
       <div style={{
         width: 54, flexShrink: 0, textAlign: 'center', padding: '8px 0',
         background: event.isPast ? 'var(--bg)' : 'var(--navy-soft)',
-        borderRadius: 9,
+        borderRadius: 0,
       }}>
         <div style={{
           fontSize: 9, fontWeight: 800, letterSpacing: 0.6, textTransform: 'uppercase',
@@ -105,7 +105,7 @@ export default function CalendarPage() {
       <div className="split page-pad">
         {/* Month grid. Hidden on phones - seven columns of day cells cannot
             be read at that width, so the lists below carry the page. */}
-        <div className="month-grid" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
+        <div className="month-grid" style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 0, overflow: 'hidden' }}>
           <div style={{
             padding: '16px 20px', borderBottom: '1px solid var(--border)',
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
@@ -141,7 +141,7 @@ export default function CalendarPage() {
                 }}>
                   <div style={{
                     fontSize: 11, fontWeight: isToday ? 800 : 600, marginBottom: 5,
-                    width: 21, height: 21, borderRadius: '50%',
+                    width: 21, height: 21, borderRadius: 0,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     background: isToday ? 'var(--navy)' : 'transparent',
                     color: isToday ? 'white' : 'var(--muted)',
@@ -156,7 +156,7 @@ export default function CalendarPage() {
                       title={e.title}
                       style={{
                         display: 'block', width: '100%', textAlign: 'left', marginBottom: 3,
-                        padding: '4px 6px', borderRadius: 5, cursor: 'pointer',
+                        padding: '4px 6px', borderRadius: 0, cursor: 'pointer',
                         fontSize: 10, fontWeight: 700, fontFamily: 'inherit',
                         background: e.isPast ? 'var(--bg)' : e.org.color,
                         color: e.isPast ? 'var(--muted)' : 'white',
@@ -183,7 +183,7 @@ export default function CalendarPage() {
             <div style={{ fontSize: 13, fontWeight: 800, marginBottom: 12 }}>Coming up</div>
             {upcoming.length === 0 ? (
               <div style={{
-                padding: '20px 18px', border: '1px dashed var(--border)', borderRadius: 'var(--radius)',
+                padding: '20px 18px', border: '1px dashed var(--border)', borderRadius: 0,
                 fontSize: 13, color: 'var(--muted)', lineHeight: 1.6, background: 'var(--surface)',
               }}>
                 Nothing on your calendar yet. Open a pin on the map and hit JOIN on its event.

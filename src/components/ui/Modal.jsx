@@ -30,7 +30,7 @@ export default function Modal({ open, onClose, title, subtitle, width = 580, chi
         onClick={e => e.stopPropagation()}
         style={{
           background: 'var(--surface)',
-          borderRadius: 'var(--radius-lg)',
+          borderRadius: 0,
           width: '100%', maxWidth: width,
           maxHeight: 'calc(100dvh - 2 * var(--modal-gutter, 20px))',
           display: 'flex', flexDirection: 'column',
@@ -52,7 +52,7 @@ export default function Modal({ open, onClose, title, subtitle, width = 580, chi
             aria-label="Close"
             style={{
               background: 'transparent', border: '1px solid var(--border)',
-              width: 32, height: 32, borderRadius: 'var(--radius)', cursor: 'pointer',
+              width: 32, height: 32, borderRadius: 0, cursor: 'pointer',
               color: 'var(--muted)', flexShrink: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}
