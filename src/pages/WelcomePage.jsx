@@ -43,13 +43,13 @@ function photoBand(src, dim = 0.55) {
 
 const STEPS = [
   { icon: 'pinPlus', title: 'Put it on the map',
-    body: 'See something that needs attention? You can add it to the map with a pin, photo and description. Anyone can see what needs improvement' },
+    body: 'See something that needs attention? You can add it to the map with a pin, photo and description. Anyone can see what needs improvement.' },
   { icon: 'thumbsUp', title: 'Get your community behind it',
     body: 'Upvote pins that you think matter. Watch the leaderboard of pins and see issues get fixed.' },
   { icon: 'users', title: 'Join the action!',
     body: 'Join the volunteer effort - see the date, the place and exactly what you would be doing. One tap to sign up, and it lands on your calendar.' },
   { icon: 'clock', title: 'See the impact',
-    body: 'Make your community more beautify! Create an account and track your work and volunteer hours.' },
+    body: 'Make your community more beautiful! Create an account and track your work and volunteer hours.' },
 ]
 
 function SectionTitle({ title, blurb }) {
