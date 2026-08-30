@@ -12,6 +12,8 @@ import { supabase } from '../../lib/supabase'
 import { useSpots } from '../../hooks/useSpots'
 import { useCity } from '../../hooks/useCity'
 import { useAuth } from '../../hooks/useAuth'
+import { setSpotPhotoStatus } from '../../lib/supabase-store'
+import { photoIsPublic, photoReviewState, PHOTO_STATUS_LABEL } from '../../lib/photos'
 
 function StatusTimeline({ status }) {
   const current = SPOT_STATUS[status]?.step ?? 0
@@ -189,6 +191,71 @@ function AdminDelete({ spotId, title, onDeleted }) {
   )
 }
 
+// The resident's photo. Everyone sees it once approved; an admin sees it in
+// any state, with the two buttons that decide it.
+function SpotPhoto({ spot, isAdmin, adminId, onReviewed }) {
+  const [saving, setSaving] = useState(false)
+  const state = photoReviewState(spot)
+
+  if (!state) return null
+  if (!isAdmin && !photoIsPublic(spot)) return null
+
+  async function review(status) {
+    setSaving(true)
+    try {
+      await setSpotPhotoStatus(spot.id, status, adminId)
+      await onReviewed?.()
+    } catch (err) {
+      console.error('Could not save the photo decision:', err)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div>
+      <img
+        src={spot.photo_url}
+        alt={spot.title}
+        style={{
+          width: '100%', maxHeight: 320, objectFit: 'cover',
+          display: 'block', background: 'var(--surface-alt)',
+        }}
+      />
+
+      {isAdmin && (
+        <div style={{
+          padding: '12px 14px', background: '#FFF8E1',
+          border: '1px solid #F0D080', borderTop: 'none',
+          display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap',
+        }}>
+          <span style={{ fontSize: 12.5, fontWeight: 700, color: '#7B5800' }}>
+            Photo: {PHOTO_STATUS_LABEL[state]}
+          </span>
+          <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
+            <Button
+              size="sm"
+              variant={state === 'approved' ? 'secondary' : 'primary'}
+              disabled={saving || state === 'approved'}
+              onClick={() => review('approved')}
+            >
+              Approve
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
+              disabled={saving || state === 'rejected'}
+              onClick={() => review('rejected')}
+            >
+              Reject
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function PinPopup({ spotId, onClose }) {
   const [spot, reloadSpot] = useSpot(spotId)
   const { city } = useCity()
@@ -220,6 +287,8 @@ export default function PinPopup({ spotId, onClose }) {
       subtitle={`Reported by ${spot.reporter?.display_name || 'a resident'}${spot.created_at ? ' on ' + formatDate(spot.created_at) : ''}`}
     >
       <div style={{ display: 'grid', gap: 24 }}>
+        <SpotPhoto spot={spot} isAdmin={isAdmin} adminId={user?.id} onReviewed={reloadSpot} />
+
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
           <Badge color={type.color} bg={type.bg} icon={type.icon}>{type.label}</Badge>
           <Badge color={status.color} bg={status.bg}>{status.label}</Badge>

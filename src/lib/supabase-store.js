@@ -44,7 +44,8 @@ export async function fetchSpots(cityId) {
     .from('spots')
     .select(`
       *,
-      votes (id, user_id, voter_name)
+      votes (id, user_id, voter_name),
+      events (id, title, event_date, start_time, end_time, location, hours)
     `)
     .eq('city_id', cityId)
     .neq('status', 'rejected')
@@ -67,6 +68,38 @@ export async function fetchSpotById(spotId) {
   return data
 }
 
+// The storage bucket photos land in. Must match MIGRATION_PHOTOS.sql.
+export const SPOT_PHOTO_BUCKET = 'spot-photos'
+
+// Uploads one image and hands back its public URL. The URL is only ever shown
+// once an admin moves the spot's photo_status to 'approved'.
+export async function uploadSpotPhoto(file, userId) {
+  if (!supabase || !file) return null
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '')
+  const name = `${userId || 'anon'}/${Date.now()}-${Math.random().toString(36).slice(2, 10)}.${ext}`
+
+  const { error } = await supabase.storage
+    .from(SPOT_PHOTO_BUCKET)
+    .upload(name, file, { cacheControl: '3600', contentType: file.type })
+  if (error) throw error
+
+  const { data } = supabase.storage.from(SPOT_PHOTO_BUCKET).getPublicUrl(name)
+  return data?.publicUrl || null
+}
+
+// An admin decision on a resident's photo.
+export async function setSpotPhotoStatus(spotId, status, adminId) {
+  const { error } = await supabase
+    .from('spots')
+    .update({
+      photo_status: status,
+      photo_reviewed_at: new Date().toISOString(),
+      photo_reviewed_by: adminId || null,
+    })
+    .eq('id', spotId)
+  if (error) throw error
+}
+
 export async function insertSpot({ type, title, address, description, lat, lng, photo, cityId, userId }) {
   const { data, error } = await supabase
     .from('spots')
@@ -80,6 +113,8 @@ export async function insertSpot({ type, title, address, description, lat, lng, 
       lat,
       lng,
       photo_url: photo || null,
+      // A photo is invisible to everyone but an admin until it is approved.
+      photo_status: photo ? 'pending' : 'approved',
       status: userId ? 'reported' : 'pending',
       base_upvotes: 0,
       created_at: todayISO(),

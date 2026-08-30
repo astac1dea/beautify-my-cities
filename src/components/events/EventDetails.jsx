@@ -5,6 +5,8 @@ import Icon from '../ui/Icon'
 import { formatDateLong, formatTimeRange, plural } from '../../lib/format'
 import { joinEvent, leaveEvent } from '../../lib/store'
 import { useAuth } from '../../hooks/useAuth'
+import { photoIsPublic } from '../../lib/photos'
+import { PIN_TYPES } from '../../lib/constants'
 
 function Fact({ icon, label, children }) {
   return (
@@ -33,9 +35,23 @@ export default function EventDetails({ event, showJoin = true }) {
 
   const spotsLeft = Math.max(0, (event.max_volunteers || 0) - event.volunteerCount)
   const full = spotsLeft === 0 && !event.isJoined
+  const spot = event.spot
+  const photo = photoIsPublic(spot) ? spot.photo_url : null
+  const spotType = spot ? PIN_TYPES[spot.type] : null
 
   return (
     <div style={{ display: 'grid', gap: 22 }}>
+      {photo && (
+        <img
+          src={photo}
+          alt={spot.title}
+          style={{
+            width: '100%', maxHeight: 280, objectFit: 'cover',
+            display: 'block', background: 'var(--surface-alt)',
+          }}
+        />
+      )}
+
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         <Badge color="var(--navy-deep)" bg="var(--navy-soft)">{event.org.name}</Badge>
         {event.isPast
@@ -56,6 +72,32 @@ export default function EventDetails({ event, showJoin = true }) {
         <Fact icon="pin" label="Where">{event.location}</Fact>
         <Fact icon="award" label="Service hours">{event.hours} hours credited</Fact>
       </div>
+
+      {spot && (
+        <div style={{
+          display: 'flex', gap: 11, alignItems: 'flex-start',
+          padding: '13px 16px', background: 'var(--surface-alt)',
+          border: '1px solid var(--border)',
+        }}>
+          <Icon
+            name={spotType?.icon || 'pin'}
+            size="sm"
+            style={{ marginTop: 2, color: 'var(--muted-light)', flexShrink: 0 }}
+          />
+          <div style={{ minWidth: 0 }}>
+            <div style={{
+              fontSize: 11.5, fontWeight: 700, letterSpacing: 0.05,
+              textTransform: 'uppercase', color: 'var(--muted)',
+            }}>
+              Scheduled for a reported spot
+            </div>
+            <div style={{ fontSize: 14, marginTop: 3, lineHeight: 1.5 }}>
+              {spot.title}
+              {spot.address && <span style={{ color: 'var(--muted)' }}> · {spot.address}</span>}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{ fontSize: 14.5, lineHeight: 1.65 }}>{event.description}</div>
 

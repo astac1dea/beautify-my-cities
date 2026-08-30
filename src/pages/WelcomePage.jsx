@@ -14,6 +14,7 @@ import EventModal from '../components/events/EventModal'
 import { useSpots } from '../hooks/useSpots'
 import { useEvents } from '../hooks/useEvents'
 import { PIN_TYPES } from '../lib/constants'
+import { photoIsPublic } from '../lib/photos'
 import { formatDateLong, formatTimeRange } from '../lib/format'
 import { useCity } from '../hooks/useCity'
 import { useIsMobile } from '../hooks/useMediaQuery'
@@ -64,8 +65,23 @@ function SectionTitle({ title, blurb }) {
 
 function EventCard({ event, onOpen }) {
   const spotsLeft = Math.max(0, (event.max_volunteers || 0) - event.volunteerCount)
+  // Events scheduled for a reported pin carry that pin's photo, once an admin
+  // has approved it.
+  const photo = photoIsPublic(event.spot) ? event.spot.photo_url : null
+
   return (
     <div className="card" style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      {photo && (
+        <img
+          src={photo}
+          alt={event.spot.title}
+          style={{
+            width: '100%', height: 170, objectFit: 'cover',
+            display: 'block', background: 'var(--surface-alt)',
+          }}
+        />
+      )}
+
       <div style={{ padding: '20px 20px 0' }}>
         <div style={{ fontSize: 13, color: 'var(--muted)' }}>
           {event.org?.name || 'Local organization'}

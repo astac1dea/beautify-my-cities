@@ -5,6 +5,7 @@ import Button from '../components/ui/Button'
 import StatCard from '../components/dashboard/StatCard'
 import HoursTable from '../components/dashboard/HoursTable'
 import HoursSummary from '../components/dashboard/HoursSummary'
+import PhotoReviewQueue from '../components/dashboard/PhotoReviewQueue'
 import SpotBreakdown from '../components/dashboard/SpotBreakdown'
 import UpcomingEvents from '../components/dashboard/UpcomingEvents'
 import PinPopup from '../components/map/PinPopup'
@@ -49,6 +50,9 @@ export default function DashboardPage() {
       />
 
       <div className="page-pad" style={{ display: 'grid', gap: 20 }}>
+        {/* Admins land on the moderation queue first, when there is one. */}
+        {user.role === 'admin' && <PhotoReviewQueue />}
+
         {/* Headline numbers */}
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16,

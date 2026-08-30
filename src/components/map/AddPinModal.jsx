@@ -6,6 +6,8 @@ import Icon from '../ui/Icon'
 import { PIN_TYPES } from '../../lib/constants'
 import { useSpots } from '../../hooks/useSpots'
 import { useCity } from '../../hooks/useCity'
+import { useAuth } from '../../hooks/useAuth'
+import { uploadSpotPhoto } from '../../lib/supabase-store'
 
 const inputStyle = {
   width: '100%', padding: '10px 12px', borderRadius: 0,
@@ -215,19 +217,21 @@ function PhotoUpload({ photo, onPhoto }) {
 export default function AddPinModal({ coords, onClose, onCreated }) {
   const { city } = useCity()
   const { addSpot } = useSpots()
+  const { user } = useAuth()
   const [type, setType] = useState('trash')
   const [submitting, setSubmitting] = useState(false)
   const [title, setTitle] = useState('')
   const [address, setAddress] = useState('')
   const [description, setDescription] = useState('')
   const [photo, setPhoto] = useState(null)
+  const [uploading, setUploading] = useState(false)
   const [error, setError] = useState('')
   const [created, setCreated] = useState(null)
   const [org, setOrg] = useState(null)
 
   // Fetch org from Supabase based on city + type
   useEffect(() => {
-    if (!city?.id) return
+    if (!supabase || !city?.id) return
     supabase
       .from('org_categories')
       .select('organizations(*)')
@@ -269,12 +273,26 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
         const geocoded = await geocodeAddress(address)
         if (geocoded) { lat = geocoded.lat; lng = geocoded.lng }
       }
+      // The photo goes to storage; the row only carries its URL. A failed
+      // upload must not lose the report, so the pin is saved either way.
+      let photoUrl = null
+      if (photo?.file) {
+        try {
+          setUploading(true)
+          photoUrl = await uploadSpotPhoto(photo.file, user?.id)
+        } catch (err) {
+          console.error('Photo upload failed, saving the report without it:', err)
+        } finally {
+          setUploading(false)
+        }
+      }
+
       const spot = await addSpot({
         type, title, address, description,
         lat, lng,
-        photo: photo?.preview || null,
+        photo: photoUrl,
       })
-      setCreated(spot)
+      setCreated({ ...spot, photoPending: !!photoUrl })
     } catch (err) {
       setError('Something went wrong. Please try again.')
     } finally {
@@ -308,12 +326,27 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
               went to <strong>{org?.name || 'our local partners'}</strong>.
             </div>
           </div>
-          {created.photo && (
-            <img
-              src={created.photo}
-              alt="Submitted"
-              style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 0 }}
-            />
+          {photo?.preview && (
+            <div>
+              <img
+                src={photo.preview}
+                alt="The photo you sent"
+                style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 0, display: 'block' }}
+              />
+              <div style={{
+                display: 'flex', gap: 9, alignItems: 'flex-start',
+                padding: '11px 13px', background: 'var(--amber-soft)',
+                border: '1px solid #E8D5B5', borderTop: 'none',
+                fontSize: 13, lineHeight: 1.55, color: 'var(--text)',
+              }}>
+                <Icon name="clock" size="sm" style={{ marginTop: 2, color: 'var(--amber)', flexShrink: 0 }} />
+                <span>
+                  {created.photoPending
+                    ? 'An admin checks your photo before it appears on the pin. Everything else about the report is live now.'
+                    : 'The photo could not be uploaded, so the report was sent without it.'}
+                </span>
+              </div>
+            </div>
           )}
           <div style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.65 }}>
             They review new reports and schedule a work day once a spot gets enough support.
@@ -340,7 +373,9 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
       footer={
         <>
           <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button onClick={submit} disabled={submitting}>{submitting ? 'Sending...' : 'Send request'}</Button>
+          <Button onClick={submit} disabled={submitting}>
+            {uploading ? 'Uploading photo...' : submitting ? 'Sending...' : 'Send request'}
+          </Button>
         </>
       }
     >
@@ -403,7 +438,10 @@ export default function AddPinModal({ coords, onClose, onCreated }) {
           />
         </Field>
 
-        <Field label="Photo (optional)" hint="A photo helps the crew understand what to expect.">
+        <Field
+          label="Photo (optional)"
+          hint="A photo helps the crew understand what to expect. It is checked by an admin before anyone else can see it."
+        >
           <PhotoUpload photo={photo} onPhoto={setPhoto} />
         </Field>
 

@@ -5,6 +5,7 @@ import { fetchSpots, insertSpot } from '../lib/supabase-store'
 import { supabase } from '../lib/supabase'
 import { useCity } from './useCity'
 import { useAuth } from './useAuth'
+import { MAX_EVENT_HOURS } from './useEvents'
 
 // ─── useSpots ─────────────────────────────────────────────────────────────────
 // Fetches spots from Supabase if available, falls back to localStorage.
@@ -35,7 +36,8 @@ export function useSpots() {
           : false,
         reporter: spot.profiles || null,
         org: null, // loaded separately when needed
-        event: null,
+        // The volunteer event an organization scheduled for this pin, if any.
+        event: spot.events?.[0] || null,
       }))
       setSupaSpots(decorated)
       setError(null)
@@ -95,6 +97,20 @@ export function useSpots() {
   return { spots, mine, ranking, addSpot, loading, error }
 }
 
+// The event popup inside a pin expects the same shape useEvents produces.
+function decorateSpotEvent(event, org, userId) {
+  if (!event) return null
+  const signups = event.event_signups || []
+  return {
+    ...event,
+    hours: Math.min(Number(event.hours) || 0, MAX_EVENT_HOURS),
+    org: org || null,
+    volunteerCount: signups.length,
+    isJoined: signups.some(s => s.user_id === userId),
+    isPast: event.event_date < new Date().toISOString().split('T')[0],
+  }
+}
+
 // ─── useSpot ──────────────────────────────────────────────────────────────────
 // Single spot — tries Supabase first, falls back to localStorage.
 
@@ -107,7 +123,12 @@ export function useSpot(spotId) {
     if (!supabase || !spotId) return
     const { data, error } = await supabase
       .from('spots')
-      .select(`*, votes (id, user_id, voter_name), organizations (id, name, email, phone, focus, blurb, contact_name)`)
+      .select(`
+        *,
+        votes (id, user_id, voter_name),
+        organizations (id, name, email, phone, focus, blurb, contact_name),
+        events (id, title, description, event_date, start_time, end_time, location, hours, max_volunteers, tasks, org_id, event_signups (id, user_id))
+      `)
       .eq('id', spotId)
       .single()
     if (error || !data) return
@@ -119,7 +140,7 @@ export function useSpot(spotId) {
         : false,
       reporter: null,
       org: data.organizations || null,
-      event: null,
+      event: decorateSpotEvent(data.events?.[0], data.organizations, user?.id),
     })
   }, [spotId, user?.id])
 

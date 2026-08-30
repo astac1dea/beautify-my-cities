@@ -17,6 +17,8 @@ function decorateEvent(event, userId) {
     ...event,
     hours: Math.min(Number(event.hours) || 0, MAX_EVENT_HOURS),
     org: event.organizations || null,
+    // The reported pin this event was scheduled for, when there is one.
+    spot: event.spots || null,
     volunteerCount: signups.length,
     isJoined: signups.some(s => s.user_id === userId),
     isPast: event.event_date < todayISO(),
@@ -36,7 +38,8 @@ export function useEvents() {
         .from('events')
         .select(`
           *,
-          event_signups (id, user_id)
+          event_signups (id, user_id),
+          spots (id, title, type, address, photo_url, photo_status)
         `)
         .eq('city_id', city.id)
         .order('event_date', { ascending: true })
@@ -87,7 +90,7 @@ export function useEvent(eventId) {
     if (!supabase || !eventId) return
     supabase
       .from('events')
-      .select(`*, organizations(*), event_signups(id, user_id)`)
+      .select(`*, organizations(*), event_signups(id, user_id), spots (id, title, type, address, photo_url, photo_status)`)
       .eq('id', eventId)
       .single()
       .then(({ data }) => {
