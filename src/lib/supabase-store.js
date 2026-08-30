@@ -57,9 +57,11 @@ export async function fetchSpots(cityId) {
 export async function fetchSpotById(spotId) {
   const { data, error } = await supabase
     .from('spots')
+    // spots.user_id points at auth.users, not profiles, so there is no
+    // relationship for PostgREST to follow - joining profiles here fails with
+    // PGRST200. The reporter's name is not needed by any caller.
     .select(`
       *,
-      profiles (id, display_name, avatar_color),
       votes (id, user_id, voter_name)
     `)
     .eq('id', spotId)
