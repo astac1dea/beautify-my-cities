@@ -5,8 +5,9 @@ export const PIN_TYPES = {
   seating:  { label: 'Seating',  icon: 'bench', color: '#1F6E45', bg: '#E3F0E8' },
 }
 
-export const MAP_TILES = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
-export const MAP_ATTRIBUTION = '© OpenStreetMap contributors &copy; <a href="https://carto.com/">CARTO</a>'
+// OpenFreeMap — free, no API key, clean modern style similar to CartoDB Positron
+export const MAP_TILES = 'https://tiles.openfreemap.org/styles/positron/{z}/{x}/{y}.png'
+export const MAP_ATTRIBUTION = '© <a href="https://openfreemap.org">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 
 export const SPOT_STATUS = {
   pending:   { label: 'Pending review', color: '#888780', bg: '#F1EFE8', step: 0,
