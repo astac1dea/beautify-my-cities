@@ -5,9 +5,9 @@ export const PIN_TYPES = {
   seating:  { label: 'Seating',  icon: 'bench', color: '#1F6E45', bg: '#E3F0E8' },
 }
 
-// OpenFreeMap — free, no API key, clean modern style similar to CartoDB Positron
-export const MAP_TILES = 'https://tiles.openfreemap.org/styles/positron/{z}/{x}/{y}.png'
-export const MAP_ATTRIBUTION = '© <a href="https://openfreemap.org">OpenFreeMap</a> © <a href="https://www.openmaptiles.org/">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+// Back to reliable OpenStreetMap — safe, always works, no API key
+export const MAP_TILES = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+export const MAP_ATTRIBUTION = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 
 export const SPOT_STATUS = {
   pending:   { label: 'Pending review', color: '#888780', bg: '#F1EFE8', step: 0,
