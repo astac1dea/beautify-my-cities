@@ -5,8 +5,9 @@ export const PIN_TYPES = {
   seating:  { label: 'Seating',  icon: 'bench', color: '#1F6E45', bg: '#E3F0E8' },
 }
 
-export const MAP_TILES = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-export const MAP_ATTRIBUTION = '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+// Mapbox Streets via Static Tiles API — correct Leaflet format
+export const MAP_TILES = 'https://api.mapbox.com/styles/v1/mapbox/streets-v12/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoiYXl1bW9vbndhdGNoZXIiLCJhIjoiY211amhlYmd3MHZ3YzJ6cHFyejNiNHgxOCJ9.TGJx2z7Xx2wTvOlFU2HQNQ'
+export const MAP_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a>'
 
 export const SPOT_STATUS = {
   pending:   { label: 'Pending review', color: '#888780', bg: '#F1EFE8', step: 0,
