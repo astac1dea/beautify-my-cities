@@ -5,9 +5,9 @@ export const PIN_TYPES = {
   seating:  { label: 'Seating',  icon: 'bench', color: '#1F6E45', bg: '#E3F0E8' },
 }
 
-// ArcGIS World Light Gray — free, no API key, clean professional look
-export const MAP_TILES = 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}'
-export const MAP_ATTRIBUTION = 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
+// OpenStreetMap Humanitarian — cleaner, softer colors than default OSM
+export const MAP_TILES = 'https://tile-a.openstreetmap.fr/hot/{z}/{x}/{y}.png'
+export const MAP_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles by <a href="https://hot.openstreetmap.org/">HOT</a>'
 
 export const SPOT_STATUS = {
   pending:   { label: 'Pending review', color: '#888780', bg: '#F1EFE8', step: 0,
