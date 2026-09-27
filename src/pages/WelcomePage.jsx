@@ -187,14 +187,14 @@ function photoBand(src, dim = 0.55) {
 }
 
 const STEPS = [
-  { icon: 'pinPlus', title: 'Put it on the map',
-    body: 'See something that needs attention? You can add it to the map with a pin, photo and description. Anyone can see what needs improvement.' },
-  { icon: 'thumbsUp', title: 'Get your community behind it',
-    body: 'Upvote pins that you think matter. Watch the leaderboard of pins and see issues get fixed.' },
-  { icon: 'users', title: 'Join the action!',
-    body: 'Join the volunteer effort - see the date, the place and exactly what you would be doing. One tap to sign up, and it lands on your calendar.' },
-  { icon: 'clock', title: 'See the impact',
-    body: 'Make your community more beautiful! Create an account and track your work and volunteer hours.' },
+  { icon: 'pinPlus', title: 'Pin a spot', color: '#059669', bg: '#e3f0e8',
+    body: 'See litter, graffiti, or a wall that could hold a mural? Add it to the map with a photo and description. Anyone in the community can see what needs attention.' },
+  { icon: 'thumbsUp', title: 'Upvote what matters', color: '#2563EB', bg: '#dbeafe',
+    body: 'The community votes on which spots matter most. Top pins rise to the leaderboard so organizations tackle the issues residents actually care about.' },
+  { icon: 'users', title: 'Volunteer for a day', color: '#7C3AED', bg: '#ede9fe',
+    body: 'Sign up for a volunteer event in one tap. See the date, location and exactly what you will be doing. It lands on your calendar automatically.' },
+  { icon: 'clock', title: 'Track your hours', color: '#D97706', bg: '#fef3c7',
+    body: 'Once you show up, the organizing group signs off your hours. Your dashboard shows every event joined and every hour contributed to your community.' },
 ]
 
 function SectionTitle({ title, blurb }) {
@@ -512,17 +512,23 @@ export default function WelcomePage() {
               <Icon name="arrowRight" size="sm" />
             </Link>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(238px, 1fr))', gap: 18 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(4, 1fr)', gap: 0, position: 'relative' }}>
             {STEPS.map((step, i) => (
-              <div key={step.title} className="card" style={{ padding: '26px 22px' }}>
-                <div style={{ width: 46, height: 46, borderRadius: 0, marginBottom: 18, background: 'var(--navy)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div key={step.title} style={{
+                position: 'relative',
+                padding: isMobile ? '28px 0' : '0 24px',
+                borderRight: !isMobile && i < STEPS.length - 1 ? '1px dashed var(--border)' : 'none',
+                borderBottom: isMobile && i < STEPS.length - 1 ? '1px dashed var(--border)' : 'none',
+              }}>
+                <div style={{ width: 32, height: 32, borderRadius: '50%', background: step.bg, color: step.color, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, marginBottom: 14 }}>{i + 1}</div>
+                <div style={{ width: 48, height: 48, borderRadius: 10, marginBottom: 16, background: step.color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon name={step.icon} size="lg" />
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--muted-light)', letterSpacing: 0.07, textTransform: 'uppercase', marginBottom: 7 }}>
-                  Step {i + 1}
-                </div>
-                <h3 style={{ fontSize: 17, fontWeight: 700, marginBottom: 9 }}>{step.title}</h3>
-                <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.6 }}>{step.body}</p>
+                <h3 style={{ fontSize: 17, fontWeight: 800, marginBottom: 10 }}>{step.title}</h3>
+                <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.7 }}>{step.body}</p>
+                {!isMobile && i < STEPS.length - 1 && (
+                  <div style={{ position: 'absolute', right: -10, top: 52, zIndex: 1, background: 'var(--surface-alt)', color: 'var(--muted)', fontSize: 18, fontWeight: 700 }}>→</div>
+                )}
               </div>
             ))}
           </div>
