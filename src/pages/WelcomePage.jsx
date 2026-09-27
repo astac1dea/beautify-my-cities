@@ -323,6 +323,38 @@ export default function WelcomePage() {
         </div>
       </div>
 
+
+      {/* ── compact impact stats ── */}
+      <section style={{ background: '#1d4e2f', padding: isMobile ? '36px 24px' : '44px 40px' }}>
+        <div style={{ maxWidth: 1100, margin: '0 auto' }}>
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : 'repeat(4, 1fr)',
+            gap: 0,
+          }}>
+            {[
+              { icon: '🗑️', number: '85+', desc: 'Bags of trash collected' },
+              { icon: '👥', number: '200+', desc: 'Community volunteers' },
+              { icon: '🎨', number: '8', desc: 'Murals & art projects' },
+              { icon: '📍', number: '5', desc: 'Locations beautified' },
+            ].map((stat, i, arr) => (
+              <div key={i} style={{
+                textAlign: 'center',
+                padding: isMobile ? '16px 8px' : '20px 16px',
+                borderRight: i < arr.length - 1 && !isMobile ? '1px solid rgba(255,255,255,0.15)' : 'none',
+                borderBottom: isMobile && i < 2 ? '1px solid rgba(255,255,255,0.15)' : 'none',
+              }}>
+                <div style={{ fontSize: 22, marginBottom: 6 }}>{stat.icon}</div>
+                <div style={{ fontSize: isMobile ? '1.8rem' : 'clamp(1.8rem, 3.5vw, 2.8rem)', fontWeight: 800, color: '#fff', lineHeight: 1, marginBottom: 6 }}>
+                  {stat.number}
+                </div>
+                <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.6)', lineHeight: 1.4 }}>{stat.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ------------------------------------------------------------- map */}
       <section id="map" style={{ paddingTop: 72, paddingBottom: 72 }}>
         <div style={{ ...SHELL }}>
