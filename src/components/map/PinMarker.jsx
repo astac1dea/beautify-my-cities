@@ -3,18 +3,17 @@ import { Marker, Popup } from 'react-leaflet'
 import { PIN_TYPES, SPOT_STATUS } from '../../lib/constants'
 import { createPinIcon } from '../../lib/maps'
 
-// Inject pulse keyframe once
 if (typeof document !== 'undefined' && !document.getElementById('bmc-pulse-style')) {
   const style = document.createElement('style')
   style.id = 'bmc-pulse-style'
   style.textContent = `
     @keyframes bmc-pulse {
-      0%   { box-shadow: 0 0 0 0 rgba(232,132,90,0.7), 0 2px 6px rgba(23,34,46,.28); }
-      50%  { box-shadow: 0 0 0 12px rgba(232,132,90,0), 0 2px 6px rgba(23,34,46,.28); }
-      100% { box-shadow: 0 0 0 0 rgba(232,132,90,0), 0 2px 6px rgba(23,34,46,.28); }
+      0%   { transform: scale(1); }
+      50%  { transform: scale(1.18); }
+      100% { transform: scale(1); }
     }
     .bmc-pin-pulse > div > div:first-child {
-      animation: bmc-pulse 1.2s ease-out 3;
+      animation: bmc-pulse 0.6s ease-out 3;
     }
   `
   document.head.appendChild(style)
@@ -24,12 +23,10 @@ export default function PinMarker({ spot, onOpen, highlighted }) {
   const type = PIN_TYPES[spot.type] || PIN_TYPES.trash
   const status = SPOT_STATUS[spot.status] || SPOT_STATUS.reported
 
-  // Visual style per status
   const isPending  = spot.status === 'pending'
   const isResolved = spot.status === 'resolved'
   const isRejected = spot.status === 'rejected'
 
-  // Don't show rejected pins on the map at all
   if (isRejected) return null
 
   const chip = (color, bg, text) => (
@@ -46,6 +43,7 @@ export default function PinMarker({ spot, onOpen, highlighted }) {
         muted: isResolved || isPending,
         opacity: isPending ? 0.5 : isResolved ? 0.65 : 1,
         active: highlighted,
+        upvotes: spot.upvotes || 0,
       })}
       className={highlighted ? 'bmc-pin-pulse' : ''}
     >
