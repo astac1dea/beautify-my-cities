@@ -211,6 +211,34 @@ export default function LearnMorePage() {
         </div>
       </section>
 
+
+      {/* partners */}
+      <section style={{ borderTop: '1px solid var(--border)', paddingTop: 56, paddingBottom: 56 }}>
+        <div style={{ ...SHELL }}>
+          <div style={{ textAlign: 'center', fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 32 }}>
+            In partnership with
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', alignItems: 'center' }}>
+            {/* CP Mentorship — confirmed partner */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 14,
+              padding: '16px 28px',
+              border: '1px solid var(--border)',
+              borderRadius: 12,
+              background: 'var(--surface)',
+              minWidth: 260,
+            }}>
+              <span style={{ fontSize: 28 }}>🤝</span>
+              <div>
+                <div style={{ fontWeight: 700, fontSize: 15 }}>CP Mentorship</div>
+                <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 2 }}>Registered NGO · Milpitas, Morgan Hill & Gilroy</div>
+              </div>
+            </div>
+            {/* More partners coming soon */}
+          </div>
+        </div>
+      </section>
+
       {/* ------------------------------------------------------------- cta */}
       <section style={{ ...SHELL, paddingTop: 72, paddingBottom: 72, textAlign: 'center' }}>
         <h2 style={{ fontSize: 'clamp(24px, 3vw, 34px)', fontWeight: 800 }}>
