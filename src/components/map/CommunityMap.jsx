@@ -109,8 +109,7 @@ export default function CommunityMap({
           <button
             onClick={e => {
               e.stopPropagation()
-              const center = e.currentTarget.closest('[style*="position: relative"]')
-              onMapClick?.({ lat: 37.4323, lng: -121.8996 })
+              onMapClick?.({ lat: city.lat, lng: city.lng })
             }}
             style={{
               pointerEvents: 'all',

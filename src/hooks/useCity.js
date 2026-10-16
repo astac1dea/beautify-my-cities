@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useSyncExternalStore } from 'react'
 import { CITIES, cityBySlug, cityById } from '../lib/cities'
 
 const DEFAULT_SLUG = 'milpitas'
@@ -15,16 +15,17 @@ export function setCity(slugOrId) {
   _listeners.forEach(fn => fn())
 }
 
+function subscribe(fn) {
+  _listeners.add(fn)
+  return () => _listeners.delete(fn)
+}
+
+// Every component that shows city data (the map, the pin list, the events)
+// re-renders on a switch. The old version subscribed from a useState
+// initializer, which never unsubscribed and could leave a component behind.
 export function useCity() {
-  const [, setTick] = useState(0)
-
-  useState(() => {
-    const fn = () => setTick(t => t + 1)
-    _listeners.add(fn)
-    return () => _listeners.delete(fn)
-  })
-
-  const city = cityBySlug(_slug) || CITIES[0]
+  const slug = useSyncExternalStore(subscribe, () => _slug, () => _slug)
+  const city = cityBySlug(slug) || CITIES[0]
   return { city, cities: CITIES, setCity }
 }
 

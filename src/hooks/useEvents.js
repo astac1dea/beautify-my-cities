@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from './useAuth'
 import { useCity } from './useCity'
@@ -30,9 +30,13 @@ export function useEvents() {
   const { user } = useAuth()
   const [events, setEvents] = useState([])
   const [loading, setLoading] = useState(true)
+  // Drop a late answer for a city we have already switched away from.
+  const wantCity = useRef(city?.id)
+  wantCity.current = city?.id
 
   const load = useCallback(async () => {
     if (!supabase || !city?.id) return
+    const forCity = city.id
     try {
       const { data, error } = await supabase
         .from('events')
@@ -41,9 +45,10 @@ export function useEvents() {
           event_signups (id, user_id),
           spots (id, title, type, address, photo_url, photo_status)
         `)
-        .eq('city_id', city.id)
+        .eq('city_id', forCity)
         .order('event_date', { ascending: true })
       if (error) throw error
+      if (wantCity.current !== forCity) return
       setEvents((data || []).map(e => decorateEvent(e, user?.id)))
     } catch (err) {
       console.error('Events fetch failed:', err)

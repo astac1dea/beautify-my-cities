@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState, useCallback } from 'react'
+import { useMemo, useEffect, useState, useCallback, useRef } from 'react'
 import { useAppState } from './useStore'
 import { allSpots, mySpots, spotRanking } from '../lib/store'
 import { fetchSpots, insertSpot } from '../lib/supabase-store'
@@ -17,6 +17,10 @@ export function useSpots() {
   const [supaSpots, setSupaSpots] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  // The city whose pins we want right now. A slow answer for the previous city
+  // must not overwrite the new one (Fremont's map showing Milpitas pins).
+  const wantCity = useRef(city?.id)
+  wantCity.current = city?.id
 
   // Clear old localStorage demo data so Supabase takes over
   useEffect(() => {
@@ -25,8 +29,10 @@ export function useSpots() {
 
   const load = useCallback(async () => {
     if (!supabase || !city?.id) return
+    const forCity = city.id
     try {
-      const data = await fetchSpots(city.id)
+      const data = await fetchSpots(forCity)
+      if (wantCity.current !== forCity) return
       // Decorate each spot with vote count and hasVoted
       const decorated = data.map(spot => ({
         ...spot,
@@ -42,6 +48,7 @@ export function useSpots() {
       setSupaSpots(decorated)
       setError(null)
     } catch (err) {
+      if (wantCity.current !== forCity) return
       console.error('Supabase spots fetch failed, falling back to localStorage:', err)
       setError(err)
       setSupaSpots(null)
