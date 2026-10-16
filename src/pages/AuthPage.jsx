@@ -31,13 +31,17 @@ function Field({ label, children }) {
 }
 
 export default function AuthPage() {
-  const { isAuthed, signIn, signUp } = useAuth()
+  const { isAuthed, signIn, signUp, resendConfirmation } = useAuth()
   const navigate = useNavigate()
   const [params] = useSearchParams()
   const { city } = useCity()
   const [mode, setMode] = useState(params.get('signup') ? 'signup' : 'login')
   const [form, setForm] = useState({ name: '', email: '', password: '', school: '', grade: '' })
   const [error, setError] = useState('')
+  const [sentTo, setSentTo] = useState('')        // signup done, waiting on the email link
+  const [unconfirmed, setUnconfirmed] = useState(false)
+  const [resent, setResent] = useState('')
+  const confirmed = params.get('confirmed') === '1'
 
   if (isAuthed) return <Navigate to="/city/milpitas" replace />
 
@@ -45,12 +49,22 @@ export default function AuthPage() {
 
   async function submit(e) {
     e.preventDefault()
-    setError('')
+    setError(''); setUnconfirmed(false); setResent('')
     const result = mode === 'login'
       ? await signIn(form.email, form.password)
       : await signUp(form)
-    if (result?.error) return setError(result.error)
+    if (result?.error) {
+      setUnconfirmed(!!result.unconfirmed)
+      return setError(result.error)
+    }
+    if (result?.needsConfirmation) return setSentTo(result.email)
     navigate(`/city/milpitas`, { replace: true })
+  }
+
+  async function resend(email) {
+    setResent('')
+    const r = await resendConfirmation(email)
+    setResent(r?.error ? r.error : `We sent a new confirmation email to ${email}.`)
   }
 
   async function loginAsDemo(email) {
@@ -84,6 +98,32 @@ export default function AuthPage() {
             <Wordmark size={36} subtitle={`${city.name}, ${city.state}`} />
           </div>
 
+          {sentTo ? (
+            <div>
+              <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 10 }}>Check your email</h1>
+              <p style={{ fontSize: 14.5, color: 'var(--muted)', marginBottom: 22, lineHeight: 1.6 }}>
+                Your account is created. We sent a confirmation link to <b style={{ color: 'var(--text)' }}>{sentTo}</b>.
+                Click the link in that email, then come back and log in. If it is not in your inbox, check your spam folder.
+              </p>
+              <Button size="lg" full onClick={() => { setSentTo(''); setMode('login'); setError('') }}>
+                Go to log in
+              </Button>
+              <button
+                onClick={() => resend(sentTo)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginTop: 16,
+                  color: 'var(--link)', fontWeight: 600, fontSize: 14 }}
+              >
+                Send the email again
+              </button>
+              {resent && <div style={{ fontSize: 13, color: 'var(--muted)', marginTop: 10 }}>{resent}</div>}
+            </div>
+          ) : (<>
+          {confirmed && mode === 'login' && (
+            <div style={{
+              fontSize: 13.5, color: 'var(--text)', background: 'var(--surface)',
+              border: '1px solid var(--border-firm)', padding: '11px 13px', marginBottom: 20,
+            }}>Your email is confirmed. Log in to get started.</div>
+          )}
           <h1 style={{ fontSize: 28, fontWeight: 800, marginBottom: 10 }}>
             {mode === 'login' ? 'Log in' : 'Create your account'}
           </h1>
@@ -112,6 +152,11 @@ export default function AuthPage() {
                 onChange={e => set('password', e.target.value)}
                 placeholder={mode === 'signup' ? 'At least 8 characters' : ''}
               />
+              {mode === 'signup' && (
+                <div style={{ fontSize: 12.5, color: 'var(--muted)', marginTop: 6 }}>
+                  Use at least 8 characters, with an uppercase letter, a lowercase letter and a number.
+                </div>
+              )}
             </Field>
 
             {mode === 'signup' && (
@@ -129,8 +174,23 @@ export default function AuthPage() {
               <div style={{
                 fontSize: 13, color: 'var(--red)', background: 'var(--red-soft)',
                 border: '1px solid #E4C7C8', borderRadius: 0, padding: '11px 13px',
-              }}>{error}</div>
+              }}>
+                {error}
+                {unconfirmed && (
+                  <div style={{ marginTop: 8 }}>
+                    <button
+                      type="button"
+                      onClick={() => resend(form.email)}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                        color: 'var(--link)', fontWeight: 600, fontSize: 13 }}
+                    >
+                      Send the confirmation email again
+                    </button>
+                  </div>
+                )}
+              </div>
             )}
+            {resent && !sentTo && <div style={{ fontSize: 13, color: 'var(--muted)' }}>{resent}</div>}
 
             <Button type="submit" size="lg" full>
               {mode === 'login' ? 'Log in' : 'Create account'}
@@ -149,6 +209,7 @@ export default function AuthPage() {
               {mode === 'login' ? 'Create one' : 'Log in'}
             </button>
           </div>
+          </>)}
         </div>
       </div>
 
