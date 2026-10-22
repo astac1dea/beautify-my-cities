@@ -18,6 +18,7 @@ import { photoIsPublic } from '../lib/photos'
 import { formatDateLong, formatTimeRange } from '../lib/format'
 import { useCity } from '../hooks/useCity'
 import { useIsMobile } from '../hooks/useMediaQuery'
+import { Trash2, Users, Palette, MapPin } from 'lucide-react'
 
 const SHELL = { maxWidth: 1220, margin: '0 auto', padding: '0 var(--shell-pad, 28px)' }
 const BAND_IMAGE = '/band.jpg'
@@ -333,10 +334,10 @@ export default function WelcomePage() {
             gap: 0,
           }}>
             {[
-              { icon: '🗑️', number: '85+', desc: 'Bags of trash collected' },
-              { icon: '👥', number: '200+', desc: 'Community volunteers' },
-              { icon: '🎨', number: '8', desc: 'Murals & art projects' },
-              { icon: '📍', number: '5', desc: 'Locations beautified' },
+              { icon: Trash2, number: '85+', desc: 'Bags of trash collected' },
+              { icon: Users, number: '200+', desc: 'Community volunteers' },
+              { icon: Palette, number: '8', desc: 'Murals & art projects' },
+              { icon: MapPin, number: '5', desc: 'Locations beautified' },
             ].map((stat, i, arr) => (
               <div key={i} style={{
                 textAlign: 'center',
@@ -344,7 +345,7 @@ export default function WelcomePage() {
                 borderRight: i < arr.length - 1 && !isMobile ? '1px solid rgba(255,255,255,0.15)' : 'none',
                 borderBottom: isMobile && i < 2 ? '1px solid rgba(255,255,255,0.15)' : 'none',
               }}>
-                <div style={{ fontSize: 22, marginBottom: 6 }}>{stat.icon}</div>
+                <stat.icon size={isMobile ? 32 : 40} strokeWidth={1.4} color="#fff" aria-hidden="true" style={{ display: 'block', margin: '0 auto 12px' }} />
                 <div style={{ fontSize: isMobile ? '1.8rem' : 'clamp(1.8rem, 3.5vw, 2.8rem)', fontWeight: 800, color: '#fff', lineHeight: 1, marginBottom: 6 }}>
                   {stat.number}
                 </div>
