@@ -63,7 +63,7 @@ function HeroSlideshow({ isMobile }) {
         <div key={s.src} style={{
           position: 'absolute', inset: 0,
           backgroundImage: `url("${s.src}")`,
-          backgroundSize: '65%',
+          backgroundSize: 'cover',
           backgroundPosition: s.pos,
           backgroundRepeat: 'no-repeat',
           backgroundColor: '#1a1a1a',
