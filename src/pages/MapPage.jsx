@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import Topbar from '../components/layout/Topbar'
 import CommunityMap from '../components/map/CommunityMap'
 import FilterPills from '../components/map/FilterPills'
@@ -13,6 +13,8 @@ import { formatDate } from '../lib/format'
 import { useCity } from '../hooks/useCity'
 import { useIsMobile } from '../hooks/useMediaQuery'
 
+const MILPITAS_ID = '00000001-0000-0000-0000-000000000001'
+
 export default function MapPage() {
   const { spots } = useSpots()
   const { city } = useCity()
@@ -26,6 +28,7 @@ export default function MapPage() {
   const [focusSpotId, setFocusSpotId] = useState(null)
 
   const visible = filter === 'all' ? spots : spots.filter(s => s.type === filter)
+  const isDemo = city.id !== MILPITAS_ID
 
   function handleMapClick(coords) {
     if (!placing) return
@@ -50,7 +53,15 @@ export default function MapPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 12, marginBottom: 14 }}>
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.09em', textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 4 }}>Every reported spot</div>
-            <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>{city.name} community map</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <h2 style={{ fontSize: 18, fontWeight: 700, margin: 0 }}>{city.name} community map</h2>
+              {isDemo && (
+                <span style={{ fontSize: 11, color: 'var(--muted)', border: '1px solid var(--border)', borderRadius: 4, padding: '2px 7px' }}>demo</span>
+              )}
+            </div>
+            {isDemo && (
+              <p style={{ fontSize: 12, color: 'var(--muted)', margin: '3px 0 0' }}>Spots on this map are simulated for demo purposes.</p>
+            )}
           </div>
           <FilterPills value={filter} onChange={v => { setFilter(v); setFocusSpotId(null) }} spots={spots} />
         </div>

@@ -360,9 +360,16 @@ export default function WelcomePage() {
       <section id="map" style={{ paddingTop: 72, paddingBottom: 72 }}>
         <div style={{ ...SHELL }}>
           <SectionTitle
-            title={`The ${city.name} map`}
+            title={city.id !== '00000001-0000-0000-0000-000000000001'
+              ? `The ${city.name} map (Demo)`
+              : `The ${city.name} map`}
             blurb="Each pin is something a resident reported. Click one to see who is responsible for it, where the request stands, and whether there is a volunteer day scheduled."
           />
+          {city.id !== '00000001-0000-0000-0000-000000000001' && (
+            <p style={{ textAlign: 'center', fontSize: 12, color: 'var(--muted)', marginTop: -16, marginBottom: 8 }}>
+              Spots on this map are simulated for demo purposes.
+            </p>
+          )}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
             <FilterPills value={filter} onChange={v => { setFilter(v); setFocusSpotId(null) }} spots={spots} />
           </div>
