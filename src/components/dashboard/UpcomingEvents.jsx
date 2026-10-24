@@ -36,7 +36,7 @@ export default function UpcomingEvents({ events = [], onOpen, limit = 4 }) {
           >
             <div style={{
               width: 8, height: 8, borderRadius: 0, flexShrink: 0,
-              background: event.org.color, marginTop: 5,
+              background: event.org?.color || 'var(--navy)', marginTop: 5,
             }} />
             <div style={{ minWidth: 0, flex: 1 }}>
               <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 3 }}>{event.title}</div>

@@ -16,11 +16,11 @@ const td = {
 // Builds a mailto the volunteer can send to the organization to ask them to
 // confirm the hours, so the log is something they have actually signed off on.
 function verifyMailto(org, rows, volunteerName) {
-  const theirs = rows.filter(r => r.org.id === org.id)
+  const theirs = rows.filter(r => r.org?.id === org.id)
   const total = theirs.reduce((n, r) => n + r.hours, 0)
   const lines = theirs.map(r => `  ${formatDate(r.date)} - ${r.event?.title || 'Volunteer event'} - ${r.hours} hours`)
   const body = [
-    `Hello ${org.contact_name},`,
+    `Hello ${org.contact_name || org.name},`,
     '',
     `My name is ${volunteerName} and I volunteered with ${org.name} through Beautify Our Cities.`,
     'I am keeping a record of my service hours and need them verified by a supervising',
@@ -47,11 +47,11 @@ function downloadCsv(rows, volunteerName) {
   const body = rows.map(r => [
     r.date,
     r.event?.title || '',
-    r.org.name,
+    r.org?.name || '',
     r.hours,
     r.status === 'verified' ? 'Verified' : 'Awaiting verification',
-    r.org.contact_name,
-    r.org.email,
+    r.org?.contact_name || '',
+    r.org?.email || '',
   ].map(esc).join(','))
 
   const csv = [header.map(esc).join(','), ...body].join('\n')
@@ -67,7 +67,7 @@ function downloadCsv(rows, volunteerName) {
 
 export default function HoursTable({ rows, totals, volunteerName }) {
   // One entry per organization, for the "ask them to verify" buttons.
-  const orgs = [...new Map(rows.map(r => [r.org.id, r.org])).values()]
+  const orgs = [...new Map(rows.filter(r => r.org).map(r => [r.org.id, r.org])).values()]
 
   return (
     <div style={{
@@ -111,14 +111,14 @@ export default function HoursTable({ rows, totals, volunteerName }) {
               </thead>
               <tbody>
                 {rows.map(row => {
-                  const meta = HOUR_STATUS[row.status]
+                  const meta = HOUR_STATUS[row.status] || HOUR_STATUS.pending
                   return (
                     <tr key={row.id}>
                       <td style={{ ...td, whiteSpace: 'nowrap', color: 'var(--muted)' }}>
                         {formatDate(row.date)}
                       </td>
                       <td style={{ ...td, fontWeight: 600 }}>{row.event?.title || '—'}</td>
-                      <td style={td}>{row.org.name}</td>
+                      <td style={td}>{row.org?.name || '—'}</td>
                       <td style={{ ...td, textAlign: 'right', fontWeight: 800, whiteSpace: 'nowrap' }}>
                         {row.hours}
                       </td>
@@ -126,10 +126,12 @@ export default function HoursTable({ rows, totals, volunteerName }) {
                         <Badge color={meta.color} bg={meta.bg} size="sm">{meta.label}</Badge>
                       </td>
                       <td style={td}>
-                        <div style={{ fontSize: 12 }}>{row.org.contact_name}</div>
-                        <a href={`mailto:${row.org.email}`} style={{ fontSize: 12, color: 'var(--navy)', fontWeight: 600 }}>
-                          {row.org.email}
-                        </a>
+                        <div style={{ fontSize: 12 }}>{row.org?.contact_name}</div>
+                        {row.org?.email && (
+                          <a href={`mailto:${row.org.email}`} style={{ fontSize: 12, color: 'var(--navy)', fontWeight: 600 }}>
+                            {row.org.email}
+                          </a>
+                        )}
                       </td>
                     </tr>
                   )

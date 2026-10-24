@@ -63,7 +63,7 @@ export default function SpotBreakdown({ spots, rankOf, onOpen }) {
                     <td style={{ ...td, textAlign: 'right', whiteSpace: 'nowrap' }}>
                       {rank === 1
                         ? <Badge color="var(--amber)" bg="var(--amber-soft)" icon="award" size="sm">#1</Badge>
-                        : <span style={{ color: 'var(--muted)', fontWeight: 700 }}>#{rank}</span>}
+                        : <span style={{ color: 'var(--muted)', fontWeight: 700 }}>{rank ? `#${rank}` : '—'}</span>}
                     </td>
                     <td style={td}>
                       <Badge color={status.color} bg={status.bg} size="sm">{status.label}</Badge>

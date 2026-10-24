@@ -32,7 +32,10 @@ export default function DashboardPage() {
       ranking: rankIndex,
       upcoming: myEventsList.filter(e => e.event_date >= today),
       totalUpvotes: pins.reduce((n, s) => n + s.upvotes, 0),
-      bestRank: pins.length ? Math.min(...pins.map(s => rankIndex.get(s.id) ?? Infinity)) : null,
+      bestRank: (() => {
+        const r = Math.min(...pins.map(s => rankIndex.get(s.id) ?? Infinity))
+        return Number.isFinite(r) ? r : null
+      })(),
     }
   }, [spotRankData, myEventsList, pins])
   const myRank = null

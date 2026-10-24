@@ -42,6 +42,7 @@ export function useEvents() {
         .from('events')
         .select(`
           *,
+          organizations (id, name, email, contact_name, color),
           event_signups (id, user_id),
           spots (id, title, type, address, photo_url, photo_status)
         `)
@@ -114,10 +115,15 @@ export function useHours() {
     if (!supabase || !user) return
     supabase
       .from('volunteer_hours')
-      .select(`*, organizations(name, email), events(title, event_date)`)
+      .select(`*, organizations(id, name, email, contact_name, color), events(title, event_date)`)
       .eq('user_id', user.id)
       .order('date', { ascending: false })
-      .then(({ data }) => setRows(data || []))
+      .then(({ data }) => setRows((data || []).map(r => ({
+        ...r,
+        hours: Number(r.hours) || 0,
+        org: r.organizations || null,
+        event: r.events || null,
+      }))))
   }, [user?.id])
 
   const totals = useMemo(() => {
