@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import PublicHeader from '../components/layout/PublicHeader'
 import PublicFooter from '../components/layout/PublicFooter'
 import Button from '../components/ui/Button'
@@ -37,8 +37,15 @@ const WHAT_YOU_CAN_DO = [
 
 export default function LearnMorePage() {
   const { city } = useCity()
+  const { hash } = useLocation()
 
-  useEffect(() => { window.scrollTo({ top: 0 }) }, [])
+  useEffect(() => {
+    if (hash) {
+      const el = document.querySelector(hash)
+      if (el) { el.scrollIntoView({ behavior: 'smooth' }); return }
+    }
+    window.scrollTo({ top: 0 })
+  }, [hash])
 
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
@@ -261,6 +268,27 @@ export default function LearnMorePage() {
           <Link to="/login?signup=1" style={{ textDecoration: 'none' }}>
             <Button size="lg" variant="secondary">Create an account</Button>
           </Link>
+        </div>
+      </section>
+
+      {/* --------------------------------------------------------- contact */}
+      <section id="contact" style={{ borderTop: '1px solid var(--border)', paddingTop: 56, paddingBottom: 56, textAlign: 'center' }}>
+        <div style={{ ...SHELL }}>
+          <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--muted)', marginBottom: 12 }}>
+            Get in touch
+          </div>
+          <h2 style={{ fontSize: 'clamp(20px, 2.5vw, 28px)', fontWeight: 700, margin: '0 0 12px' }}>
+            Want to bring Beautify Our Cities to your city?
+          </h2>
+          <p style={{ fontSize: 15, color: 'var(--muted)', lineHeight: 1.6, maxWidth: 560, margin: '0 auto 24px' }}>
+            We're actively looking to expand. Reach out and we'll get back to you.
+          </p>
+          <a href="mailto:hello@beautifyourcities.org" style={{ textDecoration: 'none' }}>
+            <Button size="lg" variant="secondary">Email us</Button>
+          </a>
+          <a href="mailto:hello@beautifyourcities.org" style={{ display: 'block', fontSize: 20, color: 'var(--text)', marginTop: 16, textDecoration: 'none', fontWeight: 600 }}>
+            hello@beautifyourcities.org
+          </a>
         </div>
       </section>
 

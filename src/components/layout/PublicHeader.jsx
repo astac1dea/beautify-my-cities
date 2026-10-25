@@ -15,6 +15,7 @@ const LINKS = [
   { to: '/#events', label: 'Volunteer events' },
   { to: '/#how', label: 'How it works' },
   { to: '/learn-more', label: 'Learn more' },
+  { to: '/learn-more#contact', label: 'Contact us' },
 ]
 
 function NavLink({ link, style, onClick }) {
@@ -87,7 +88,7 @@ export default function PublicHeader() {
           </button>
         ) : (
           <>
-            <nav style={{ display: 'flex', gap: 24, flexWrap: 'wrap', marginRight: 'auto' }}>
+            <nav style={{ display: 'flex', gap: 16, flexWrap: 'nowrap', marginRight: 'auto' }}>
               {LINKS.map(l => (
                 <NavLink key={l.label} link={l} style={linkStyle} />
               ))}
